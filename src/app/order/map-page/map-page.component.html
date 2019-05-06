@@ -1,0 +1,5 @@
+<div class="page">
+  <div class="map-block">
+    <app-map *ngIf="places && places.length > 0" [center]="currLocation" [zoom]="11" [places]="places"></app-map>
+  </div>
+</div>

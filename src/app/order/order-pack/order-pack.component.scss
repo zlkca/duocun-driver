@@ -1,0 +1,46 @@
+.order{
+  border-bottom: solid 1px #eee;
+  padding: 10px 0px;
+
+  .note-row, .order-id-row, .client-row, .phonenum-row, .receivables-row, .address-row, .navigate-row{
+    font-size: 12px;
+    .col-2 {
+      padding: 0px;
+    }
+    .col-10 {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .product-block{
+    padding-top: 10px;
+    .product-col{
+      padding-left: 0px;
+    }
+
+    .col-9, .col-3{
+      padding: 0px;
+    }
+  }
+
+  .navigate-row{
+    .btn{
+      float: right;
+    }
+  }
+
+  .paid-toggle{
+    margin-top: 10px;
+  }
+}
+
+// /deep/ .mat-slide-toggle-bar {
+//   height: 22px !important;
+//   width: 120px !important;
+// }
+
+// /deep/ .mat-slide-toggle-thumb {
+//   height: 28px !important;
+//   width: 28px !important;
+// }

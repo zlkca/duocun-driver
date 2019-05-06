@@ -1,0 +1,47 @@
+
+<div class="order-list" *ngIf="orders && orders.length>0">
+  <div *ngFor="let order of orders">
+    <div class="order" *ngIf="!order.paid">
+      <div class="row order-id-row">
+        <div class="col-2" i18n="@@OrderId">Order Id</div>
+        <div class="col-10">{{order.id}}</div>
+      </div>
+      <div class="row client-row">
+        <div class="col-2" i18n="@@Client">Client</div>
+        <div class="col-10">{{order.clientName}}</div>
+      </div>
+      <div class="row phonenum-row">
+        <div class="col-2" i18n="@@ClientPhoneNumber">Client Phone Number</div>
+        <div class="col-10">{{order.clientPhoneNumber}}</div>
+      </div>
+      <div class="row address-row">
+        <div class="col-2" i18n="@@DeliverAddress">Delivery Address</div>
+        <div class="col-10">{{order.address}}</div>
+      </div>
+      <div class="row note-row">
+        <div class="col-2" i18n="@@Note">Note</div>
+        <div class="col-9">{{order.note}}</div>
+      </div>
+      <div class="row product-block">
+        <div class="col-9">
+            <div *ngFor="let item of order.items" class="text-sm row">
+              <div class="col-6 product-col">{{item.productName}}</div>
+              <div class="col-3 quantity-col">x{{item.quantity}}</div>
+              <!-- <div class="col-3 price-col">${{item.price * item.quantity | number : '1.2-2'}}</div> -->
+            </div>
+        </div>
+        <div class="col-3">
+          <div class="btn btn-sm btn-primary pull-right" i18n="@@NavigateToHere" (click)="navigateTo(order.location)">NavigateToHere</div>
+        </div>
+      </div>
+      <div class="row receivables-row">
+        <div class="col-2" i18n="@@Receivables">Receivables</div>
+        <div class="col-10">{{order.total | number : '1.2-2'}}</div>
+      </div>
+      <div class="row paid-toggle">
+        <mat-slide-toggle i18n="@@Paid" [checked]="order.paid" (change)="togglePaid($event, order)">Paid</mat-slide-toggle>
+      </div>
+    </div>
+  </div>
+</div>
+  

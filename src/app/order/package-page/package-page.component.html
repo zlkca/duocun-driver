@@ -1,0 +1,22 @@
+<div class="page">
+  <div class="header-row">
+    <span class="title-bg" i18n="@@MyOrder">My Order</span>
+  </div>
+  <div class="content">
+      <div class="deliver-time">
+        <span i18n="@@DeliverTime">Deliver Time</span>: {{deliverTime}}
+      </div>
+      <app-order-pack *ngIf="restaurant" [restaurant]="restaurant" [dateRange]="range"></app-order-pack>
+    <!-- <mat-tab-group mat-align-tabs="center">
+      <mat-tab i18n-label label="LunchToday">
+        <app-order-pack [account]="account" [dateRange]="rangeToday"></app-order-pack>
+      </mat-tab>
+      <mat-tab i18n-label label="LunchTomorrow">
+        <app-order-pack [account]="account" [dateRange]="rangeTomorrow"></app-order-pack>
+      </mat-tab>
+      <mat-tab i18n-label label="LunchAfterTomorrow">
+        <app-order-pack [account]="account" [dateRange]="rangeAfterTomorrow"></app-order-pack>
+      </mat-tab>
+    </mat-tab-group> -->
+  </div>
+</div>
