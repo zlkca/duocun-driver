@@ -422,6 +422,14 @@
           <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="NavigateToHere" datatype="html">
+        <source>NavigateToHere</source>
+        <target>导航</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order.component.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="Name" datatype="html">
         <source>Name:</source>
         <target>名字</target>
@@ -874,6 +882,22 @@
           <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="ClientPhoneNumber" datatype="html">
+        <source>Client Phone Number</source>
+        <target>客户电话</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-package/order-package.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Receivables" datatype="html">
+        <source>Receivables</source>
+        <target>应收款</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-package/order-package.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="RestaurantLogo" datatype="html">
         <source>Restaurant Logo</source>
         <target>餐馆商标</target>
@@ -1020,6 +1044,10 @@
         <target>今天午饭</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/page/home/home.component.html</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">order/summary-page/summary-page.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
@@ -1338,6 +1366,150 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/contact/contact-form/contact-form.component.html</context>
           <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Map" datatype="html">
+        <source>Map</source>
+        <target>地图</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/footer/footer.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="OrderSummary" datatype="html">
+        <source>Order Summary</source>
+        <target>订单汇总</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/summary-page/summary-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="PackOrder" datatype="html">
+        <source>Pack Order</source>
+        <target>出餐分袋</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/package-page/package-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="OrderSettlement" datatype="html">
+        <source>Settlement</source>
+        <target>结算</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Note" datatype="html">
+        <source>Note</source>
+        <target>备注</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/summary-page/summary-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Client" datatype="html">
+        <source>Client</source>
+        <target>客户</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/pack-page/pack-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="bc96aff42ce24cd4f02440fe3e0c51aa9898e5ba" datatype="html">
+        <source>LunchToday</source>
+        <target>今天午餐</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/summary-page/summary-page.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="beb3a4ba8ded6f89509e7237766f60c16038a1b2" datatype="html">
+        <source>LunchTomorrow</source>
+        <target>明天午餐</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/summary-page/summary-page.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="db3e392b3f04e3f56af40b58972d315cb981fa5e" datatype="html">
+        <source>LunchAfterTomorrow</source>
+        <target>后天午餐</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/summary-page/summary-page.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="DailySettlement" datatype="html">
+        <source>Daily</source>
+        <target>日结</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="WeeklySettlement" datatype="html">
+        <source>Weekly</source>
+        <target>周结</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="MonthlySettlement" datatype="html">
+        <source>Weekly</source>
+        <target>月结</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="DeliverTime" datatype="html">
+        <source>Deliver Time</source>
+        <target>出餐时间</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="530487ff9842f6bb5506e2dd0cd8e03872c9cf6c" datatype="html">
+        <source>DailySettlement</source>
+        <target>日结</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="b0321a2848f0a4c5d0f11df0f5c190c8d9bfe1b4" datatype="html">
+        <source>WeeklySettlement</source>
+        <target>周结</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="44cd9651d28ce09a722a694a28f0ffce9c68464f" datatype="html">
+        <source>MonthlySettlement</source>
+        <target>月结</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+     <trans-unit id="ApplyAsMerchant" datatype="html">
+        <source>Apply as Merchant</source>
+        <target>申请成为商家</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Paid" datatype="html">
+        <source>Paid</source>
+        <target>已付款</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-pack/order-pack.component.html</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
     </body>

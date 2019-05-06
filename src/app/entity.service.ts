@@ -3,10 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthService } from './account/auth.service';
+import { IEntity } from './entity.model';
 
-export interface IEntity {
-  id ?: string;
-}
 
 @Injectable()
 export class EntityService {
@@ -58,5 +56,20 @@ export class EntityService {
 
   replace(entity: IEntity): Observable<any> {
     return this.http.put(this.url, entity);
+  }
+
+  update(filter: any, data: any): Observable<any> {
+    return this.http.patch(this.url, {filter: filter, data: data});
+  }
+
+  removeById(id: string): Observable<any> {
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    const accessTokenId = this.authSvc.getAccessToken();
+    if (accessTokenId) {
+      headers = headers.append('Authorization', this.authPrefix + accessTokenId);
+      // httpParams = httpParams.append('access_token', LoopBackConfig.getAuthPrefix() + accessTokenId);
+    }
+    return this.http.delete(this.url + '/' + id, {headers: headers});
   }
 }

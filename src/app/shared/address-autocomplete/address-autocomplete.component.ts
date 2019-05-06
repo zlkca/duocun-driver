@@ -90,28 +90,28 @@ export class AddressAutocompleteComponent implements OnInit {
     const oLocation = geocodeResult.geometry.location;
     if (addr && addr.length) {
       const loc: any = {
-        street_number: '',
-        street_name: '',
-        sub_locality: '',
+        streetNumber: '',
+        streetName: '',
+        subLocality: '',
         city: '',
         province: '',
-        postal_code: '',
+        postalCode: '',
         lat: typeof oLocation.lat === 'function' ? oLocation.lat() : oLocation.lat,
         lng: typeof oLocation.lng === 'function' ? oLocation.lng() : oLocation.lng
       };
 
       addr.forEach(compo => {
-        if (compo.types.indexOf('street_number') !== -1) {
-          loc.street_number = compo.long_name;
+        if (compo.types.indexOf('streetNumber') !== -1) {
+          loc.streetNumber = compo.long_name;
         }
         if (compo.types.indexOf('route') !== -1) {
-          loc.street_name = compo.long_name;
+          loc.streetName = compo.long_name;
         }
-        if (compo.types.indexOf('postal_code') !== -1) {
-          loc.postal_code = compo.long_name;
+        if (compo.types.indexOf('postalCode') !== -1) {
+          loc.postalCode = compo.long_name;
         }
         if (compo.types.indexOf('sublocality_level_1') !== -1 && compo.types.indexOf('sublocality') !== -1) {
-          loc.sub_locality = compo.long_name;
+          loc.subLocality = compo.long_name;
         }
         if (compo.types.indexOf('locality') !== -1) {
           loc.city = compo.long_name;
@@ -127,9 +127,9 @@ export class AddressAutocompleteComponent implements OnInit {
   }
 
   getAddrString(location: any) {
-    const city = location.sub_locality ? location.sub_locality : location.city;
-    return location.street_number + ' ' + location.street_name + ', ' + city + ', ' + location.province;
-    // + ', ' + location.postal_code;
+    const city = location.subLocality ? location.subLocality : location.city;
+    return location.streetNumber + ' ' + location.streetName + ', ' + city + ', ' + location.province;
+    // + ', ' + location.postalCode;
   }
 
   clearAddr() {

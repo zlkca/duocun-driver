@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { combineReducers } from 'redux';
-import { DEFAULT_ACCOUNT, accountReducer } from './account/account.reducer';
+import { accountReducer } from './account/account.reducer';
 // import { pictureReducer } from './commerce/commerce.reducers';
 import { locationReducer } from './location/location.reducer';
 import { ILocation } from './location/location.model';
@@ -14,17 +14,12 @@ import { IDelivery, IDeliveryTime } from './delivery/delivery.model';
 import { deliveryReducer } from './delivery/delivery.reducer';
 import { IContact } from './contact/contact.model';
 import { contactReducer } from './contact/contact.reducer';
-import { ICart } from './cart/cart.model';
-import { cartReducer } from './cart/cart.reducer';
-import { amountReducer } from './order/order.reducers';
-import { IAmount } from './order/order.model';
 import { restaurantReducer } from './restaurant/restaurant.reducer';
 import { IRestaurant } from './restaurant/restaurant.model';
 import { Account } from './account/account.model';
 import { deliveryTimeReducer } from './delivery/delivery-time.reducer';
 
 export interface IAppState {
-    cart: ICart;
     account: Account;
     // picture: IPicture;
     location: ILocation;
@@ -35,12 +30,10 @@ export interface IAppState {
     malls: IMall[];
     delivery: IDelivery;
     contact: IContact;
-    amount: IAmount;
 }
 
 export const INITIAL_STATE: IAppState = {
-    cart: { items: [] },
-    account: DEFAULT_ACCOUNT,
+    account: null,
     // picture: DEFAULT_PICTURE,
     location: null,
     page: 'home',
@@ -50,7 +43,6 @@ export const INITIAL_STATE: IAppState = {
     malls: [DEFAULT_MALL],
     delivery: null,
     contact: null,
-    amount: null,
 };
 
 // export function rootReducer(last:IAppState, action:Action):IAppState{
@@ -64,7 +56,6 @@ export const INITIAL_STATE: IAppState = {
 // }
 
 export const rootReducer = combineReducers({
-    cart: cartReducer,
     account: accountReducer,
     // picture: pictureReducer,
     location: locationReducer,
@@ -74,6 +65,5 @@ export const rootReducer = combineReducers({
     restaurant: restaurantReducer,
     malls: mallReducer,
     delivery: deliveryReducer,
-    contact: contactReducer,
-    amount: amountReducer
+    contact: contactReducer
 });

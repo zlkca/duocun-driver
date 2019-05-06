@@ -32,7 +32,7 @@ export class LocationListComponent implements OnInit {
         if (self.account) {
           self.locationSvc.save({
             userId: self.account.id, type: 'history',
-            placeId: r.place_id, location: r, created: new Date()
+            placeId: r.placeId, location: r, created: new Date()
           }).subscribe(x => {
           });
         }

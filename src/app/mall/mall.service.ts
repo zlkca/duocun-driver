@@ -102,5 +102,6 @@ export class MallService extends EntityService {
     });
     return inRange;
   }
+
 }
 

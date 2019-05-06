@@ -5,7 +5,8 @@ export interface IProduct {
   name: string;
   description?: string;
   price: number;
-  restaurantId: string;
+  cost: number;
+  merchantId: string;
   categoryId: string;
   created?: Date;
   modified?: Date;
@@ -20,8 +21,9 @@ export class Product implements IProduct {
   name: string;
   description: string;
   price: number;
+  cost: number;
   categoryId: string;
-  restaurantId: string;
+  merchantId: string;
   created: Date;
   modified: Date;
   id: string;

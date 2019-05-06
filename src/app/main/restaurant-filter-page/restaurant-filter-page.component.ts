@@ -145,7 +145,7 @@ export class RestaurantFilterPageComponent implements OnInit {
       // fix me!!!
       // if (self.account) {
       //   self.locationSvc.save({ userId: self.account.id, type: 'history',
-      //     placeId: r.place_id, location: r, created: new Date() }).subscribe(x => {
+      //     placeId: r.placeId, location: r, created: new Date() }).subscribe(x => {
       //   });
       // }
     },

@@ -8,19 +8,16 @@ import { NgRedux } from '@angular-redux/store';
 import { IAppState } from '../../store';
 import { PageActions } from '../../main/main.actions';
 import { SocketService } from '../../shared/socket.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../account/auth.service';
-import { IPageAction } from '../main.reducers';
-import { LocationActions } from '../../location/location.actions';
-import { ILocationAction } from '../../location/location.reducer';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { ICommand } from '../../shared/command.reducers';
 import { IDeliveryTime } from '../../delivery/delivery.model';
-import { IDeliveryTimeAction } from '../../delivery/delivery-time.reducer';
-import { DeliveryTimeActions } from '../../delivery/delivery-time.actions';
-
-declare var google;
+import { AccountActions } from '../../account/account.actions';
+import { Account, Role } from '../../account/account.model';
+import { ILocationAction } from '../../location/location.reducer';
+import { LocationActions } from '../../location/location.actions';
 
 const APP = environment.APP;
 
@@ -40,7 +37,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   account;
   bHideMap = false;
   bTimeOptions = false;
-  orderDeadline = {h: 9, m: 30};
+  orderDeadline = { h: 9, m: 30 };
   overdue;
   afternoon;
   deliveryTime: IDeliveryTime = { type: '', text: '' };
@@ -55,111 +52,125 @@ export class HomeComponent implements OnInit, OnDestroy {
     private authSvc: AuthService,
     private socketSvc: SocketService,
     private router: Router,
+    private route: ActivatedRoute,
     private rx: NgRedux<IAppState>,
   ) {
   }
 
+
   ngOnInit() {
     const self = this;
-    this.accountSvc.getCurrent().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(account => {
-      self.account = account;
-      self.socketSvc.init(this.authSvc.getAccessToken());
-    });
-    this.rx.dispatch<IPageAction>({
-      type: PageActions.UPDATE_URL,
-      payload: 'home'
-    });
-    this.rx.select('cmd').pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((x: ICommand) => {
-      if (x.name === 'clear-address') {
-        this.places = [];
+    self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+      if (account) {
+        self.loginSuccessHandler(account);
+      } else { // not login
+        self.router.navigate(['account/login']);
       }
-    });
-    this.rx.select('location').pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((loc: ILocation) => {
-      if (loc) {
-        self.deliveryAddress = self.locationSvc.getAddrString(loc);
-      }
+    }, err => {
+      console.log('login failed');
     });
   }
 
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
+  // ngOnInit() {
+  //   const self = this;
+  //   self.route.queryParamMap.pipe(takeUntil(this.onDestroy$)).subscribe(queryParams => {
+  //     const code = queryParams.get('code');
 
-  onAddressInputFocus(e?: any) {
-    const self = this;
-    this.places = [];
-    if (this.account && this.account.id) {
-      this.locationSvc.getHistoryLocations(this.account.id).then(a => {
-        self.places = a;
-      });
+  //     self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+  //       if (account) {
+  //         self.loginSuccessHandler(account);
+  //       } else { // not login
+  //         if (code) { // try wechat login
+  //           this.accountSvc.wechatLogin(code).pipe(
+  //             takeUntil(this.onDestroy$)
+  //           ).subscribe((data: any) => {
+  //             if (data) {
+  //               self.authSvc.setUserId(data.userId);
+  //               self.authSvc.setAccessToken(data.id);
+  //               self.accountSvc.getCurrentUser().pipe(
+  //                 takeUntil(this.onDestroy$)
+  //               ).subscribe((acc: Account) => {
+  //                 if (acc) {
+  //                   self.account = acc;
+  //                   self.loginSuccessHandler(acc);
+  //                 } else {
+  //                   this.router.navigate(['account/setting']);
+  //                   // this.snackBar.open('', '微信登录失败。', {
+  //                   //   duration: 1000
+  //                   // });
+  //                 }
+  //               });
+  //             } else { // failed from shared link login
+  //               // tslint:disable-next-line:max-line-length
+  //               window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0591bdd165898739&redirect_uri=https://duocun.com.cn&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect';
+  //             }
+  //           });
+  //         } else { // no code in router
+  //           this.router.navigate(['account/setting']);
+  //         }
+  //       }
+  //     }, err => {
+  //       console.log('login failed');
+  //     });
+  //   });
+  // }
+
+  loginSuccessHandler(account: Account) {
+    this.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
+
+    const roles = account.roles;
+    if (roles && roles.length > 0 && roles.indexOf(Role.MERCHANT_ADMIN) !== -1) {
+      this.router.navigate(['order/package']);
+    } else { // not authorized for opreration merchant
+      this.router.navigate(['account/setting'], { queryParams: { merchant: false } });
     }
   }
 
-  onSelectPlace(e) {
-    const r: ILocation = e.location;
-    this.places = [];
-    if (r) {
-      this.rx.dispatch<ILocationAction>({
-        type: LocationActions.UPDATE,
-        payload: r
-      });
-      this.deliveryAddress = e.address; // set address text to input
-      this.router.navigate(['main/filter']);
-    }
-  }
-
-  onAddressChange(e) {
+  wechatLoginHandler(data: any) {
     const self = this;
-    this.places = [];
-    this.locationSvc.reqPlaces(e.input).subscribe((ps: IPlace[]) => {
-      if (ps && ps.length > 0) {
-        for (const p of ps) {
-          p.type = 'suggest';
-          self.places.push(p); // without lat lng
-        }
+    self.authSvc.setUserId(data.userId);
+    self.authSvc.setAccessToken(data.id);
+    self.accountSvc.getCurrentUser().pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((account: Account) => {
+      if (account) {
+        self.account = account;
+
+        // this.snackBar.open('', '微信登录成功。', {
+        //   duration: 1000
+        // });
+        // self.loading = false;
+        // self.init(account);
+      } else {
+        // this.snackBar.open('', '微信登录失败。', {
+        //   duration: 1000
+        // });
       }
     });
+
+    this.getCurrentLocation();
   }
 
-  onAddressClear(e) {
-    this.deliveryAddress = '';
-    this.places = [];
-    this.onAddressInputFocus();
-  }
-
-  useCurrentLocation() {
+  getCurrentLocation() {
     const self = this;
     self.places = [];
     this.locationSvc.getCurrentLocation().then(r => {
+      // self.sharedSvc.emitMsg({name: 'OnUpdateAddress', addr: r});
       self.deliveryAddress = self.locationSvc.getAddrString(r); // set address text to input
 
       self.rx.dispatch<ILocationAction>({
         type: LocationActions.UPDATE,
         payload: r
       });
-
-      this.router.navigate(['main/filter']);
-      // fix me!!!
-      // if (self.account) {
-      //   self.locationSvc.save({ userId: self.account.id, type: 'history',
-      //     placeId: r.place_id, location: r, created: new Date() }).subscribe(x => {
-      //   });
-      // }
     },
     err => {
       console.log(err);
     });
   }
 
-  showLocationList() {
-    return this.places && this.places.length > 0;
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
 }

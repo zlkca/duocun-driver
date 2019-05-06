@@ -24,8 +24,8 @@ export class MapComponent implements OnInit, OnChanges {
         this.initMap();
     }
 
-    ngOnChanges() {
-        this.initMap();
+    ngOnChanges(v) {
+      this.initMap();
     }
 
     initMap() {
@@ -46,7 +46,7 @@ export class MapComponent implements OnInit, OnChanges {
             });
 
 
-            if (this.places && this.places.length) {
+            if (this.places && this.places.length > 0) {
                 // var infowindow = new google.maps.InfoWindow({
                 //   content: contentString
                 // });

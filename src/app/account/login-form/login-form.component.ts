@@ -10,7 +10,7 @@ import { AccountActions } from '../account.actions';
 import { PageActions } from '../../main/main.actions';
 import { IAppState } from '../../store';
 
-import { Account } from '../account.model';
+import { Account, Role } from '../account.model';
 
 @Component({
   providers: [AuthService],
@@ -70,14 +70,11 @@ export class LoginFormComponent implements OnInit, OnDestroy {
           self.accountSvc.getCurrentUser().subscribe((account: Account) => {
             if (account) {
               self.rx.dispatch({ type: AccountActions.UPDATE, payload: account }); // update header, footer icons
-              if (account.type === 'super') {
-                this.router.navigate(['admin']);
-              } else if (account.type === 'worker') {
-                this.router.navigate(['order/list-worker']);
-              } else if (account.type === 'restaurant') {
-                this.router.navigate(['order/list-restaurant']);
-              } else if (account.type === 'user') {
-                this.router.navigate(['main/home']);
+              const roles = account.roles;
+              if (roles && roles.length > 0 && roles.indexOf(Role.STUFF) !== -1) {
+                this.router.navigate(['order/package']);
+              } else {
+                this.router.navigate(['account/login']);
               }
             } else {
               this.errMsg = 'Wrong username or password';
@@ -96,6 +93,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       this.errMsg = 'Wrong username or password';
     }
   }
+
   onForgetPassword() {
     // this.router.navigate(["/forget-password"]);;
     // return false;

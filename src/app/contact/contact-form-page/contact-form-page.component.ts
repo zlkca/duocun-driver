@@ -217,7 +217,7 @@ export class ContactFormPageComponent implements OnInit, OnDestroy {
     }
     v.modified = new Date();
     v.accountId = this.account.id;
-    v.placeId = this.contact.location.place_id;
+    v.placeId = this.contact.location.placeId;
     v.location = this.contact.location;
     v.address = this.deliveryAddress;
     return new Contact(v);

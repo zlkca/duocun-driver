@@ -7,15 +7,15 @@ export interface GeoPoint  {
 }
 
 export interface ILocation {
-  place_id: string;
+  placeId: string;
   city: string;
   lat: number;
   lng: number;
-  postal_code: string;
+  postalCode: string;
   province: string;
-  street_name: string;
-  street_number: string;
-  sub_locality: string;
+  streetName: string;
+  streetNumber: string;
+  subLocality: string;
 }
 
 export interface ILatLng {
@@ -36,7 +36,7 @@ export interface IPlace {
   id?: string;
   type?: string;
   description?: string;
-  place_id?: string;
+  placeId?: string;
   structured_formatting: IStructuredAddress;
   terms?: IPlaceTerm[];
   location?: ILocation;

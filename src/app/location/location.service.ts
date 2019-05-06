@@ -122,29 +122,29 @@ export class LocationService extends EntityService {
     const oLocation = geocodeResult.geometry.location;
     if (addr && addr.length) {
       const loc: ILocation = {
-        place_id: geocodeResult.place_id,
-        street_number: '',
-        street_name: '',
-        sub_locality: '',
+        placeId: geocodeResult.place_id,
+        streetNumber: '',
+        streetName: '',
+        subLocality: '',
         city: '',
         province: '',
-        postal_code: '',
+        postalCode: '',
         lat: typeof oLocation.lat === 'function' ? oLocation.lat() : oLocation.lat,
         lng: typeof oLocation.lng === 'function' ? oLocation.lng() : oLocation.lng
       };
 
       addr.forEach(compo => {
-        if (compo.types.indexOf('street_number') !== -1) {
-          loc.street_number = compo.long_name;
+        if (compo.types.indexOf('streetNumber') !== -1) {
+          loc.streetNumber = compo.long_name;
         }
         if (compo.types.indexOf('route') !== -1) {
-          loc.street_name = compo.long_name;
+          loc.streetName = compo.long_name;
         }
-        if (compo.types.indexOf('postal_code') !== -1) {
-          loc.postal_code = compo.long_name;
+        if (compo.types.indexOf('postalCode') !== -1) {
+          loc.postalCode = compo.long_name;
         }
         if (compo.types.indexOf('sublocality_level_1') !== -1 && compo.types.indexOf('sublocality') !== -1) {
-          loc.sub_locality = compo.long_name;
+          loc.subLocality = compo.long_name;
         }
         if (compo.types.indexOf('locality') !== -1) {
           loc.city = compo.long_name;
@@ -160,9 +160,9 @@ export class LocationService extends EntityService {
   }
 
   getAddrString(location: ILocation) {
-    const city = location.sub_locality ? location.sub_locality : location.city;
-    return location.street_number + ' ' + location.street_name + ', ' + city + ', ' + location.province;
-    // + ', ' + location.postal_code;
+    const city = location.subLocality ? location.subLocality : location.city;
+    return location.streetNumber + ' ' + location.streetName + ', ' + city + ', ' + location.province;
+    // + ', ' + location.postalCode;
   }
 
   getAddrStringByPlace(place) {
@@ -187,13 +187,13 @@ export class LocationService extends EntityService {
   // ---------------------------------
   // return --- meter
   // get surface distance between current location and restaurant
-  getDirectDistance(center: ILatLng, location: ILatLng) {
-    const lat1 = center.lat;
-    const lng1 = center.lng;
+  getDirectDistance(origin: ILatLng, destination: ILatLng) {
+    const lat1 = origin.lat;
+    const lng1 = origin.lng;
 
-    if (location) {
-      const lat2 = location.lat;
-      const lng2 = location.lng;
+    if (destination) {
+      const lat2 = destination.lat;
+      const lng2 = destination.lng;
       const dLat = (lat2 - lat1) * (Math.PI / 180);
       const dLng = (lng2 - lng1) * (Math.PI / 180);
       const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
@@ -217,8 +217,8 @@ export class LocationService extends EntityService {
           const p: IPlace = {
             type: 'history',
             structured_formatting: {
-              main_text: loc.street_number + ' ' + loc.street_name,
-              secondary_text: (loc.sub_locality ? loc.sub_locality : loc.city) + ',' + loc.province
+              main_text: loc.streetNumber + ' ' + loc.streetName,
+              secondary_text: (loc.subLocality ? loc.subLocality : loc.city) + ',' + loc.province
             },
             location: loc
           };

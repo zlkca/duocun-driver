@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import * as moment from 'moment';
 
-declare var moment: any;
 declare var io: any;
 
 @Injectable()
@@ -56,6 +56,47 @@ export class SharedService {
     return total.toFixed(2);
   }
 
+  getTodayStart() {
+    const m = moment(); // .utcOffset(0);
+    return m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toDate();
+  }
+
+  getNextDayStart(offset: number) {
+    const m = moment(); // .utcOffset(0);
+    return m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).add(offset, 'days').toDate();
+  }
+
+
+  getDateTime(s) {
+    if (s) {
+      return moment(s);
+    } else {
+      return moment();
+    }
+  }
+
+  getNow() {
+    return moment();
+  }
+
+  // type --- 'day', 'date', week', 'month', 'year', 12:00 am
+  getStartOf(type) {
+    return moment().startOf(type);
+  }
+
+  // type --- 'day', 'date', week', 'month', 'year', 23:59:59.999
+  getEndOf(type) {
+    return moment().endOf(type);
+  }
+
+  addDays(date, offset: number) {
+    return date.add(offset, 'days');
+  }
+
+  formatDateTime(date) {
+    return date.format('YYYY-MM-DDTHH:mm:ss') + '.000Z';
+  }
+
   getToday() {
     const m = moment(); // .utcOffset(0);
     return m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DDTHH:mm:ss') + '.000Z';
@@ -66,11 +107,7 @@ export class SharedService {
     return m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DD');
   }
 
-  // for compare purpose only
-  getNextNDay(offset: number) {
-    return moment(new Date()).set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).add(offset, 'days')
-      .format('YYYY-MM-DDTHH:mm:ss') + '.000Z';
-  }
+
 
   getNextNDayString(offset: number) {
     return moment(new Date()).set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).add(offset, 'days')
@@ -86,6 +123,8 @@ export class SharedService {
     const b = moment(new Date());
     return b > a;
   }
+
+
 
   getFirstDayOfMonth() {
     return moment().startOf('month').format('YYYY-MM-DDTHH:mm:ss') + '.000Z';

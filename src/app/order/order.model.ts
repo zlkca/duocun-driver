@@ -1,52 +1,55 @@
 import { Product } from '../product/product.model';
 // import { Picture } from '../picture.model';
-import { Address } from '../account/account.model';
+import { Address } from '../entity.model';
 import { Restaurant } from '../restaurant/restaurant.model';
-import { Picture } from '../picture.model';
+import { ILocation } from '../location/location.model';
+
+
 
 export interface IOrder {
-  clientId: number;
-  username: string;
-  restaurantId: string;
-  workerId: string;
-  status: string;
-  clientStatus: string;
-  workerStatus: string;
-  restaurantStatus: string;
-  notes?: string;
-  address: string;
+  id?: string;
+  clientId?: string;
+  clientName?: string;
+  clientPhoneNumber?: string;
+  merchantId?: string;
+  merchantName?: string;
+  stuffId?: string;
+  stuffName?: string;
+  status?: string;
+  paid?: boolean;
+  note?: string;
+  address?: string;
+  location?: ILocation;
   delivered?: Date;
   created?: Date;
   modified?: Date;
-  id?: number;
-  account?: Account;
-  restaurant?: Restaurant;
-  items?: OrderItem[];
+  items?: IOrderItem[];
   deliveryAddress?: Address;
+  deliveryCost?: number;
   deliveryFee?: number;
   deliveryDiscount?: number;
   total?: number;
 }
 
 export class Order implements IOrder {
-  clientId: number;
-  username: string;
-  restaurantId: string;
-  workerId: string;
+  id: string;
+  clientId: string;
+  clientName: string;
+  clientPhoneNumber?: string;
+  merchantId: string;
+  merchantName: string;
+  stuffId: string;
+  stuffName?: string;
   status: string;
-  clientStatus: string;
-  workerStatus: string;
-  restaurantStatus: string;
-  notes: string;
+  note: string;
   address: string;
+  location?: ILocation;
   delivered: Date;
   created: Date;
   modified: Date;
-  id: number;
-  account: Account;
-  restaurant: Restaurant;
   items: OrderItem[];
   deliveryAddress: Address;
+  deliveryCost?: number;
   deliveryFee: number;
   deliveryDiscount: number;
   total: number;
@@ -56,34 +59,26 @@ export class Order implements IOrder {
 }
 
 export interface IOrderItem {
-  price: number;
-  quantity: number;
-  orderId: number;
-  productId: number;
-  created?: Date;
-  modified?: Date;
   id?: number;
-  name: string;
-  order?: Order;
-  product?: Product;
+  productId: string;
+  productName: string;
+  merchantId: string;
+  merchantName: string;
+  price: number;
+  cost?: number;
+  quantity: number;
 }
 
 export class OrderItem implements IOrderItem {
-  price: number;
-  quantity: number;
-  orderId: number;
-  productId: number;
-  created: Date;
-  modified: Date;
   id: number;
-  name: string;
-  order: Order;
-  product: Product;
+  productId: string;
+  productName: string;
+  merchantId: string;
+  merchantName: string;
+  price: number;
+  cost?: number;
+  quantity: number;
   constructor(data?: IOrderItem) {
     Object.assign(this, data);
   }
-}
-
-export interface IAmount {
-  total?: number;
 }
