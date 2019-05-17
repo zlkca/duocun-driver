@@ -898,6 +898,14 @@
           <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="Payables" datatype="html">
+        <source>Payables</source>
+        <target>应付款</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-package/order-package.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="RestaurantLogo" datatype="html">
         <source>Restaurant Logo</source>
         <target>餐馆商标</target>
@@ -1510,6 +1518,46 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/order/order-pack/order-pack.component.html</context>
           <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Received" datatype="html">
+        <source>Received</source>
+        <target>收到</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Merchant" datatype="html">
+        <source>Merchant</source>
+        <target>商家</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Balance" datatype="html">
+        <source>Balance</source>
+        <target>余额</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Payment" datatype="html">
+        <source>Payment</source>
+        <target>付款</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="WaitMerchantConfirm" datatype="html">
+        <source>Wait Merchant Confirm</source>
+        <target>等待商家确认</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
     </body>

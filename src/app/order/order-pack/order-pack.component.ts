@@ -11,6 +11,13 @@ import { LocationService } from '../../location/location.service';
 import { AccountService } from '../../account/account.service';
 import { IAccount } from '../../account/account.model';
 import { MatSnackBar } from '../../../../node_modules/@angular/material';
+import { AssignmentService } from '../../assignment/assignment.service';
+import { FormBuilder } from '../../../../node_modules/@angular/forms';
+import { ClientPaymentService } from '../../payment/client-payment.service';
+import { IClientPayment } from '../../payment/client-payment';
+import { IAssignment } from '../../assignment/assignment.model';
+import { ClientBalanceService } from '../../payment/client-balance.service';
+import { IMerchantBalance, IClientBalance } from '../../payment/payment.model';
 
 @Component({
   selector: 'app-order-pack',
@@ -26,25 +33,44 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
   list: IOrderItem[];
   ordersWithNote: IOrder[] = [];
   onDestroy$ = new Subject();
+  assignments;
+  forms = {};
+  clientBalances = [];
 
   constructor(
     private orderSvc: OrderService,
     private sharedSvc: SharedService,
     private accountSvc: AccountService,
     private locationSvc: LocationService,
-    private snackBar: MatSnackBar
+    private assignmentSvc: AssignmentService,
+    private clientPaymentSvc: ClientPaymentService,
+    private clientBalanceSvc: ClientBalanceService,
+    private snackBar: MatSnackBar,
+    private fb: FormBuilder
   ) {
     const self = this;
-    self.accountSvc.getCurrent().pipe(
+    // self.accountSvc.getCurrent().pipe(
+    //   takeUntil(this.onDestroy$)
+    // ).subscribe(account => {
+    //   self.account = account;
+    //   self.assignmentSvc.find({where: {driverId: account.id}}).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
+    //     self.assignments = xs;
+    //     self.reload();
+    //   });
+    // });
+
+    self.clientBalanceSvc.find().pipe(
       takeUntil(this.onDestroy$)
-    ).subscribe(account => {
-      self.account = account;
+    ).subscribe((cbs: IClientBalance[]) => {
+      this.clientBalances = cbs;
     });
   }
 
   ngOnInit() {
     const self = this;
-    self.reload();
+    // setTimeout(() => {
+    //   self.reload();
+    // }, 2000);
 
     // this.socketSvc.on('updateOrders', x => {
     //   // self.onFilterOrders(this.selectedRange);
@@ -66,13 +92,31 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     // });
   }
 
-  reload() {
+  reload(assignments: IAssignment[]) {
     const self = this;
+    const os = [];
     self.orderSvc.find({ where: { delivered: self.dateRange } }).pipe(
       takeUntil(this.onDestroy$)
-    ).subscribe(orders => {
-      orders.map(order => { order.paid = (order.status === 'paid'); });
-      self.orders = orders;
+    ).subscribe((orders: IOrder[]) => {
+      this.forms = {};
+      orders.map(order => {
+        const balance: IClientBalance = self.clientBalances.find(x => x.accountId === order.clientId);
+        if (balance) {
+          order.balance = balance.amount;
+        }
+        const assignment = self.assignments.find(x => x.orderId === order.id);
+        if (assignment) {
+          order.code = assignment.code;
+          order.paid = (order.status === 'paid');
+          this.forms[order.id] = this.fb.group({
+            received: [0]
+          });
+          os.push(order);
+        }
+      });
+
+      self.orders = os;
+      // self.orders = orders.filter(order => self.assignments.find(x => x.orderId === order.id) );
     });
   }
 
@@ -85,7 +129,17 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(v) {
-    this.reload();
+    // this.reload();
+    const self = this;
+    self.accountSvc.getCurrent().pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(account => {
+      self.account = account;
+      self.assignmentSvc.find({ where: { driverId: account.id } }).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
+        self.assignments = xs;
+        self.reload(xs);
+      });
+    });
   }
 
   ngOnDestroy() {
@@ -120,19 +174,44 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     return groupedOrders;
   }
 
-  togglePaid(e, order) {
+  togglePaid(e, order: IOrder) {
+    const self = this;
     const data = {
       status: e.checked ? 'paid' : 'unpaid',
-      stuffId: this.account.id,
-      stuffName: this.account.username
+      driverId: this.account.id,
+      driverName: this.account.username
     };
-
     this.orderSvc.update({ id: order.id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
       if (x && x.ok) {
-        this.snackBar.open('', '已完成客户' + order.clientName + '的订单', { duration: 2000 });
-        this.reload();
+        this.snackBar.open('', '已完成客户' + order.clientName + '的订单', { duration: 2300 });
+        setTimeout(() => {
+          this.reload(self.assignments);
+        }, 2000);
       }
     });
+
+    this.updateClientBalance(order);
   }
 
+
+  updateClientBalance(order: IOrder) {
+    const received = parseFloat(this.forms[order.id].get('received').value);
+
+    const clientPayment: IClientPayment = {
+      clientId: order.clientId,
+      clientName: order.clientName,
+      driverId: this.account.id,
+      driverName: this.account.username,
+      credit: received,
+      debit: order.total,
+      balance: received - order.total,
+      created: new Date(),
+      modified: new Date(),
+    };
+
+    this.clientPaymentSvc.save(clientPayment).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
+      this.snackBar.open('', '已保存客户的余额', { duration: 2300 });
+    });
+
+  }
 }

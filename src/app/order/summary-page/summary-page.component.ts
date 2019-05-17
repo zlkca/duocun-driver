@@ -54,7 +54,7 @@ export class SummaryPageComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe(account => {
         const roles = account.roles;
-        if (roles && roles.length > 0 && roles.indexOf(Role.STUFF) !== -1) {
+        if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
           self.restaurantSvc.find().pipe(
             takeUntil(this.onDestroy$)
           ).subscribe((rs: IRestaurant[]) => {

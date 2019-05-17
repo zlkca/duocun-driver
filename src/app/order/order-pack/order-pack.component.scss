@@ -2,7 +2,18 @@
   border-bottom: solid 1px #eee;
   padding: 10px 0px;
 
-  .note-row, .order-id-row, .client-row, .phonenum-row, .receivables-row, .address-row, .navigate-row{
+  .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
+    font-size: 12px;
+    .col-2 {
+      padding: 0px;
+    }
+    .col-10 {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .order-id-col, .merchant-col{
     font-size: 12px;
     .col-2 {
       padding: 0px;
@@ -15,12 +26,17 @@
 
   .product-block{
     padding-top: 10px;
-    .product-col{
-      padding-left: 0px;
-    }
-
     .col-9, .col-3{
       padding: 0px;
+    }
+
+    .product-col{
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    
+    .quantity-col{
+      padding-left: 5px;
     }
   }
 
@@ -35,12 +51,45 @@
   }
 }
 
-// /deep/ .mat-slide-toggle-bar {
-//   height: 22px !important;
-//   width: 120px !important;
-// }
+.receivables-row{
+  font-size: 14px;
+  padding-top: 10px;
 
-// /deep/ .mat-slide-toggle-thumb {
-//   height: 28px !important;
-//   width: 28px !important;
-// }
+  .left-col{
+    padding: 0px;
+  }
+}
+
+.received-form{
+  font-size: 16px;
+  padding-right: 0px;
+  .label, .dollar-sign{
+    padding-top: 5px;
+  }
+  .received-input{
+    float: left;
+    width: calc(100% - 56px);
+    height: 32px;
+    padding: 5px;
+  }
+}
+
+/deep/ .mat-slide-toggle-bar {
+  height: 28px !important;
+  width: 98px !important;
+}
+
+/deep/ .mat-slide-toggle-thumb {
+  height: 28px !important;
+  width: 28px !important;
+}
+
+/deep/ .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
+    transform: translate3d(70px,0,0) !important;
+}
+
+/deep/ .mat-slide-toggle-thumb-container {
+    width: 28px !important;
+    height: 28px !important;
+    top: 0px !important;
+}

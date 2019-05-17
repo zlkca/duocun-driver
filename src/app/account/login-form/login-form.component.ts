@@ -71,7 +71,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
             if (account) {
               self.rx.dispatch({ type: AccountActions.UPDATE, payload: account }); // update header, footer icons
               const roles = account.roles;
-              if (roles && roles.length > 0 && roles.indexOf(Role.STUFF) !== -1) {
+              if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
                 this.router.navigate(['order/package']);
               } else {
                 this.router.navigate(['account/login']);

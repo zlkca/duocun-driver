@@ -93,7 +93,7 @@ export class FooterComponent implements OnInit, OnDestroy {
     const account = this.account;
     if (account) {
       const roles = account.roles;
-      if (roles && roles.length > 0 && roles.indexOf(Role.STUFF) !== -1) {
+      if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
         this.router.navigate(['account/setting'], { queryParams: { merchant: true } });
       } else {
         this.router.navigate(['account/setting'], { queryParams: { merchant: false } });
@@ -111,9 +111,9 @@ export class FooterComponent implements OnInit, OnDestroy {
     }
   }
 
-  toAdmin() {
+  toPayment() {
     if (this.account) {
-      this.router.navigate(['admin']);
+      this.router.navigate(['payment/merchant']);
     } else {
       this.router.navigate(['account/login']);
     }

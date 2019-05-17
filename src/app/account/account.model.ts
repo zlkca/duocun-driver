@@ -5,8 +5,9 @@ export enum Role {
   MERCHANT_ADMIN = 2,
   MERCHANT_STUFF = 3,
   MANAGER = 4,
-  STUFF = 5,
+  DRIVER = 5,
   CLIENT = 6,
+  PREPAID_CLIENT = 7
 }
 
 export interface IAccount {

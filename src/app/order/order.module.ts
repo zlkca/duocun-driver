@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { SharedModule } from '../shared/shared.module';
 import { OrderService } from './order.service';
@@ -19,6 +19,10 @@ import { OrderPackComponent } from './order-pack/order-pack.component';
 import { SettlementPageComponent } from './settlement-page/settlement-page.component';
 import { SettlementComponent } from './settlement/settlement.component';
 import { MapPageComponent } from './map-page/map-page.component';
+import { ClientPaymentService } from '../payment/client-payment.service';
+import { MerchantBalanceService } from '../payment/merchant-balance.service';
+import { MerchantPaymentService } from '../payment/merchant-payment.service';
+import { ClientBalanceService } from '../payment/client-balance.service';
 
 @NgModule({
   imports: [
@@ -37,7 +41,11 @@ import { MapPageComponent } from './map-page/map-page.component';
   providers: [
     OrderService,
     RestaurantService,
-    AccountService
+    AccountService,
+    ClientBalanceService,
+    ClientPaymentService,
+    MerchantBalanceService,
+    MerchantPaymentService
   ],
   declarations: [
     OrderHistoryComponent,

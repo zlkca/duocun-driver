@@ -2,9 +2,13 @@
 <div class="order-list" *ngIf="orders && orders.length>0">
   <div *ngFor="let order of orders">
     <div class="order" *ngIf="!order.paid">
-      <div class="row order-id-row">
+      <div class="row order-id-col">
         <div class="col-2" i18n="@@OrderId">Order Id</div>
-        <div class="col-10">{{order.id}}</div>
+        <div class="col-10">{{order.code? order.code: order.id}}</div>
+      </div>
+      <div class="row merchant-col">
+        <div class="col-2" i18n="@@Merchant">Merchant</div>
+        <div class="col-10">{{order.merchantName}}</div>
       </div>
       <div class="row client-row">
         <div class="col-2" i18n="@@Client">Client</div>
@@ -35,11 +39,37 @@
         </div>
       </div>
       <div class="row receivables-row">
-        <div class="col-2" i18n="@@Receivables">Receivables</div>
-        <div class="col-10">{{order.total | number : '1.2-2'}}</div>
-      </div>
-      <div class="row paid-toggle">
-        <mat-slide-toggle i18n="@@Paid" [checked]="order.paid" (change)="togglePaid($event, order)">Paid</mat-slide-toggle>
+        <div class="col-4 left-col">
+          <div class="row balance-col">
+            <span i18n="@@Balance">Balance</span>:&nbsp;
+            <span>${{order.balance | number : '1.2-2'}}</span>
+          </div>
+          <div class="row total-col">
+            <span i18n="@@Total">total</span>:&nbsp;
+            <span>${{order.total | number : '1.2-2'}}</span>
+          </div>
+          <div class="row receivable-col">
+            <span i18n="@@Receivables">Receivables</span>:&nbsp;
+            <span>${{order.total | number : '1.2-2'}}</span>
+          </div>
+        </div>
+        <div class="col-8 right-col">
+          <form [formGroup]="forms[order.id]" class="received-form">
+            <div class="row received-block">
+              <div class="label"><span i18n="@@Received">Received</span>:&nbsp;</div>
+              <div class="dollar-sign">$&nbsp;</div>
+              <input class="received-input" name="received" formControlName="received"/>
+            </div>
+          </form>
+          <div class="row paid-toggle" >
+            <mat-slide-toggle i18n="@@Paid" [checked]="order.paid" 
+            (click)="$event.preventDefault()"
+            (change)="togglePaid($event, order)">Paid</mat-slide-toggle>
+          </div>
+          <!-- <div class="row prepaid-client" *ngIf="order.prepaidClient">
+            预付款用户
+          </div> -->
+        </div>
       </div>
     </div>
   </div>

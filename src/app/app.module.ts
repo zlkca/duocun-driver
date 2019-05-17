@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +17,7 @@ import { FooterComponent } from './footer/footer.component';
 import { HttpClientModule } from '../../node_modules/@angular/common/http';
 import { EntityService } from './entity.service';
 import { createStore } from '../../node_modules/redux';
+import { GestureConfig } from '../../node_modules/@angular/material';
 
 
 const appRoutes: Routes = [
@@ -48,6 +49,10 @@ const appRoutes: Routes = [
     {
       path: 'account',
       loadChildren: './account/account.module#AccountModule'
+    },
+    {
+      path: 'payment',
+      loadChildren: './payment/payment.module#PaymentModule'
     },
     {
       path: 'main',
@@ -94,8 +99,9 @@ const appRoutes: Routes = [
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent],
     providers: [EntityService,
-      AuthService
-    ]
+      AuthService,
+      {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig}
+    ],
 
 })
 export class AppModule {

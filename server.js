@@ -3,7 +3,7 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs');
 const cfg = JSON.parse(fs.readFileSync('../duocun.cfg.json','utf8'));
-const APP_SERVER = cfg.STUFF_SERVER;
+const APP_SERVER = cfg.DRIVER_SERVER;
 
 const app = express()
 

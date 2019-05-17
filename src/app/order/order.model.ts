@@ -8,13 +8,16 @@ import { ILocation } from '../location/location.model';
 
 export interface IOrder {
   id?: string;
+  code?: string;
   clientId?: string;
   clientName?: string;
   clientPhoneNumber?: string;
+  prepaidClient?: boolean;
+  clientBalance?: number;
   merchantId?: string;
   merchantName?: string;
-  stuffId?: string;
-  stuffName?: string;
+  driverId?: string;
+  driverName?: string;
   status?: string;
   paid?: boolean;
   note?: string;
@@ -29,6 +32,7 @@ export interface IOrder {
   deliveryFee?: number;
   deliveryDiscount?: number;
   total?: number;
+  balance?: number;
 }
 
 export class Order implements IOrder {
@@ -36,10 +40,12 @@ export class Order implements IOrder {
   clientId: string;
   clientName: string;
   clientPhoneNumber?: string;
+  prepaidClient?: boolean;
+  clientBalance?: number;
   merchantId: string;
   merchantName: string;
-  stuffId: string;
-  stuffName?: string;
+  driverId: string;
+  driverName?: string;
   status: string;
   note: string;
   address: string;
@@ -53,6 +59,7 @@ export class Order implements IOrder {
   deliveryFee: number;
   deliveryDiscount: number;
   total: number;
+  balance?: number;
   constructor(data?: IOrder) {
     Object.assign(this, data);
   }

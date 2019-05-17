@@ -7,7 +7,6 @@ import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router
 import { IRestaurant } from '../../restaurant/restaurant.model';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
-import { isMoment } from '../../../../node_modules/moment';
 
 @Component({
   selector: 'app-settlement-page',
@@ -62,7 +61,7 @@ export class SettlementPageComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe(account => {
         const roles = account.roles;
-        if (roles && roles.length > 0 && roles.indexOf(Role.STUFF) !== -1) {
+        if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
           self.restaurantSvc.find().pipe(
             takeUntil(this.onDestroy$)
           ).subscribe((rs: IRestaurant[]) => {
