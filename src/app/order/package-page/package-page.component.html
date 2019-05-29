@@ -6,6 +6,18 @@
       <div class="deliver-time">
         <span i18n="@@DeliverTime">Deliver Time</span>: {{deliverTime}}
       </div>
+
+      <!-- <div class="row date-input-block">
+        <form [formGroup]="dateForm">
+          <input class="date-input" matInput [matDatepicker]="picker" i18n-placeholder placeholder="Choose a date"
+            [formControl]="date"
+            (click)="picker.open()"
+            (dateChange)="onDateChange('change', $event)">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </form>
+      </div> -->
+      
       <app-order-pack *ngIf="restaurant" [restaurant]="restaurant" [dateRange]="range"></app-order-pack>
     <!-- <mat-tab-group mat-align-tabs="center">
       <mat-tab i18n-label label="LunchToday">

@@ -23,6 +23,8 @@ import { ClientPaymentService } from '../payment/client-payment.service';
 import { MerchantBalanceService } from '../payment/merchant-balance.service';
 import { MerchantPaymentService } from '../payment/merchant-payment.service';
 import { ClientBalanceService } from '../payment/client-balance.service';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   imports: [
@@ -30,6 +32,7 @@ import { ClientBalanceService } from '../payment/client-balance.service';
     MatTabsModule,
     MatExpansionModule,
     MatSlideToggleModule,
+    MatMomentDateModule,
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,

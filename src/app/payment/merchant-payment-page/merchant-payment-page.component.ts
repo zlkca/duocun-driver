@@ -7,6 +7,7 @@ import { Role } from '../../account/account.model';
 import { IMerchantPayment } from '../payment.model';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
 import { MatSnackBar } from '../../../../node_modules/@angular/material';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-merchant-payment-page',
@@ -52,7 +53,6 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
   reload() {
     const self = this;
 
-
     self.merchantPaymentSvc.find({
       where: {
         type: 'debit',
@@ -62,7 +62,6 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
       self.debits = ds;
 
       self.merchantPaymentSvc.find({ where: { type: 'credit', status: 'new' } }).pipe(takeUntil(this.onDestroy$)).subscribe(cs => {
-        self.credits = cs;
 
         cs.map(c => {
           const debit = ds.find(x => x.merchantId === c.merchantId && x.delivered === c.delivered);
@@ -75,12 +74,20 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
             amount: [0]
           });
         });
+
+        self.credits = cs.sort((a: IMerchantPayment, b: IMerchantPayment) => {
+          if (moment(a.delivered).isAfter(moment(b.delivered))) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
       });
 
     });
   }
 
-  togglePaid(e, item) {
+  togglePaid(e, item: IMerchantPayment) {
     const self = this;
     const amount = parseFloat(this.forms[item.id].get('amount').value);
 

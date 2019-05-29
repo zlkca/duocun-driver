@@ -15,7 +15,7 @@
         </div>
         <div class="col-12">
           <span class="label" i18n="@@Payables">Payables</span>
-          <span>${{p.amount}}</span>
+          <span>${{p.amount | number : '1.2-2'}}</span>
         </div>
         <div class="col-6" *ngIf="p.status === 'new'">
           <form [formGroup]="forms[p.id]" class="send-form">

@@ -14,10 +14,12 @@ import { MatSnackBar } from '../../../../node_modules/@angular/material';
 import { AssignmentService } from '../../assignment/assignment.service';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
 import { ClientPaymentService } from '../../payment/client-payment.service';
-import { IClientPayment } from '../../payment/client-payment';
+import { IClientPayment } from '../../payment/payment.model';
 import { IAssignment } from '../../assignment/assignment.model';
 import { ClientBalanceService } from '../../payment/client-balance.service';
 import { IMerchantBalance, IClientBalance } from '../../payment/payment.model';
+import { group } from '../../../../node_modules/@angular/animations';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-order-pack',
@@ -36,6 +38,7 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
   assignments;
   forms = {};
   clientBalances = [];
+  ordersByMerchants = [];
 
   constructor(
     private orderSvc: OrderService,
@@ -92,32 +95,66 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     // });
   }
 
+  groupByMerchants(orders: IOrder[]) {
+    const groupedByMerchants = [];
+    orders.map(order => {
+      const item = groupedByMerchants.find(m => m.merchantId === order.merchantId);
+      if (!item) {
+        groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, orders: [order] });
+      } else {
+        item.orders.push(order);
+      }
+    });
+    return groupedByMerchants;
+  }
+
+  getQuantity(order: IOrder) {
+    let quantity = 0;
+    order.items.map((item: IOrderItem) => {
+      quantity += item.quantity;
+    });
+    return quantity;
+  }
+
   reload(assignments: IAssignment[]) {
     const self = this;
     const os = [];
-    self.orderSvc.find({ where: { delivered: self.dateRange } }).pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((orders: IOrder[]) => {
-      this.forms = {};
-      orders.map(order => {
-        const balance: IClientBalance = self.clientBalances.find(x => x.accountId === order.clientId);
-        if (balance) {
-          order.balance = balance.amount;
-        }
-        const assignment = self.assignments.find(x => x.orderId === order.id);
-        if (assignment) {
-          order.code = assignment.code;
-          order.paid = (order.status === 'paid');
-          this.forms[order.id] = this.fb.group({
-            received: [0]
-          });
-          os.push(order);
-        }
-      });
 
-      self.orders = os;
-      // self.orders = orders.filter(order => self.assignments.find(x => x.orderId === order.id) );
+    self.clientPaymentSvc.find({ where: { delivered: self.dateRange, type: 'credit' } }).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((cps: IClientPayment[]) => {
+      self.orderSvc.find({ where: { delivered: self.dateRange } }).pipe(
+        takeUntil(this.onDestroy$)
+      ).subscribe((orders: IOrder[]) => {
+        this.forms = {};
+
+        // client balance should be got from db
+        orders.map(order => {
+          const cp: IClientPayment = cps.find(x => x.orderId === order.id);
+          order.received = cp ?  cp.amount : 0;
+
+          const balance: IClientBalance = self.clientBalances.find(x => x.accountId === order.clientId);
+          if (balance) {
+            order.balance = balance.amount;
+          }
+          const assignment = self.assignments.find(x => x.orderId === order.id);
+          if (assignment) {
+            order.code = assignment.code;
+            order.paid = (order.status === 'paid');
+            this.forms[order.id] = this.fb.group({
+              received: [0]
+            });
+            os.push(order);
+          }
+        });
+
+        self.orders = os;
+        self.ordersByMerchants = this.groupByMerchants(os);
+        // self.orders = orders.filter(order => self.assignments.find(x => x.orderId === order.id) );
+      });
     });
+
+
   }
 
   onSelect(c) {
@@ -183,28 +220,29 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     };
     this.orderSvc.update({ id: order.id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
       if (x && x.ok) {
-        this.snackBar.open('', '已完成客户' + order.clientName + '的订单', { duration: 2300 });
+        this.snackBar.open('', '已完成客户' + order.clientName + '的订单', { duration: 1500 });
         setTimeout(() => {
           this.reload(self.assignments);
         }, 2000);
       }
     });
 
-    this.updateClientBalance(order);
+    this.savePayment(order);
   }
 
 
-  updateClientBalance(order: IOrder) {
+  savePayment(order: IOrder) {
     const received = parseFloat(this.forms[order.id].get('received').value);
 
     const clientPayment: IClientPayment = {
+      orderId: order.id,
       clientId: order.clientId,
       clientName: order.clientName,
       driverId: this.account.id,
       driverName: this.account.username,
-      credit: received,
-      debit: order.total,
-      balance: received - order.total,
+      amount: received,
+      type: 'credit',
+      delivered: order.delivered,
       created: new Date(),
       modified: new Date(),
     };
@@ -212,6 +250,6 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     this.clientPaymentSvc.save(clientPayment).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
       this.snackBar.open('', '已保存客户的余额', { duration: 2300 });
     });
-
   }
+
 }

@@ -1,13 +1,20 @@
+.merchant-block{
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-top: 1px solid #aaa;
+  margin-top: 10px;
+}
+
 .order{
   border-bottom: solid 1px #eee;
   padding: 10px 0px;
 
   .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
     font-size: 12px;
-    .col-2 {
+    .col-3 {
       padding: 0px;
     }
-    .col-10 {
+    .col-9 {
       padding-left: 0px;
       padding-right: 0px;
     }
@@ -15,10 +22,10 @@
 
   .order-id-col, .merchant-col{
     font-size: 12px;
-    .col-2 {
+    .col-3 {
       padding: 0px;
     }
-    .col-10 {
+    .col-9 {
       padding-left: 0px;
       padding-right: 0px;
     }
@@ -51,12 +58,35 @@
   }
 }
 
+.client-row{
+  width: 100%;
+  .client-col, .quantity-col, .status-col{
+    font-size: 14px;
+    padding: 0px;
+  }
+  .red{
+    color: red;
+  }
+
+  .green{
+    color: green;
+  }
+}
+
 .receivables-row{
   font-size: 14px;
   padding-top: 10px;
 
   .left-col{
     padding: 0px;
+  }
+
+  .right-col{
+    padding-right: 0px;
+
+    .paid-toggle{
+      margin-top: 10px;
+    }
   }
 }
 
@@ -74,9 +104,16 @@
   }
 }
 
+.order-block{
+  margin-bottom: 6px;
+}
+
+/deep/ .mat-expansion-panel-body{
+  padding: 0px 16px 16px !important;
+}
 /deep/ .mat-slide-toggle-bar {
   height: 28px !important;
-  width: 98px !important;
+  width: 88px !important;
 }
 
 /deep/ .mat-slide-toggle-thumb {
@@ -85,11 +122,24 @@
 }
 
 /deep/ .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
-    transform: translate3d(70px,0,0) !important;
+    transform: translate3d(60px,0,0) !important;
 }
 
 /deep/ .mat-slide-toggle-thumb-container {
     width: 28px !important;
     height: 28px !important;
     top: 0px !important;
+}
+
+/deep/ .mat-expansion-panel-header {
+  padding-left: 16px !important;
+  font-weight: 600;
+}
+
+/deep/ .mat-expansion-panel-header-title {
+  padding-right: 0px;
+}
+
+/deep/ .mat-slide-toggle-content {
+    font-size: 12px;
 }

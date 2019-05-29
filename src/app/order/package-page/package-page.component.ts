@@ -7,6 +7,7 @@ import { Subject } from '../../../../node_modules/rxjs';
 import { RestaurantService } from '../../restaurant/restaurant.service';
 import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
+import { FormBuilder } from '../../../../node_modules/@angular/forms';
 
 @Component({
   selector: 'app-package-page',
@@ -22,13 +23,16 @@ export class PackagePageComponent implements OnInit, OnDestroy {
   deliverTime;
   onDestroy$ = new Subject();
   restaurant: IRestaurant;
+  // dateForm;
+  // get date() { return this.dateForm.get('date'); }
 
   constructor(
     private restaurantSvc: RestaurantService,
     private sharedSvc: SharedService,
     private accountSvc: AccountService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    // private fb: FormBuilder
   ) {
     const now = this.sharedSvc.getNow();
     const dayEnd = this.sharedSvc.getStartOf('day').set({ hour: 19, minute: 30, second: 0, millisecond: 0 });
@@ -50,7 +54,11 @@ export class PackagePageComponent implements OnInit, OnDestroy {
       const todayEnd = this.sharedSvc.getEndOf('day').toDate();
       this.range = { $lt: todayEnd, $gt: todayStart };
     }
+
+    // this.dateForm = this.fb.group({ date: [''] });
   }
+
+
   ngOnInit() {
     const self = this;
     self.accountSvc.getCurrent().pipe(

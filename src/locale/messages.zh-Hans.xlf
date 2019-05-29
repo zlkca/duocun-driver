@@ -1560,6 +1560,30 @@
           <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="3317b8688eb2cfabc4021cd7b2926b32f3864ad2" datatype="html">
+        <source>Choose a date</source>
+        <target>选择出餐日期</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="GetFood" datatype="html">
+        <source>Get Food</source>
+        <target>取餐</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="75efc06dc9eade4e6537951c2c14a3ed294a4427" datatype="html">
+        <source>Merchant</source>
+        <target>商家</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

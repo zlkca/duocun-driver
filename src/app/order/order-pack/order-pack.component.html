@@ -1,77 +1,95 @@
+<div class="order-list" *ngIf="ordersByMerchants && ordersByMerchants.length>0">
 
-<div class="order-list" *ngIf="orders && orders.length>0">
-  <div *ngFor="let order of orders">
-    <div class="order" *ngIf="!order.paid">
-      <div class="row order-id-col">
-        <div class="col-2" i18n="@@OrderId">Order Id</div>
-        <div class="col-10">{{order.code? order.code: order.id}}</div>
-      </div>
-      <div class="row merchant-col">
-        <div class="col-2" i18n="@@Merchant">Merchant</div>
-        <div class="col-10">{{order.merchantName}}</div>
-      </div>
-      <div class="row client-row">
-        <div class="col-2" i18n="@@Client">Client</div>
-        <div class="col-10">{{order.clientName}}</div>
-      </div>
-      <div class="row phonenum-row">
-        <div class="col-2" i18n="@@ClientPhoneNumber">Client Phone Number</div>
-        <div class="col-10">{{order.clientPhoneNumber}}</div>
-      </div>
-      <div class="row address-row">
-        <div class="col-2" i18n="@@DeliverAddress">Delivery Address</div>
-        <div class="col-10">{{order.address}}</div>
-      </div>
-      <div class="row note-row">
-        <div class="col-2" i18n="@@Note">Note</div>
-        <div class="col-9">{{order.note}}</div>
-      </div>
-      <div class="row product-block">
-        <div class="col-9">
-            <div *ngFor="let item of order.items" class="text-sm row">
-              <div class="col-6 product-col">{{item.productName}}</div>
-              <div class="col-3 quantity-col">x{{item.quantity}}</div>
-              <!-- <div class="col-3 price-col">${{item.price * item.quantity | number : '1.2-2'}}</div> -->
-            </div>
-        </div>
-        <div class="col-3">
-          <div class="btn btn-sm btn-primary pull-right" i18n="@@NavigateToHere" (click)="navigateTo(order.location)">NavigateToHere</div>
-        </div>
-      </div>
-      <div class="row receivables-row">
-        <div class="col-4 left-col">
-          <div class="row balance-col">
-            <span i18n="@@Balance">Balance</span>:&nbsp;
-            <span>${{order.balance | number : '1.2-2'}}</span>
-          </div>
-          <div class="row total-col">
-            <span i18n="@@Total">total</span>:&nbsp;
-            <span>${{order.total | number : '1.2-2'}}</span>
-          </div>
-          <div class="row receivable-col">
-            <span i18n="@@Receivables">Receivables</span>:&nbsp;
-            <span>${{order.total | number : '1.2-2'}}</span>
-          </div>
-        </div>
-        <div class="col-8 right-col">
-          <form [formGroup]="forms[order.id]" class="received-form">
-            <div class="row received-block">
-              <div class="label"><span i18n="@@Received">Received</span>:&nbsp;</div>
-              <div class="dollar-sign">$&nbsp;</div>
-              <input class="received-input" name="received" formControlName="received"/>
-            </div>
-          </form>
-          <div class="row paid-toggle" >
-            <mat-slide-toggle i18n="@@Paid" [checked]="order.paid" 
-            (click)="$event.preventDefault()"
-            (change)="togglePaid($event, order)">Paid</mat-slide-toggle>
-          </div>
-          <!-- <div class="row prepaid-client" *ngIf="order.prepaidClient">
-            预付款用户
-          </div> -->
-        </div>
-      </div>
+  <div *ngFor="let m of ordersByMerchants">
+    <div class="merchant-block">
+      <span i18n="Merchant">Merchant</span>:
+      <span>{{m.merchantName}}</span>
     </div>
+    <div *ngFor="let order of m.orders" class="order-block">
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+              <div class="row client-row">
+                <div class="col-8 client-col">{{order.clientName}}</div>
+                <div class="col-2 status-col red" *ngIf="!order.paid">未送</div>
+                <div class="col-2 status-col green" *ngIf="order.paid">已送</div>
+                <div class="col-2 quantity-col">x {{getQuantity(order)}}</div>
+              </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+  
+        <div class="order">
+            <div class="row order-id-col">
+              <div class="col-3" i18n="@@OrderId">Order Id</div>
+              <div class="col-9">{{order.code? order.code: order.id}}</div>
+            </div>
+            <div class="row merchant-col">
+              <div class="col-3" i18n="@@Merchant">Merchant</div>
+              <div class="col-9">{{order.merchantName}}</div>
+            </div>
+            <!-- <div class="row client-row">
+              <div class="col-3" i18n="@@Client">Client</div>
+              <div class="col-9">{{order.clientName}}</div>
+            </div> -->
+            <div class="row phonenum-row">
+              <div class="col-3" i18n="@@ClientPhoneNumber">Client Phone Number</div>
+              <div class="col-9">{{order.clientPhoneNumber}}</div>
+            </div>
+            <div class="row address-row">
+              <div class="col-3" i18n="@@DeliverAddress">Delivery Address</div>
+              <div class="col-9">{{order.address}}</div>
+            </div>
+            <div class="row note-row">
+              <div class="col-3" i18n="@@Note">Note</div>
+              <div class="col-9">{{order.note}}</div>
+            </div>
+            <div class="row product-block">
+              <div class="col-9">
+                <div *ngFor="let item of order.items" class="text-sm row">
+                  <div class="col-6 product-col">{{item.productName}}</div>
+                  <div class="col-3 quantity-col">x{{item.quantity}}</div>
+                  <!-- <div class="col-3 price-col">${{item.price * item.quantity | number : '1.2-2'}}</div> -->
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="btn btn-sm btn-primary pull-right" i18n="@@NavigateToHere" (click)="navigateTo(order.location)">NavigateToHere</div>
+              </div>
+            </div>
+          </div>
+          <div class="row receivables-row">
+              <div class="col-5 left-col">
+                <div class="row balance-col">
+                  <span i18n="@@Balance">Balance</span>:&nbsp;
+                  <span>${{order.balance | number : '1.2-2'}}</span>
+                </div>
+                <div class="row total-col">
+                  <span i18n="@@Total">total</span>:&nbsp;
+                  <span>${{order.total | number : '1.2-2'}}</span>
+                </div>
+                <div class="row receivable-col">
+                  <span i18n="@@Receivables">Receivables</span>:&nbsp;
+                  <span>${{order.total | number : '1.2-2'}}</span>
+                </div>
+              </div>
+              <div class="col-7 right-col">
+                <form [formGroup]="forms[order.id]" class="received-form">
+                  <div class="row received-block">
+                    <div class="label">
+                      <span i18n="@@Received">Received</span>:&nbsp;
+                    </div>
+                    <div class="dollar-sign">$&nbsp;<span *ngIf="order.paid">{{order.received | number : '1.2-2'}}</span></div>
+                    <input *ngIf="!order.paid" class="received-input" name="received" formControlName="received" />
+                  </div>
+                </form>
+                <div class="row paid-toggle" *ngIf="!order.paid">
+                  <mat-slide-toggle i18n="@@Paid" [checked]="order.paid" (click)="$event.preventDefault()" (change)="togglePaid($event, order)">Paid</mat-slide-toggle>
+                </div>
+              </div><!--end of right-col -->
+            </div>
+        </mat-expansion-panel>
+
+    </div>
+
   </div>
 </div>
-  

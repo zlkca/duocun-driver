@@ -9,6 +9,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { AccountService } from '../account/account.service';
 import { MerchantPaymentService } from './merchant-payment.service';
+import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment-page.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { MerchantPaymentService } from './merchant-payment.service';
     MatSlideToggleModule
   ],
   declarations: [
-    MerchantPaymentPageComponent
+    MerchantPaymentPageComponent,
+    DriverPaymentPageComponent
   ],
   providers: [
     AccountService,

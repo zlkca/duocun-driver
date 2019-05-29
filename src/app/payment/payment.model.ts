@@ -23,6 +23,20 @@ export interface IMerchantBalance {
   modified?: Date;
 }
 
+export interface IClientPayment {
+  id?: string;
+  orderId?: string; // since 2019-05-29
+  clientId?: string;
+  clientName?: string;
+  driverId?: string;
+  driverName?: string;
+  type?: string;
+  amount?: number;
+  delivered?: Date;
+  created?: Date;
+  modified?: Date;
+}
+
 export interface IClientBalance {
   id?: string;
   accountId: string;
