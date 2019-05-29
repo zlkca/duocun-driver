@@ -34,7 +34,10 @@
             </div> -->
             <div class="row phonenum-row">
               <div class="col-3" i18n="@@ClientPhoneNumber">Client Phone Number</div>
-              <div class="col-9">{{order.clientPhoneNumber}}</div>
+              <div class="col-9">
+                <span>{{order.clientPhoneNumber}}</span>&nbsp;
+                <span style="white-space:pre"></span><a href="tel://{order.clientPhoneNumber}">拨打号码</a>
+              </div>
             </div>
             <div class="row address-row">
               <div class="col-3" i18n="@@DeliverAddress">Delivery Address</div>
