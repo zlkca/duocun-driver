@@ -2,21 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AccountService } from '../account.service';
 import { NgRedux } from '@angular-redux/store';
 import { IAppState } from '../../store';
-import { IAccount } from '../account.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
-import { IContact, Contact } from '../../contact/contact.model';
 import { Subject } from '../../../../node_modules/rxjs';
-import { ContactService } from '../../contact/contact.service';
-import { IContactAction } from '../../contact/contact.reducer';
-import { ContactActions } from '../../contact/contact.actions';
-import * as Cookies from 'js-cookie';
 import { PageActions } from '../../main/main.actions';
-import { LocationService } from '../../location/location.service';
 import { RestaurantService } from '../../restaurant/restaurant.service';
 import { IRestaurant } from '../../restaurant/restaurant.model';
 import { MatSnackBar } from '../../../../node_modules/@angular/material';
 import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms';
+import { TransactionService } from '../../transaction/transaction.service';
+import { ITransaction, ITransactionData } from '../../transaction/transaction.model';
 
 @Component({
   selector: 'app-account-page',
@@ -28,7 +23,6 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   phone;
   address;
   onDestroy$ = new Subject<any>();
-  restaurants: IRestaurant[] = [];
   phoneVerified;
   form;
   errMsg;
@@ -36,6 +30,7 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   bMerchant = false;
   bApplied = false;
   merchantId: string;
+  balance;
 
   get name() { return this.form.get('name'); }
 
@@ -44,19 +39,14 @@ export class AccountPageComponent implements OnInit, OnDestroy {
     private rx: NgRedux<IAppState>,
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private restaurantSvc: RestaurantService,
+    private router: Router,
+    private transactionSvc: TransactionService,
     private snackBar: MatSnackBar
   ) {
     const self = this;
     this.rx.dispatch({
       type: PageActions.UPDATE_URL,
       payload: 'account-setting'
-    });
-
-    this.restaurantSvc.find().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(rs => {
-      self.restaurants = rs;
     });
 
     this.form = this.fb.group({
@@ -69,10 +59,9 @@ export class AccountPageComponent implements OnInit, OnDestroy {
     this.sub = this.route.queryParams.subscribe(params => {
       // this.bMerchant = params['merchant'].toLowerCase() === 'true' ? true : false;
 
-      this.accountSvc.getCurrentUser().pipe(
-        takeUntil(this.onDestroy$)
-      ).subscribe((account: Account) => {
+      this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
         self.account = account;
+        self.reload(account.id);
         self.accountSvc.getMerchantApplication(account.id).pipe(
           takeUntil(this.onDestroy$)
         ).subscribe(x => {
@@ -105,4 +94,58 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   // onChangeRestaurantName(e) {
   //   this.errMsg = '';
   // }
+
+  toPaymentPage() {
+    this.router.navigate(['payment/driver']);
+  }
+
+  reload(driverId: string) {
+    this.transactionSvc.find({ $or: [{ fromId: driverId }, { toId: driverId }] }).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
+      // const transactions = ts.sort((a: ITransaction, b: ITransaction) => {
+      //   const aMoment = moment(a.created);
+      //   const bMoment = moment(b.created);
+      //   if (aMoment.isAfter(bMoment)) {
+      //     return 1; // b at top
+      //   } else if (bMoment.isAfter(aMoment)) {
+      //     return -1;
+      //   } else {
+      //     if (a.type === 'debit' && b.type === 'credit') {
+      //       return -1;
+      //     } else {
+      //       return 1;
+      //     }
+      //   }
+      // });
+
+      const dataList: ITransactionData[] = [];
+      let balance = 0;
+      ts.map((t: ITransaction) => {
+        if (t.type === 'credit') {
+          balance += t.amount;
+          // dataList.push({ date: t.created, name: t.fromName, type: t.type, received: t.amount, paid: 0, balance: balance });
+        } else {
+          balance -= t.amount;
+          // dataList.push({ date: t.created, name: t.toName, type: t.type, received: t.amount, paid: 0, balance: balance });
+        }
+      });
+      this.balance = balance;
+      // dataList.sort((a: ITransactionData, b: ITransactionData) => {
+      //   const aMoment = moment(a.date);
+      //   const bMoment = moment(b.date);
+      //   if (aMoment.isAfter(bMoment)) {
+      //     return -1;
+      //   } else if (bMoment.isAfter(aMoment)) {
+      //     return 1;
+      //   } else {
+      //     if (a.type === 'debit' && b.type === 'credit') {
+      //       return 1;
+      //     } else {
+      //       return -1;
+      //     }
+      //   }
+      // });
+      // this.dataSource = new MatTableDataSource(dataList);
+      // this.dataSource.sort = this.sort;
+    });
+  }
 }

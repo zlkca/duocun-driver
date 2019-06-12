@@ -1608,6 +1608,14 @@
           <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="ViewDetail" datatype="html">
+        <source>ViewDetail</source>
+        <target>查看详情</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>
