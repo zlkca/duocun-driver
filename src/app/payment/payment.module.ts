@@ -6,10 +6,15 @@ import { MerchantPaymentPageComponent } from './merchant-payment-page/merchant-p
 import { FormsModule, ReactiveFormsModule } from '../../../node_modules/@angular/forms';
 import { MatSnackBarModule } from '../../../node_modules/@angular/material';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AccountService } from '../account/account.service';
 import { MerchantPaymentService } from './merchant-payment.service';
 import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment-page.component';
+import { MerchantBalanceService } from './merchant-balance.service';
 
 @NgModule({
   imports: [
@@ -18,7 +23,11 @@ import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatSelectModule,
   ],
   declarations: [
     MerchantPaymentPageComponent,
@@ -26,7 +35,8 @@ import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment
   ],
   providers: [
     AccountService,
-    MerchantPaymentService
+    MerchantPaymentService,
+    MerchantBalanceService
   ]
 })
 export class PaymentModule { }

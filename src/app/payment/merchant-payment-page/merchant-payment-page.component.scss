@@ -1,4 +1,28 @@
+.payment-table-container{
+  height: 600px;
+  overflow: auto;
+}
 
+table{
+  width: 100%;
+}
+
+.operate-block{
+  margin-top:60px;
+  .col-3, .col-4{
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}
+.mat-form-field {
+  width: 120px;
+}
+td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, th.mat-header-cell:first-of-type {
+  padding-left: 4px;
+}
+td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type, th.mat-header-cell:last-of-type {
+  padding-right: 4px;
+}
 .payable-list{
   margin-top: 60px;
 }

@@ -20,6 +20,8 @@ import { ClientBalanceService } from '../../payment/client-balance.service';
 import { IMerchantBalance, IClientBalance } from '../../payment/payment.model';
 import { group } from '../../../../node_modules/@angular/animations';
 import * as moment from 'moment';
+import { TransactionService } from '../../transaction/transaction.service';
+import { ITransaction } from '../../transaction/transaction.model';
 
 @Component({
   selector: 'app-order-pack',
@@ -48,6 +50,7 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     private assignmentSvc: AssignmentService,
     private clientPaymentSvc: ClientPaymentService,
     private clientBalanceSvc: ClientBalanceService,
+    private transactionSvc: TransactionService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder
   ) {
@@ -131,7 +134,7 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
         // client balance should be got from db
         orders.map(order => {
           const cp: IClientPayment = cps.find(x => x.orderId === order.id);
-          order.received = cp ?  cp.amount : 0;
+          order.received = cp ? cp.amount : 0;
 
           const balance: IClientBalance = self.clientBalances.find(x => x.accountId === order.clientId);
           if (balance) {
@@ -249,6 +252,23 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
 
     this.clientPaymentSvc.save(clientPayment).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
       this.snackBar.open('', '已保存客户的余额', { duration: 2300 });
+    });
+
+    const tr: ITransaction = {
+      orderId: order.id,
+      fromId: order.clientId,
+      fromName: order.clientName,
+      toId: this.account.id,
+      toName: this.account.username,
+      type: 'credit',
+      amount: received,
+      note: '',
+      created: order.delivered,
+      modified: new Date()
+    };
+
+    this.transactionSvc.save(tr).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
+      this.snackBar.open('', '已保存交易', { duration: 1000 });
     });
   }
 

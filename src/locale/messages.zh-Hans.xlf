@@ -1584,6 +1584,22 @@
           <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="Driver" datatype="html">
+        <source>Driver</source>
+        <target>司机</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Pay" datatype="html">
+        <source>Pay</source>
+        <target>付款</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-form.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

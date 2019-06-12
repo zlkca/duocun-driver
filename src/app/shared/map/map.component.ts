@@ -39,11 +39,11 @@ export class MapComponent implements OnInit, OnChanges {
                 fullscreenControl: false
             });
 
-            const marker = new google.maps.Marker({
-                position: self.center,
-                map: map,
-                label: ''
-            });
+            // const marker = new google.maps.Marker({
+            //     position: self.center,
+            //     map: map,
+            //     label: ''
+            // });
 
 
             if (this.places && this.places.length > 0) {
@@ -60,18 +60,31 @@ export class MapComponent implements OnInit, OnChanges {
                 //   infowindow.open(map, marker);
                 // });
 
-                const markers = this.places.map((location, i) => {
-                    return new google.maps.Marker({
-                        position: location,
-                        label: {
-                          text: self.places[i].name,
-                          fontSize: '11px'
-                        }
-                    });
+                // const markers = this.places.map((location, i) => {
+                //     return new google.maps.Marker({
+                //         position: location,
+                //         label: {
+                //           text: self.places[i].name,
+                //           fontSize: '11px'
+                //         }
+                //     });
+                // });
+                const markers = this.places.map((p, i) => {
+                  // return
+                  const marker1 = new google.maps.Marker({
+                    position: p,
+                    label: {
+                      text: self.places[i].name,
+                      fontSize: '11px'
+                    },
+                    icon: {
+                      url: p.icon
+                    }
+                  });
+                  marker1.setMap(map);
                 });
-
-                const markerCluster = new MarkerClusterer(map, markers,
-                    { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+                // const markerCluster = new MarkerClusterer(map, markers,
+                //     { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
 
             }// end of this.places
 

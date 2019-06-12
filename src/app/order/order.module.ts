@@ -25,6 +25,7 @@ import { MerchantPaymentService } from '../payment/merchant-payment.service';
 import { ClientBalanceService } from '../payment/client-balance.service';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { TransactionService } from '../transaction/transaction.service';
 
 @NgModule({
   imports: [
@@ -48,7 +49,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     ClientBalanceService,
     ClientPaymentService,
     MerchantBalanceService,
-    MerchantPaymentService
+    MerchantPaymentService,
+    TransactionService
   ],
   declarations: [
     OrderHistoryComponent,
