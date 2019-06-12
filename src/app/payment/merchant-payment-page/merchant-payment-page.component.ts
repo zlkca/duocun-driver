@@ -8,9 +8,9 @@ import { IMerchantPayment, IMerchantPaymentData, IMerchantBalance } from '../pay
 import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms';
 import { MatSnackBar, MatTableDataSource, MatSort } from '../../../../node_modules/@angular/material';
 import * as moment from 'moment';
-import { ITransaction } from '../../transaction/transaction.model';
 import { TransactionService } from '../../transaction/transaction.service';
 import { MerchantBalanceService } from '../merchant-balance.service';
+import { ITransaction } from '../../transaction/transaction.model';
 
 @Component({
   selector: 'app-merchant-payment-page',
@@ -62,7 +62,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.payForm = this.fb.group({amount: ['', Validators.required]});
+    this.payForm = this.fb.group({ amount: ['', Validators.required] });
   }
 
   ngOnDestroy() {
