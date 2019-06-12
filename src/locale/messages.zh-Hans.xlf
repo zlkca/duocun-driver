@@ -890,6 +890,14 @@
           <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="Call" datatype="html">
+        <source>Call</source>
+        <target>拨打电话</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-package/order-package.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="Receivables" datatype="html">
         <source>Receivables</source>
         <target>应收款</target>
