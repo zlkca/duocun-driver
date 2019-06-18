@@ -66,9 +66,7 @@ export class MapPageComponent implements OnInit, OnDestroy {
 
   reload(assignments: IAssignment[]) {
     const self = this;
-    self.orderSvc.find({ where: { delivered: self.dateRange } }).pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(orders => {
+    self.orderSvc.find({ delivered: self.dateRange }).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
       self.orders = orders;
       const places = [];
       orders.map((order: IOrder) => {
@@ -77,7 +75,7 @@ export class MapPageComponent implements OnInit, OnDestroy {
           const assignment = self.assignments.find(a => a.orderId === order.id);
           if (assignment) {
             const loc = order.location;
-            const obj = { name: order.clientName, lat: loc.lat, lng: loc.lng };
+            const obj = { name: order.clientName, ...loc };
             places.push(obj);
           }
         }

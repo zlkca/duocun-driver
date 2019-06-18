@@ -45,7 +45,7 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
       this.account = account;
       if (account && account.roles) {
         const roles = account.roles;
-        if (roles && roles.length > 0 && roles.indexOf(Role.SUPER) !== -1) {
+        if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
           self.reload(account.id);
         }
       } else {

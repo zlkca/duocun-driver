@@ -111,9 +111,17 @@ export class FooterComponent implements OnInit, OnDestroy {
     }
   }
 
-  toPayment() {
+  toMerchant() {
     if (this.account) {
       this.router.navigate(['payment/merchant']);
+    } else {
+      this.router.navigate(['account/login']);
+    }
+  }
+
+  toSalary() {
+    if (this.account) {
+      this.router.navigate(['payment/salary']);
     } else {
       this.router.navigate(['account/login']);
     }

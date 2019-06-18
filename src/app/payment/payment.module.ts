@@ -15,6 +15,7 @@ import { AccountService } from '../account/account.service';
 import { MerchantPaymentService } from './merchant-payment.service';
 import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment-page.component';
 import { MerchantBalanceService } from './merchant-balance.service';
+import { DriverSalaryPageComponent } from './driver-salary-page/driver-salary-page.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import { MerchantBalanceService } from './merchant-balance.service';
   ],
   declarations: [
     MerchantPaymentPageComponent,
-    DriverPaymentPageComponent
+    DriverPaymentPageComponent,
+    DriverSalaryPageComponent
   ],
   providers: [
     AccountService,

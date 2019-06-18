@@ -1,0 +1,42 @@
+
+    
+  <div class="payment-table-container mat-elevation-z8" *ngIf="dataSource">
+    <table mat-table [dataSource]="dataSource" matSort>
+  
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="@@Date">Date</th>
+        <td mat-cell *matCellDef="let row"> {{row.date | date: 'MMMd E'}} </td>
+      </ng-container>
+  
+      <!-- <ng-container matColumnDef="clientName" >
+        <th mat-header-cell *matHeaderCellDef i18n="Client"> Client </th>
+        <td mat-cell *matCellDef="let row"> {{row.clientName}} </td>
+      </ng-container> -->
+  
+      <ng-container matColumnDef="driverName">
+        <th mat-header-cell *matHeaderCellDef i18n="@@Driver"> Driver </th>
+        <td mat-cell *matCellDef="let row"> {{row.driverName}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="hours">
+        <th mat-header-cell *matHeaderCellDef i18n="@@Hours"> Hours </th>
+        <td mat-cell *matCellDef="let row"> {{row.hours | number : '1.2-2'}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="nOrders">
+        <th mat-header-cell *matHeaderCellDef i18n="@@Orders"> Orders </th>
+        <td mat-cell *matCellDef="let row"> {{row.nOrders | number : '1.2-2'}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="balance">
+        <th mat-header-cell *matHeaderCellDef i18n="@@Balance"> Balance </th>
+        <td mat-cell *matCellDef="let row" [style.color]="row.balance"> {{row.balance | number : '1.2-2'}} </td>
+      </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    
+      <!-- <mat-paginator [pageSizeOptions]="[8]"></mat-paginator> -->
+    </div>
+    
