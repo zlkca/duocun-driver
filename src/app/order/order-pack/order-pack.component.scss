@@ -7,7 +7,7 @@
 
 .order{
   border-bottom: solid 1px #eee;
-  padding: 10px 0px;
+  padding: 0px 0px 10px 0px;
 
   .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
     font-size: 12px;
@@ -45,6 +45,12 @@
     .quantity-col{
       padding-left: 5px;
     }
+
+    .phonenum-row{
+      a{
+        font-size: 14px;
+      }
+    }
   }
 
   .navigate-row{
@@ -58,12 +64,28 @@
   }
 }
 
-.client-row{
+.order-header{
   width: 100%;
-  .client-col, .quantity-col, .status-col{
-    font-size: 14px;
+
+  .col-8{
     padding: 0px;
   }
+
+  .code-col, .client-col, .quantity-col, .status-col{
+    // font-size: 14px;
+    padding: 0px;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .col-3 {
+    padding: 0px;
+  }
+  .col-9 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
   .red{
     color: red;
   }

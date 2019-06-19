@@ -10,20 +10,29 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-              <div class="row client-row">
-                <div class="col-8 client-col">{{order.clientName}}</div>
+              <div class="row order-header">
+                <div class="col-8">
+                  <div class="row code-col">
+                      <div class="col-3" i18n="@@OrderId">Order Id</div>
+                      <div class="col-9">{{order.code}}</div>
+                  </div>
+                  <div class="row client-col">
+                      <div class="col-3" i18n="@@Client">Client</div>
+                      <div class="col-9">{{order.clientName}}</div>
+                  </div>
+                </div>
                 <div class="col-2 status-col red" *ngIf="!order.paid">未送</div>
                 <div class="col-2 status-col green" *ngIf="order.paid">已送</div>
-                <div class="col-2 quantity-col">x {{getQuantity(order)}}</div>
+                <div class="col-2 quantity-col">x {{getQuantity(order)}}件</div>
               </div>
           </mat-panel-title>
         </mat-expansion-panel-header>
   
         <div class="order">
-            <div class="row order-id-col">
+            <!-- <div class="row order-id-col">
               <div class="col-3" i18n="@@OrderId">Order Id</div>
               <div class="col-9">{{order.code? order.code: order.id}}</div>
-            </div>
+            </div> -->
             <div class="row merchant-col">
               <div class="col-3" i18n="@@Merchant">Merchant</div>
               <div class="col-9">{{order.merchantName}}</div>
@@ -36,7 +45,8 @@
               <div class="col-3" i18n="@@ClientPhoneNumber">Client Phone Number</div>
               <div class="col-9">
                 <span>{{order.clientPhoneNumber}}</span>&nbsp;
-                <span style="white-space:pre"></span><a href="tel://{order.clientPhoneNumber}" i18n="@@Call">Call</a>
+                <span style="white-space:pre"></span>
+                <a style="font-size:14px;" href="tel://{order.clientPhoneNumber}" i18n="@@Call">Call</a>
               </div>
             </div>
             <div class="row address-row">
