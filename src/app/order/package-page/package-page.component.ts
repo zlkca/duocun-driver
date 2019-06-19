@@ -8,6 +8,7 @@ import { RestaurantService } from '../../restaurant/restaurant.service';
 import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-package-page',
@@ -23,8 +24,6 @@ export class PackagePageComponent implements OnInit, OnDestroy {
   deliverTime;
   onDestroy$ = new Subject();
   restaurant: IRestaurant;
-  // dateForm;
-  // get date() { return this.dateForm.get('date'); }
 
   constructor(
     private restaurantSvc: RestaurantService,
@@ -32,44 +31,22 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     private accountSvc: AccountService,
     private router: Router,
     private route: ActivatedRoute,
-    // private fb: FormBuilder
   ) {
-    const now = this.sharedSvc.getNow();
-    const dayEnd = this.sharedSvc.getStartOf('day').set({ hour: 19, minute: 30, second: 0, millisecond: 0 });
-
-    if (now.isAfter(dayEnd)) {
-      this.deliverTime = this.sharedSvc.getStartOf('day').add(1, 'days')
-        .set({ hour: 11, minute: 45, second: 0, millisecond: 0 })
+      this.deliverTime = moment().startOf('day').set({ hour: 11, minute: 45, second: 0, millisecond: 0 })
         .format('YYYY-MM-DD HH:mm:ss');
 
-      const tomorrowStart = this.sharedSvc.getStartOf('day').add(1, 'days').toDate();
-      const tomorrowEnd = this.sharedSvc.getEndOf('day').add(1, 'days').toDate();
-      this.range = { $lt: tomorrowEnd, $gt: tomorrowStart };
-    } else {
-      this.deliverTime = this.sharedSvc.getStartOf('day')
-        .set({ hour: 11, minute: 45, second: 0, millisecond: 0 })
-        .format('YYYY-MM-DD HH:mm:ss');
-
-      const todayStart = this.sharedSvc.getStartOf('day').toDate();
-      const todayEnd = this.sharedSvc.getEndOf('day').toDate();
+      const todayStart = moment().startOf('day').toDate();
+      const todayEnd = moment().endOf('day').toDate();
       this.range = { $lt: todayEnd, $gt: todayStart };
-    }
-
-    // this.dateForm = this.fb.group({ date: [''] });
   }
-
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrent().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(account => {
+    self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       if (account && account.roles) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.restaurantSvc.find().pipe(
-            takeUntil(this.onDestroy$)
-          ).subscribe((rs: IRestaurant[]) => {
+          self.restaurantSvc.find().pipe(takeUntil(this.onDestroy$)).subscribe((rs: IRestaurant[]) => {
             if (rs && rs.length > 0) {
               self.restaurant = rs[0];
             } else {

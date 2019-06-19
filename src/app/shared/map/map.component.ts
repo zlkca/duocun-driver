@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 
 declare let google: any;
-declare let MarkerClusterer: any;
 
 function getFunc(location) {
   return () => {
@@ -19,14 +18,9 @@ function getFunc(location) {
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, OnChanges {
-  @Input()
-  center: any;
-
-  @Input()
-  zoom: any;
-
-  @Input()
-  places: any[];
+  @Input() center: any;
+  @Input() zoom: any;
+  @Input() places: any[];
 
   constructor() { }
 
@@ -49,64 +43,35 @@ export class MapComponent implements OnInit, OnChanges {
         fullscreenControl: false
       });
 
-      // const marker = new google.maps.Marker({
-      //     position: self.center,
-      //     map: map,
-      //     label: ''
-      // });
-
-
       if (this.places && this.places.length > 0) {
         // var infowindow = new google.maps.InfoWindow({
         //   content: contentString
         // });
 
-        // var marker = new google.maps.Marker({
-        //   position: uluru,
-        //   map: map,
-        //   title: 'Uluru (Ayers Rock)'
-        // });
-        // marker.addListener('click', function() {
-        //   infowindow.open(map, marker);
-        // });
 
-        // const markers = this.places.map((location, i) => {
-        //     return new google.maps.Marker({
-        //         position: location,
-        //         label: {
-        //           text: self.places[i].name,
-        //           fontSize: '11px'
-        //         }
-        //     });
-        // });
-        const markers = this.places.map((p, i) => {
+        this.places.map((p, i) => {
           // return
           const marker1 = new google.maps.Marker({
-            position: p,
+            position: { lat: p.lat, lng: p.lng },
             label: {
               text: self.places[i].name,
               fontSize: '11px'
             },
+            map: map,
             icon: {
               url: p.icon
             }
           });
 
+          if (p.status === 'paid') {
+            google.maps.event.removeListener(p.listener);
+          } else {
+            p.listener = marker1.addListener('click', getFunc(self.places[i]));
+          }
 
 
-          marker1.addListener('click', getFunc(self.places[i]));
-          // navigateTo(location: ILocation) {
-          //   (<any>window).location = encodeURI('https://www.google.com/maps/dir/?api=1&destination=' +
-          //     + location.streetNumber + '+' + location.streetName + '+'
-          //     + (location.subLocality ? location.subLocality : location.city) + '+'
-          //     + location.province
-          //     + '&destination_placeId=' + location.placeId);
-          // }
-          marker1.setMap(map);
+          // marker1.setMap(map);
         });
-        // const markerCluster = new MarkerClusterer(map, markers,
-        //     { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
-
       }// end of this.places
 
     }
