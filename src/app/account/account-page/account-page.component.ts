@@ -62,11 +62,6 @@ export class AccountPageComponent implements OnInit, OnDestroy {
       this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
         self.account = account;
         self.reload(account.id);
-        self.accountSvc.getMerchantApplication(account.id).pipe(
-          takeUntil(this.onDestroy$)
-        ).subscribe(x => {
-          this.bApplied = x !== null;
-        });
       });
     });
   }
@@ -100,7 +95,8 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   }
 
   reload(driverId: string) {
-    this.transactionSvc.find({ $or: [{ fromId: driverId }, { toId: driverId }] }).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
+    const q = { $or: [{ fromId: driverId }, { toId: driverId }] };
+    this.transactionSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
       // const transactions = ts.sort((a: ITransaction, b: ITransaction) => {
       //   const aMoment = moment(a.created);
       //   const bMoment = moment(b.created);

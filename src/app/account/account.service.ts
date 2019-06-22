@@ -36,15 +36,6 @@ export class AccountService extends EntityService {
     this.url = super.getBaseUrl() + 'Accounts';
   }
 
-
-  applyMerchant(accountId: string, merchantName: string) {
-    return this.http.post(this.url + '/applyMerchant', {accountId: accountId, merchantName: merchantName});
-  }
-
-  getMerchantApplication(accountId: string) {
-    return this.http.post(this.url + '/getMerchantApplication', {accountId: accountId});
-  }
-
   signup(account: Account): Observable<any> {
     return this.http.post(this.url + '/signup', account);
   }
@@ -73,68 +64,20 @@ export class AccountService extends EntityService {
     const id: any = this.authSvc.getUserId();
     // const url = id ? (this.url + '/' + id) : (this.url + '/__anonymous__');
     if (id) {
-      return this.http.get(this.url + '/' + id);
+      return this.findById(id);
     } else {
       return of(null);
     }
   }
 
   getCurrent(forceGet: boolean = false): Observable<Account> {
-    // const self = this;
-    // const state: any = this.ngRedux.getState();
-    // if (!state || !state.account.id || forceGet) {
+    const self = this;
+    const state: any = this.ngRedux.getState();
+    if (!state || !state.account || !state.account.id || forceGet) {
       return this.getCurrentUser();
-    //   // .pipe(
-    //   //   flatMap((acc: Account) => {
-    //   //     self.ngRedux.dispatch({ type: AccountActions.UPDATE, payload: acc });
-    //   //     return new Observable(observer => observer.next(acc));
-    //   //   })
-    //   // );
-    // } else {
-    //   return this.ngRedux.select<Account>('account');
-    // }
-  }
-
-  find(filter?: any): Observable<any> {
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Content-Type', 'application/json');
-    const accessTokenId = this.authSvc.getAccessToken();
-    if (accessTokenId) {
-      headers = headers.append('Authorization', '' + accessTokenId);
-      // httpParams = httpParams.append('access_token', LoopBackConfig.getAuthPrefix() + accessTokenId);
+    } else {
+      return this.ngRedux.select<Account>('account');
     }
-    if (filter) {
-      headers = headers.append('filter', JSON.stringify(filter));
-    }
-    return this.http.get(this.url, { headers: headers });
-  }
-
-  // override method
-  findById(id: string, filter?: any): Observable<any> {
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Content-Type', 'application/json');
-    const accessTokenId = this.authSvc.getAccessToken();
-    if (accessTokenId) {
-      headers = headers.append('Authorization', '' + accessTokenId);
-      // httpParams = httpParams.append('access_token', LoopBackConfig.getAuthPrefix() + accessTokenId);
-    }
-    if (filter) {
-      headers = headers.append('filter', JSON.stringify(filter));
-    }
-    const url = id ? (this.url + '/' + id) : (this.url + '/__anonymous__');
-    return this.http.get(url, { headers: headers });
-  }
-
-  create(account: Account): Observable<any> {
-    return this.http.post(this.url, account);
-  }
-
-  replaceById(id: number, account: Account) {
-    return this.http.put(this.url, account);
-  }
-
-  rmAccount(id): Observable<any> {
-    return this.http.get(this.url);
   }
 
   // getWechatAccessToken(authCode: string) {
@@ -147,7 +90,7 @@ export class AccountService extends EntityService {
   // }
 
   wechatLogin(authCode: string) {
-    const url = super.getBaseUrl() + 'wechatLogin?code=' + authCode;
+    const url = this.url + '/wechatLogin?code=' + authCode;
     return this.http.get(url);
   }
 

@@ -130,6 +130,10 @@
   margin-bottom: 6px;
 }
 
+.total-col, .balance-col, .receivable-col{
+  font-size: 12px;
+}
+
 /deep/ .mat-expansion-panel-body{
   padding: 0px 16px 16px !important;
 }

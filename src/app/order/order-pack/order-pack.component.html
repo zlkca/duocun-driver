@@ -73,16 +73,16 @@
           <div class="row receivables-row">
               <div class="col-5 left-col">
                 <div class="row balance-col">
-                  <span i18n="@@Balance">Balance</span>:&nbsp;
+                  <span>往日余额</span>:&nbsp;
                   <span>${{order.balance | number : '1.2-2'}}</span>
                 </div>
                 <div class="row total-col">
-                  <span i18n="@@Total">total</span>:&nbsp;
+                  <span>今天订单总额</span>:&nbsp;
                   <span>${{order.total | number : '1.2-2'}}</span>
                 </div>
                 <div class="row receivable-col">
                   <span i18n="@@Receivables">Receivables</span>:&nbsp;
-                  <span>${{order.total | number : '1.2-2'}}</span>
+                  <span>${{order.receivable | number : '1.2-2'}}</span>
                 </div>
               </div>
               <div class="col-7 right-col">

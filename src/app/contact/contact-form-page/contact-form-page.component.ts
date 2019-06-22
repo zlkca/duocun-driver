@@ -108,7 +108,9 @@ export class ContactFormPageComponent implements OnInit, OnDestroy {
   onAddressChange(e) {
     const self = this;
     this.options = [];
-    this.locationSvc.reqPlaces(e.input).subscribe((ps: IPlace[]) => {
+    this.locationSvc.reqPlaces(e.input).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((ps: IPlace[]) => {
       if (ps && ps.length > 0) {
         for (const p of ps) {
           p.type = 'suggest';
@@ -128,7 +130,9 @@ export class ContactFormPageComponent implements OnInit, OnDestroy {
     const self = this;
     this.options = [];
     if (this.account && this.account.id) {
-      this.locationSvc.getHistoryLocations(this.account.id).then(a => {
+      this.locationSvc.getHistoryLocations(this.account.id).pipe(
+        takeUntil(this.onDestroy$)
+      ).subscribe(a => {
         self.options = a;
       });
     }
@@ -187,9 +191,9 @@ export class ContactFormPageComponent implements OnInit, OnDestroy {
   onVerificationCodeInput(e) {
     if (e.target.value && e.target.value.length === 4) {
       const code = e.target.value;
-      this.contactSvc.verifyCode(code, this.account.id).subscribe(x => {
-        this.phoneVerified = x;
-      });
+      // this.contactSvc.verifyCode(code, this.account.id).subscribe(x => {
+      //   this.phoneVerified = x;
+      // });
     }
   }
 
@@ -265,16 +269,16 @@ export class ContactFormPageComponent implements OnInit, OnDestroy {
     contact.phone = contact.phone.match(/\d+/g).join('');
 
     if (contact.phone) {
-      this.contactSvc.sendVerifyMessage(contact).subscribe(x => {
+      // this.contactSvc.sendVerifyMessage(contact).subscribe(x => {
 
-      });
+      // });
     }
   }
 
   verify(code: string, accountId: string) {
     const v = this.form.value;
-    this.contactSvc.verifyCode(code, accountId).subscribe(x => {
-      this.phoneVerified = x;
-    });
+    // this.contactSvc.verifyCode(code, accountId).subscribe(x => {
+    //   this.phoneVerified = x;
+    // });
   }
 }

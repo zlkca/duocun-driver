@@ -140,6 +140,9 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
           if (balance) {
             order.balance = balance.amount;
           }
+
+          order.receivable = (order.total - order.balance > 0) ? (order.total - order.balance) : 0;
+
           const assignment = self.assignments.find(x => x.orderId === order.id);
           if (assignment) {
             order.code = assignment.code;

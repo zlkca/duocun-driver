@@ -34,6 +34,7 @@ export interface IOrder {
   total?: number;
   received?: number; // 2019-05-29
   balance?: number;
+  receivable?: number;
 }
 
 export class Order implements IOrder {

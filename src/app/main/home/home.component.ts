@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   orderDeadline = { h: 9, m: 30 };
   overdue;
   afternoon;
-  deliveryTime: IDeliveryTime = { type: '', text: '' };
+  // deliveryTime: IDeliveryTime = { type: '', text: '' };
 
   inRange = false;
   onDestroy$ = new Subject<any>();

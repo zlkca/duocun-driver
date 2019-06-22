@@ -1,4 +1,5 @@
-import { IAddress, Address } from '../entity.model';
+
+import { GeoPoint } from '../location/location.model';
 
 export enum Role {
   SUPER = 1,
@@ -25,7 +26,8 @@ export interface IAccount {
   unionid?: string; // wechat unionid
   accessTokens?: any[];
   address?: IAddress;
-  roles?: number[];
+  roles?: number[]; // 'super', 'merchant-admin', 'merchant-stuff', 'driver', 'user'
+  visited?: boolean;
   merchants?: string[]; // merchant Ids
 }
 
@@ -44,10 +46,45 @@ export class Account implements IAccount {
   unionid?: string; // wechat unionid
   accessTokens?: any[];
   address?: Address;
-  roles?: number[];
+  roles?: number[]; // 'super', 'merchant-admin', 'merchant-stuff', 'driver', 'user'
+  visited?: boolean;
   merchants?: string[]; // merchant Ids
   constructor(data?: IAccount) {
     Object.assign(this, data);
   }
 }
 
+export interface IAddress {
+  formattedAddress?: string;
+  unit?: number;
+  streetName?: string;
+  streetNumber?: string;
+  location?: GeoPoint;
+  sublocality?: string;
+  city?: string;
+  province?: string;
+  country?: string;
+  postalCode?: string;
+  created?: Date;
+  modified?: Date;
+  id?: number;
+}
+
+export class Address implements IAddress {
+  formattedAddress: string;
+  unit: number;
+  streetName: string;
+  streetNumber: string;
+  location: GeoPoint;
+  sublocality: string;
+  city: string;
+  province: string;
+  country: string;
+  postalCode: string;
+  created: Date;
+  modified: Date;
+  id: number;
+  constructor(data?: IAddress) {
+    Object.assign(this, data);
+  }
+}
