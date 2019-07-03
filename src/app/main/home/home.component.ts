@@ -6,14 +6,11 @@ import { AccountService } from '../../account/account.service';
 import { ILocationHistory, IPlace, ILocation, ILatLng, GeoPoint } from '../../location/location.model';
 import { NgRedux } from '@angular-redux/store';
 import { IAppState } from '../../store';
-import { PageActions } from '../../main/main.actions';
 import { SocketService } from '../../shared/socket.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../account/auth.service';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
-import { ICommand } from '../../shared/command.reducers';
-import { IDeliveryTime } from '../../delivery/delivery.model';
 import { AccountActions } from '../../account/account.actions';
 import { Account, Role } from '../../account/account.model';
 import { ILocationAction } from '../../location/location.reducer';
@@ -48,11 +45,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private accountSvc: AccountService,
     private locationSvc: LocationService,
-    private sharedSvc: SharedService,
     private authSvc: AuthService,
-    private socketSvc: SocketService,
     private router: Router,
-    private route: ActivatedRoute,
     private rx: NgRedux<IAppState>,
   ) {
   }
@@ -130,9 +124,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const self = this;
     self.authSvc.setUserId(data.userId);
     self.authSvc.setAccessToken(data.id);
-    self.accountSvc.getCurrentUser().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((account: Account) => {
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
       if (account) {
         self.account = account;
 

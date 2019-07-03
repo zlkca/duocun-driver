@@ -46,7 +46,7 @@
               <div class="col-9">
                 <span>{{order.clientPhoneNumber}}</span>&nbsp;
                 <span style="white-space:pre"></span>
-                <a style="font-size:14px;" href="tel://{order.clientPhoneNumber}" i18n="@@Call">Call</a>
+                <a style="font-size:14px;" [href]="'tel:' + order.clientPhoneNumber" i18n="@@Call">Call</a>
               </div>
             </div>
             <div class="row address-row">
@@ -77,7 +77,7 @@
                   <span>${{order.balance | number : '1.2-2'}}</span>
                 </div>
                 <div class="row total-col">
-                  <span>今天订单总额</span>:&nbsp;
+                  <span>今天订单</span>:&nbsp;
                   <span>${{order.total | number : '1.2-2'}}</span>
                 </div>
                 <div class="row receivable-col">

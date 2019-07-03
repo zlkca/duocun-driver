@@ -136,12 +136,12 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
           const cp: IClientPayment = cps.find(x => x.orderId === order.id);
           order.received = cp ? cp.amount : 0;
 
-          const balance: IClientBalance = self.clientBalances.find(x => x.accountId === order.clientId);
+          const balance: IClientBalance = self.clientBalances.find(x => x.clientId === order.clientId);
           if (balance) {
-            order.balance = balance.amount;
+            order.balance = balance.amount + order.total;
+            order.receivable = (balance.amount > 0) ? 0 : (-balance.amount);
           }
 
-          order.receivable = (order.total - order.balance > 0) ? (order.total - order.balance) : 0;
 
           const assignment = self.assignments.find(x => x.orderId === order.id);
           if (assignment) {

@@ -22,10 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<any>();
 
   constructor(
-    private authSvc: AuthService,
-    // private rx: NgRedux<IAppState>
   ) {
-    const self = this;
     window.addEventListener('orientationchange', function () {
       window.location.reload();
     }, false);
