@@ -74,7 +74,7 @@ export class SettlementComponent implements OnInit, OnChanges, OnDestroy {
 
   reload(merchantId: string) {
     const self = this;
-    self.orderSvc.find({ where: { merchantId: merchantId, delivered: self.dateRange }}).pipe(
+    self.orderSvc.find({ merchantId: merchantId, delivered: self.dateRange, status: { $ne: 'del' }}).pipe(
       takeUntil(self.onDestroy$)
     ).subscribe(orders => {
       const list = [];

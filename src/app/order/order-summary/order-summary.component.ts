@@ -62,7 +62,7 @@ export class OrderSummaryComponent implements OnInit, OnChanges, OnDestroy {
 
   reload(merchantId: string) {
     const self = this;
-    const q = {merchantId: merchantId, delivered: self.dateRange};
+    const q = {merchantId: merchantId, delivered: self.dateRange, status: { $ne: 'del' } };
     self.orderSvc.find(q).pipe(takeUntil(self.onDestroy$)).subscribe(orders => {
       const list = [];
       const ordersWithNote = [];

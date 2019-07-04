@@ -65,9 +65,7 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     //   });
     // });
 
-    self.clientBalanceSvc.find().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((cbs: IClientBalance[]) => {
+    self.clientBalanceSvc.find().pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
       this.clientBalances = cbs;
     });
   }
@@ -123,12 +121,10 @@ export class OrderPackComponent implements OnInit, OnChanges, OnDestroy {
     const self = this;
     const os = [];
 
-    self.clientPaymentSvc.find({ where: { delivered: self.dateRange, type: 'credit' } }).pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((cps: IClientPayment[]) => {
-      self.orderSvc.find({ where: { delivered: self.dateRange } }).pipe(
-        takeUntil(this.onDestroy$)
-      ).subscribe((orders: IOrder[]) => {
+    self.clientPaymentSvc.find({ delivered: self.dateRange, type: 'credit' })
+      .pipe(takeUntil(this.onDestroy$)).subscribe((cps: IClientPayment[]) => {
+      const orderQuery = { delivered: self.dateRange, status: { $ne: 'del' } };
+      self.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         this.forms = {};
 
         // client balance should be got from db
