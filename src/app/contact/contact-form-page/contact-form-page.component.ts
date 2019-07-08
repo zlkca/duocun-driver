@@ -23,7 +23,6 @@ import { CommandActions } from '../../shared/command.actions';
 import * as Cookies from 'js-cookie';
 import { IDeliveryTimeAction } from '../../delivery/delivery-time.reducer';
 import { DeliveryTimeActions } from '../../delivery/delivery-time.actions';
-import { CodegenComponentFactoryResolver } from '../../../../node_modules/@angular/core/src/linker/component_factory_resolver';
 
 @Component({
   selector: 'app-contact-form-page',

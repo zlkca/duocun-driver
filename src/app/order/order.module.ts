@@ -21,7 +21,6 @@ import { SettlementComponent } from './settlement/settlement.component';
 import { MapPageComponent } from './map-page/map-page.component';
 import { ClientPaymentService } from '../payment/client-payment.service';
 import { MerchantBalanceService } from '../payment/merchant-balance.service';
-import { MerchantPaymentService } from '../payment/merchant-payment.service';
 import { ClientBalanceService } from '../payment/client-balance.service';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -49,7 +48,6 @@ import { TransactionService } from '../transaction/transaction.service';
     ClientBalanceService,
     ClientPaymentService,
     MerchantBalanceService,
-    MerchantPaymentService,
     TransactionService
   ],
   declarations: [

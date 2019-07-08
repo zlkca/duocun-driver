@@ -1,6 +1,5 @@
 
-import { throwError as observableThrowError, Observable } from 'rxjs';
-import { fromPromise } from 'rxjs/observable/fromPromise';
+import { throwError as observableThrowError, Observable ,  from as fromPromise } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 
 import { Injectable } from '@angular/core';

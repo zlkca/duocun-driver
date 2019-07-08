@@ -25,7 +25,7 @@ export class CartPageComponent implements OnInit, OnDestroy {
   defaultProductPicture = window.location.protocol + '//placehold.it/400x300';
   private onDestroy$ = new Subject<void>();
 
-  @ViewChild('orderDetailModal') orderDetailModal;
+  @ViewChild('orderDetailModal', {static: true}) orderDetailModal;
 
   constructor(
     private rx: NgRedux<IAppState>,

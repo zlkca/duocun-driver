@@ -12,10 +12,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
 
 import { AccountService } from '../account/account.service';
-import { MerchantPaymentService } from './merchant-payment.service';
 import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment-page.component';
 import { MerchantBalanceService } from './merchant-balance.service';
 import { DriverSalaryPageComponent } from './driver-salary-page/driver-salary-page.component';
+import { OrderService } from '../order/order.service';
 
 @NgModule({
   imports: [
@@ -37,8 +37,8 @@ import { DriverSalaryPageComponent } from './driver-salary-page/driver-salary-pa
   ],
   providers: [
     AccountService,
-    MerchantPaymentService,
-    MerchantBalanceService
+    MerchantBalanceService,
+    OrderService,
   ]
 })
 export class PaymentModule { }

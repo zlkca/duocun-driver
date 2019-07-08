@@ -41,8 +41,8 @@ export interface IClientPayment {
 
 export interface IClientBalance {
   id?: string;
-  accountId: string;
-  accountName: string;
+  clientId: string;
+  clientName: string;
   amount: number;
   created?: Date;
   modified?: Date;

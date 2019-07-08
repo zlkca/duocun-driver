@@ -18,19 +18,13 @@ import { IDriverPayment, IDriverPaymentData } from '../payment.model';
   styleUrls: ['./driver-payment-page.component.scss']
 })
 export class DriverPaymentPageComponent implements OnInit, OnDestroy {
-
-  payments: IDriverPayment[];
-  paymentDataList: IDriverPaymentData[];
-  selectedPayments: IDriverPaymentData[];
-  // balances: IDriverBalance[] = [];
-
   dataSource: MatTableDataSource<ITransactionData>;
   onDestroy$ = new Subject();
   account;
   displayedColumns: string[] = ['date', 'name', 'received', 'paid', 'balance'];
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private accountSvc: AccountService,
@@ -60,8 +54,8 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
   }
 
   reload(driverId: string) {
-    this.transactionSvc.find({ $or: [{ fromId: driverId }, { toId: driverId }] }).pipe(takeUntil(this.onDestroy$))
-      .subscribe((ts: ITransaction[]) => {
+    const query = { $or: [{ fromId: driverId }, { toId: driverId }] };
+    this.transactionSvc.find(query).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
       const transactions = ts.sort((a: ITransaction, b: ITransaction) => {
         const aMoment = moment(a.created);
         const bMoment = moment(b.created);
@@ -80,11 +74,11 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
 
       const dataList: ITransactionData[] = [];
       let balance = 0;
-      ts.map((t: ITransaction) => {
-        if (t.type === 'credit') {
+      transactions.map((t: ITransaction) => {
+        if (t.type === 'credit' || (t.type === 'transfer' && t.toId === driverId)) {
           balance += t.amount;
           dataList.push({ date: t.created, name: t.fromName, type: t.type, received: t.amount, paid: 0, balance: balance });
-        } else {
+        } else if (t.type === 'debit' || (t.type === 'transfer' && t.fromId === driverId)) {
           balance -= t.amount;
           dataList.push({ date: t.created, name: t.toName, type: t.type, received: 0, paid: t.amount, balance: balance });
         }

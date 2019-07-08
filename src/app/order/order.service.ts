@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { EntityService } from '../entity.service';
 import { AuthService } from '../account/auth.service';
+import { IOrder, IOrderItem } from './order.model';
 
 
 
@@ -19,5 +20,11 @@ export class OrderService extends EntityService {
     this.url = super.getBaseUrl() + 'Orders';
   }
 
-
+  getCost(order: IOrder) {
+    let total = 0;
+    order.items.map((item: IOrderItem) => {
+      total += item.cost * item.quantity;
+    });
+    return total;
+  }
 }

@@ -97,51 +97,15 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   reload(driverId: string) {
     const q = { $or: [{ fromId: driverId }, { toId: driverId }] };
     this.transactionSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
-      // const transactions = ts.sort((a: ITransaction, b: ITransaction) => {
-      //   const aMoment = moment(a.created);
-      //   const bMoment = moment(b.created);
-      //   if (aMoment.isAfter(bMoment)) {
-      //     return 1; // b at top
-      //   } else if (bMoment.isAfter(aMoment)) {
-      //     return -1;
-      //   } else {
-      //     if (a.type === 'debit' && b.type === 'credit') {
-      //       return -1;
-      //     } else {
-      //       return 1;
-      //     }
-      //   }
-      // });
-
-      const dataList: ITransactionData[] = [];
       let balance = 0;
       ts.map((t: ITransaction) => {
-        if (t.type === 'credit') {
+        if (t.type === 'credit' || (t.type === 'transfer' && t.toId === driverId)) {
           balance += t.amount;
-          // dataList.push({ date: t.created, name: t.fromName, type: t.type, received: t.amount, paid: 0, balance: balance });
-        } else {
+        } else if (t.type === 'debit' || (t.type === 'transfer' && t.fromId === driverId)) {
           balance -= t.amount;
-          // dataList.push({ date: t.created, name: t.toName, type: t.type, received: t.amount, paid: 0, balance: balance });
         }
       });
       this.balance = balance;
-      // dataList.sort((a: ITransactionData, b: ITransactionData) => {
-      //   const aMoment = moment(a.date);
-      //   const bMoment = moment(b.date);
-      //   if (aMoment.isAfter(bMoment)) {
-      //     return -1;
-      //   } else if (bMoment.isAfter(aMoment)) {
-      //     return 1;
-      //   } else {
-      //     if (a.type === 'debit' && b.type === 'credit') {
-      //       return 1;
-      //     } else {
-      //       return -1;
-      //     }
-      //   }
-      // });
-      // this.dataSource = new MatTableDataSource(dataList);
-      // this.dataSource.sort = this.sort;
     });
   }
 }

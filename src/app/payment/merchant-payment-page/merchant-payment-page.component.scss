@@ -78,31 +78,31 @@ td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type, th.mat-header-cell:la
   margin: 0px;
 }
 
-/deep/ .mat-slide-toggle-bar {
+.mat-slide-toggle-bar {
   height: 28px !important;
   width: 78px !important;
 }
 
-/deep/ .mat-slide-toggle-thumb {
+.mat-slide-toggle-thumb {
   height: 28px !important;
   width: 28px !important;
 }
 
-/deep/ .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
     transform: translate3d(50px,0,0) !important;
 }
 
-/deep/ .mat-slide-toggle-thumb-container {
+.mat-slide-toggle-thumb-container {
     width: 28px !important;
     height: 28px !important;
     top: 0px !important;
 }
 
-/deep/ .mat-slide-toggle-content{
+.mat-slide-toggle-content{
   font-size: 12px !important;
   padding-top: 8px !important;
 }
 
-/deep/ .mat-slide-toggle {
+.mat-slide-toggle {
   height: 30px !important;
 }

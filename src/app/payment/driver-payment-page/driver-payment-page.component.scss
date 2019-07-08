@@ -2,11 +2,11 @@
   height: 600px;
   overflow: auto;
 
-  /deep/ .mat-cell{
+  .mat-cell{
     font-size: 12px;
   }
 
-  /deep/ .mat-column-name{
+  .mat-column-name{
     width: 100px;
     flex: 0 0 100px;
     word-wrap: break-word;
