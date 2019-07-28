@@ -12,6 +12,8 @@ import { MatSnackBar } from '../../../../node_modules/@angular/material';
 import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms';
 import { TransactionService } from '../../transaction/transaction.service';
 import { ITransaction, ITransactionData } from '../../transaction/transaction.model';
+import * as moment from 'moment';
+import { AssignmentService } from '../../assignment/assignment.service';
 
 @Component({
   selector: 'app-account-page',
@@ -31,6 +33,7 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   bApplied = false;
   merchantId: string;
   balance;
+  salary;
 
   get name() { return this.form.get('name'); }
 
@@ -40,6 +43,7 @@ export class AccountPageComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private assignmentSvc: AssignmentService,
     private transactionSvc: TransactionService,
     private snackBar: MatSnackBar
   ) {
@@ -62,6 +66,7 @@ export class AccountPageComponent implements OnInit, OnDestroy {
       this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
         self.account = account;
         self.reload(account.id);
+        self.loadSalary(account.id);
       });
     });
   }
@@ -94,6 +99,10 @@ export class AccountPageComponent implements OnInit, OnDestroy {
     this.router.navigate(['payment/driver']);
   }
 
+  toSalaryPage() {
+    this.router.navigate(['payment/salary']);
+  }
+
   reload(driverId: string) {
     const q = { $or: [{ fromId: driverId }, { toId: driverId }] };
     this.transactionSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
@@ -108,4 +117,45 @@ export class AccountPageComponent implements OnInit, OnDestroy {
       this.balance = balance;
     });
   }
+
+  groupBy(items, key) {
+    return items.reduce((result, item) => ({
+      ...result,
+      [item[key]]: [
+        ...(result[item[key]] || []),
+        item,
+      ],
+    }), {});
+  }
+
+  loadSalary(driverId: string) {
+    this.assignmentSvc.find({ driverId: driverId }).pipe(takeUntil(this.onDestroy$)).subscribe((assignments) => {
+      const groups = this.groupBy(assignments, 'delivered');
+      const salaryItems = [];
+      const dates = Object.keys(groups);
+      let balance = 0;
+      dates.map(date => {
+        const group = groups[date];
+        if (group && group.length > 0) {
+          balance += 2 * 30;
+          const a = group[0];
+          salaryItems.push({
+            date: a.delivered, driverId: a.driverId, driverName: a.driverName, nOrders: group.length, hours: 2, balance: balance
+          });
+        }
+      });
+
+      salaryItems.sort((a, b) => {
+        const aMoment = moment(a.date);
+        const bMoment = moment(b.date);
+        if (aMoment.isAfter(bMoment)) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      this.salary = balance;
+    });
+  }
+
 }

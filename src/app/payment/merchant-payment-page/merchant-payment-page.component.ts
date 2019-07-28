@@ -84,6 +84,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     };
 
     this.transactionSvc.save(t).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.snackBar.open('', '已付款 $' + amount + '给商家' + this.merchant.merchantName, { duration: 1500 });
       this.reload(this.merchant.merchantId);
     });
   }

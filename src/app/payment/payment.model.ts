@@ -120,4 +120,11 @@ export interface ISalaryData {
   nOrders?: number;
 }
 
-
+export interface IClientPaymentData {
+  date: Date;
+  consumed: number;
+  paid: number;
+  balance: number;
+  type: string; // credit, debit
+  description: string;
+}

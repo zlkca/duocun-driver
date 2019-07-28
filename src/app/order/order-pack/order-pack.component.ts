@@ -68,9 +68,9 @@ export class OrderPackComponent implements OnInit, OnDestroy {
       self.clientBalanceSvc.find().pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
         this.clientBalances = cbs;
         self.assignmentSvc.find({ driverId: account.id }).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
-        self.assignments = xs;
-        self.reload(cbs);
-      });
+          self.assignments = xs;
+          self.reload(cbs);
+        });
       });
     });
 
@@ -123,32 +123,36 @@ export class OrderPackComponent implements OnInit, OnDestroy {
     const self = this;
     const os = [];
     const orderQuery = { delivered: this.dateRange, status: { $nin: ['bad', 'del'] } };
+    const transactionQuery = { type: 'credit', toId: this.account.id, created: this.dateRange };
 
-    this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
-      this.forms = {};
-
-      orders.map(order => {
-        const balance: IClientBalance = balances.find(x => x.clientId === order.clientId);
-        if (balance) {
-          order.balance = balance.amount;
-          order.receivable = (balance.amount > order.total) ? 0 : (order.total - balance.amount);
-        }
-
-        // only load order belongs to this driver
-        const assignment = this.assignments.find(x => x.orderId === order.id);
-        if (assignment) {
-          order.code = assignment.code;
-          order.paid = (order.status === 'paid');
-          this.forms[order.id] = this.fb.group({
-            received: [0]
-          });
-          os.push(order);
-        }
+    this.transactionSvc.find(transactionQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
+      this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
+        this.forms = {};
+        orders.map(order => {
+          const transaction = ts.find(t => t.orderId === order.id);
+          if (transaction) {
+            order.received = transaction.amount;
+          }
+          const balance: IClientBalance = balances.find(x => x.clientId === order.clientId);
+          if (balance) {
+            order.balance = balance.amount;
+            order.receivable = (balance.amount > order.total) ? 0 : (order.total - balance.amount);
+          }
+          // only load order belongs to this driver
+          const assignment = this.assignments.find(x => x.orderId === order.id);
+          if (assignment) {
+            order.code = assignment.code;
+            order.paid = (order.status === 'paid');
+            this.forms[order.id] = this.fb.group({
+              received: [0]
+            });
+            os.push(order);
+          }
+        });
+        self.orders = os;
+        self.ordersByMerchants = this.groupByMerchants(os);
+        // self.orders = orders.filter(order => self.assignments.find(x => x.orderId === order.id) );
       });
-
-      self.orders = os;
-      self.ordersByMerchants = this.groupByMerchants(os);
-      // self.orders = orders.filter(order => self.assignments.find(x => x.orderId === order.id) );
     });
   }
 

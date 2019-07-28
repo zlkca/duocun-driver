@@ -16,6 +16,9 @@ import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment
 import { MerchantBalanceService } from './merchant-balance.service';
 import { DriverSalaryPageComponent } from './driver-salary-page/driver-salary-page.component';
 import { OrderService } from '../order/order.service';
+import { RestaurantService } from '../restaurant/restaurant.service';
+import { ClientPaymentComponent } from './client-payment/client-payment.component';
+import { ClientPaymentPageComponent } from './client-payment-page/client-payment-page.component';
 
 @NgModule({
   imports: [
@@ -33,12 +36,15 @@ import { OrderService } from '../order/order.service';
   declarations: [
     MerchantPaymentPageComponent,
     DriverPaymentPageComponent,
-    DriverSalaryPageComponent
+    DriverSalaryPageComponent,
+    ClientPaymentComponent,
+    ClientPaymentPageComponent
   ],
   providers: [
     AccountService,
     MerchantBalanceService,
     OrderService,
+    RestaurantService
   ]
 })
 export class PaymentModule { }

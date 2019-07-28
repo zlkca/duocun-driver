@@ -37,23 +37,17 @@ export class FooterComponent implements OnInit, OnDestroy {
     private rx: NgRedux<IAppState>
   ) {
     const self = this;
-    this.rx.select('account').pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((account: Account) => {
+    this.rx.select('account').pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
       self.account = account;
     });
 
-    this.rx.select('location').pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((loc: ILocation) => {
+    this.rx.select('location').pipe(takeUntil(this.onDestroy$)).subscribe((loc: ILocation) => {
       self.location = loc;
     });
 
-    this.rx.select<string>('page').pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(x => {
+    // this.rx.select<string>('page').pipe(takeUntil(this.onDestroy$)).subscribe(x => {
 
-    });
+    // });
   }
 
   ngOnInit() {
@@ -121,6 +115,22 @@ export class FooterComponent implements OnInit, OnDestroy {
   toSalary() {
     if (this.account) {
       this.router.navigate(['payment/salary']);
+    } else {
+      this.router.navigate(['account/login']);
+    }
+  }
+
+  toPickup() {
+    if (this.account) {
+      this.router.navigate(['assignment/pickup']);
+    } else {
+      this.router.navigate(['account/login']);
+    }
+  }
+
+  toClient() {
+    if (this.account) {
+      this.router.navigate(['payment/client']);
     } else {
       this.router.navigate(['account/login']);
     }
