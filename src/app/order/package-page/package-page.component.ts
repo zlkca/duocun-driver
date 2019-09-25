@@ -42,7 +42,8 @@ export class PackagePageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+      self.account = account;
       if (account && account.roles) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {

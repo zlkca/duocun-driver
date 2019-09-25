@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AccountService } from '../../account/account.service';
 import { OrderService } from '../../order/order.service';
 import { SharedService } from '../../shared/shared.service';
 import { Order } from '../order.model';
 import { SocketService } from '../../shared/socket.service';
+import { Subject } from '../../../../node_modules/rxjs';
+import { takeUntil } from '../../../../node_modules/rxjs/operators';
 
 @Component({
   selector: 'app-order-history',
   templateUrl: './order-history.component.html',
   styleUrls: ['./order-history.component.scss']
 })
-export class OrderHistoryComponent implements OnInit {
-
+export class OrderHistoryComponent implements OnInit, OnDestroy {
+  private onDestroy$ = new Subject();
   account;
   restaurant;
   orders = [];
@@ -24,10 +26,13 @@ export class OrderHistoryComponent implements OnInit {
   ) {
 
   }
-
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
   ngOnInit() {
     const self = this;
-    this.accountSvc.getCurrent().subscribe(account => {
+    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
       if (account && account.id) {
         self.reload(account.id);
@@ -60,7 +65,7 @@ export class OrderHistoryComponent implements OnInit {
 
   reload(clientId) {
     const self = this;
-    self.orderSvc.find({ clientId: clientId, status: { $ne: 'del' } }).subscribe(orders => {
+    self.orderSvc.find({ clientId: clientId, status: { $nin: ['del', 'bad', 'tmp'] } }).subscribe(orders => {
       orders.sort((a: Order, b: Order) => {
         if (this.sharedSvc.compareDateTime(a.created, b.created)) {
           return -1;

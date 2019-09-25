@@ -70,13 +70,13 @@ export class AccountService extends EntityService {
   }
 
   getCurrent(forceGet: boolean = false): Observable<Account> {
-    const self = this;
-    const state: any = this.ngRedux.getState();
-    if (!state || !state.account || !state.account.id || forceGet) {
+    // const self = this;
+    // const state: any = this.ngRedux.getState();
+    // if (!state || !state.account || !state.account.id || forceGet) {
       return this.getCurrentUser();
-    } else {
-      return this.ngRedux.select<Account>('account');
-    }
+    // } else {
+    //   return this.ngRedux.select<Account>('account');
+    // }
   }
 
   // getWechatAccessToken(authCode: string) {

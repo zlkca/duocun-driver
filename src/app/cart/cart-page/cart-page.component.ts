@@ -52,16 +52,11 @@ export class CartPageComponent implements OnInit, OnDestroy {
         });
       });
 
-    this.accountServ.getCurrent().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((acc: Account) => {
-        console.log(acc);
-        this.account = acc;
-      });
+    this.accountServ.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((acc: Account) => {
+      console.log(acc);
+      this.account = acc;
+    });
   }
-
-
-
 
   addToCart(item: ICartItem) {
     this.rx.dispatch({

@@ -48,7 +48,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
   ) {
     const self = this;
-    self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       this.account = account;
       if (account && account.roles) {
         const roles = account.roles;
@@ -114,7 +114,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     const merchant = this.merchants.find(m => m.merchantId === merchantId);
     const debitQuery = { type: 'debit', toId: merchantId };
     this.transactionSvc.find(debitQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
-      const orderQuery = {merchantId: merchantId, status: {$ne: 'del'}};
+      const orderQuery = {merchantId: merchantId, status: {$nin: ['del', 'tmp']}};
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         const receivables = this.groupBy(orders, 'delivered');
         const payments: IMerchantPaymentData[] = [];

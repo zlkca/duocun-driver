@@ -10,6 +10,7 @@ import { Order, IOrder } from '../order.model';
 import { AccountService } from '../../account/account.service';
 import { AssignmentService } from '../../assignment/assignment.service';
 import { IAssignment } from '../../assignment/assignment.model';
+import { AccountActions } from '../../account/account.actions';
 @Component({
   selector: 'app-map-page',
   templateUrl: './map-page.component.html',
@@ -43,8 +44,9 @@ export class MapPageComponent implements OnInit, OnDestroy {
     const self = this;
     this.dateRange = this.getDateRange();
 
-    self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
       self.account = account;
+      // self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
       self.assignmentSvc.find({ driverId: account.id, delivered: self.dateRange }).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
         self.assignments = xs;
         self.reload(xs);
@@ -64,7 +66,7 @@ export class MapPageComponent implements OnInit, OnDestroy {
       green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
       red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
     };
-    self.orderSvc.find({ delivered: self.dateRange, status: { $ne: 'del' } }).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
+    self.orderSvc.find({ delivered: self.dateRange, status: { $nin: ['del', 'bad', 'tmp'] } }).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
       self.orders = orders;
       const places = [];
       orders.map((order: IOrder) => {

@@ -8,6 +8,8 @@ import { takeUntil } from '../../../node_modules/rxjs/operators';
 import { Subject } from '../../../node_modules/rxjs';
 import { IMall } from '../mall/mall.model';
 import { ILocation } from '../location/location.model';
+import { AccountService } from '../account/account.service';
+// import { AccountService } from '../account/account.service';
 
 @Component({
   selector: 'app-footer',
@@ -34,10 +36,14 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private accountSvc: AccountService,
     private rx: NgRedux<IAppState>
   ) {
     const self = this;
-    this.rx.select('account').pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
+    // this.rx.select('account').pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
+    //   self.account = account;
+    // });
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
     });
 
@@ -51,6 +57,10 @@ export class FooterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const self = this;
+    // self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    //   self.account = account;
+    // });
   }
 
   ngOnDestroy() {

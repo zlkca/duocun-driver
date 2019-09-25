@@ -62,7 +62,7 @@ export class OrderSummaryComponent implements OnInit, OnChanges, OnDestroy {
 
   reload(merchantId: string) {
     const self = this;
-    const q = {merchantId: merchantId, delivered: self.dateRange, status: { $ne: 'del' } };
+    const q = { merchantId: merchantId, delivered: self.dateRange, status: { $nin: ['del', 'bad', 'tmp'] } };
     self.orderSvc.find(q).pipe(takeUntil(self.onDestroy$)).subscribe(orders => {
       const list = [];
       const ordersWithNote = [];
@@ -100,5 +100,13 @@ export class OrderSummaryComponent implements OnInit, OnChanges, OnDestroy {
 
   toDateTimeString(s) {
     return s ? this.sharedSvc.toDateTimeString(s) : '';
+  }
+
+  takeTask() {
+
+  }
+
+  rejectTask() {
+
   }
 }

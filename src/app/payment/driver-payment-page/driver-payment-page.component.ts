@@ -35,7 +35,7 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       this.account = account;
       if (account && account.roles) {
         const roles = account.roles;

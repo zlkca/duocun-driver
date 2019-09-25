@@ -22,7 +22,8 @@
                   </div>
                 </div>
                 <div class="col-2 status-col red" *ngIf="!order.paid">未送</div>
-                <div class="col-2 status-col green" *ngIf="order.paid">已送</div>
+                <div class="col-2 status-col green" *ngIf="order.paid && order.paymentMethod !== 'prepaid' && order.paymentMethod !== 'card' && order.paymentMethod !== 'WECHATPAY'">已送</div>
+                <div class="col-2 status-col green" *ngIf="order.paid && (order.paymentMethod === 'prepaid' || order.paymentMethod === 'card' || order.paymentMethod === 'WECHATPAY')">已付款</div>
                 <div class="col-2 quantity-col">x {{getQuantity(order)}}件</div>
               </div>
           </mat-panel-title>
@@ -72,10 +73,10 @@
           </div>
           <div class="row receivables-row">
               <div class="col-5 left-col">
-                <div class="row balance-col">
+                <!-- <div class="row balance-col">
                   <span>往日余额</span>:&nbsp;
                   <span>${{order.balance | number : '1.2-2'}}</span>
-                </div>
+                </div> -->
                 <div class="row total-col">
                   <span>今天订单</span>:&nbsp;
                   <span>${{order.total | number : '1.2-2'}}</span>

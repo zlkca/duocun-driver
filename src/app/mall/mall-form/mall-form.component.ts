@@ -185,7 +185,7 @@ export class MallFormComponent implements OnInit {
 //     //     (err:any) => {
 //     //     });
 
-//     this.accountSvc.getCurrent().subscribe((acc: Account) => {
+//     this.accountSvc.getCurrentUser().subscribe((acc: Account) => {
 //       this.currentAccount = acc;
 //       if (acc.type === 'super') {
 //         self.accountSvc.find({ where: { type: 'business' } }).subscribe(users => {

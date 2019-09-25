@@ -1,15 +1,15 @@
-<!-- <div class="row">
-  <div class="btn btn-primary" (click)="updateBalances()">Update All Balances</div>
-</div>
-   -->
-<mat-form-field>
-  <mat-label><span i18n="@@Client">Client</span></mat-label>
-  <mat-select [(value)]="selectedClient" (selectionChange)="onClientSelectionChanged($event)">
-    <mat-option *ngFor="let r of clients" [value]="r.clientId">
-      {{r.clientName}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+
+<form class="client-form">
+  <mat-form-field class="client-field">
+    <mat-label><span i18n="@@Client">Client</span></mat-label>
+    <input type="text" placeholder="Pick one" aria-label="Number" matInput [formControl]="clientCtrl" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+      <mat-option *ngFor="let r of filteredOptions | async" [value]="r">
+        {{r.accountName}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</form>
 
 <div class="payment-table-container mat-elevation-z8" *ngIf="dataSource">
   <table mat-table [dataSource]="dataSource" matSort>

@@ -54,8 +54,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       if (account) {
+        self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
         self.loginSuccessHandler(account);
       } else { // not login
         self.router.navigate(['account/login']);
@@ -70,7 +71,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   //   self.route.queryParamMap.pipe(takeUntil(this.onDestroy$)).subscribe(queryParams => {
   //     const code = queryParams.get('code');
 
-  //     self.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+  //     self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
   //       if (account) {
   //         self.loginSuccessHandler(account);
   //       } else { // not login

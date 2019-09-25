@@ -18,6 +18,7 @@ import { HttpClientModule } from '../../node_modules/@angular/common/http';
 import { EntityService } from './entity.service';
 import { createStore } from '../../node_modules/redux';
 import { GestureConfig } from '../../node_modules/@angular/material';
+import { AccountService } from './account/account.service';
 
 
 const appRoutes: Routes = [
@@ -98,8 +99,10 @@ const appRoutes: Routes = [
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent],
-    providers: [EntityService,
+    providers: [
+      EntityService,
       AuthService,
+      AccountService,
       {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig}
     ],
 

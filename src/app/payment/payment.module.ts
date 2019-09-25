@@ -10,7 +10,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AccountService } from '../account/account.service';
 import { DriverPaymentPageComponent } from './driver-payment-page/driver-payment-page.component';
 import { MerchantBalanceService } from './merchant-balance.service';
@@ -19,6 +20,7 @@ import { OrderService } from '../order/order.service';
 import { RestaurantService } from '../restaurant/restaurant.service';
 import { ClientPaymentComponent } from './client-payment/client-payment.component';
 import { ClientPaymentPageComponent } from './client-payment-page/client-payment-page.component';
+import { ClientBalanceService } from './client-balance.service';
 
 @NgModule({
   imports: [
@@ -32,6 +34,8 @@ import { ClientPaymentPageComponent } from './client-payment-page/client-payment
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
+    MatInputModule,
+    MatAutocompleteModule,
   ],
   declarations: [
     MerchantPaymentPageComponent,
@@ -44,7 +48,8 @@ import { ClientPaymentPageComponent } from './client-payment-page/client-payment
     AccountService,
     MerchantBalanceService,
     OrderService,
-    RestaurantService
+    RestaurantService,
+    ClientBalanceService
   ]
 })
 export class PaymentModule { }
