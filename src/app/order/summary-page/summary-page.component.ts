@@ -50,14 +50,11 @@ export class SummaryPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrentUser().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(account => {
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+      if (account) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.restaurantSvc.find().pipe(
-            takeUntil(this.onDestroy$)
-          ).subscribe((rs: IRestaurant[]) => {
+          self.restaurantSvc.find().pipe(takeUntil(this.onDestroy$)).subscribe((rs: IRestaurant[]) => {
             if (rs && rs.length > 0) {
               self.restaurant = rs[0];
             } else {
@@ -67,6 +64,9 @@ export class SummaryPageComponent implements OnInit, OnDestroy {
         } else {
 
         }
+      } else {
+
+      }
     });
 
     // this.socketSvc.on('updateOrders', x => {

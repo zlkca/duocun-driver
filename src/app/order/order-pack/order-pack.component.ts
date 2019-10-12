@@ -118,7 +118,7 @@ export class OrderPackComponent implements OnInit, OnDestroy {
     orders.map(order => {
       const item = groupedByMerchants.find(m => m.merchantId === order.merchantId);
       if (!item) {
-        groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, orders: [order] });
+        groupedByMerchants.push({ merchantId: order.merchant._id, merchantName: order.merchantName, orders: [order] });
       } else {
         item.orders.push(order);
       }
@@ -144,11 +144,11 @@ export class OrderPackComponent implements OnInit, OnDestroy {
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         this.forms = {};
         orders.map(order => {
-          // update order finance data
           const transaction = ts.find(t => t.orderId === order.id);
           if (transaction) {
             order.received = transaction.amount;
           }
+
           const balance: IClientBalance = balances.find(x => x.accountId === order.clientId);
           if (balance) {
             order.balance = balance.amount; // new balance

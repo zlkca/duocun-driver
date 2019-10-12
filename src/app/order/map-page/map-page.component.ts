@@ -31,23 +31,25 @@ export class MapPageComponent implements OnInit, OnDestroy {
     private accountSvc: AccountService,
     private assignmentSvc: AssignmentService
   ) {
-    this.rx.select<ILocation>('location').pipe(takeUntil(this.onDestroy$)).subscribe(loc => {
-      if (loc) {
-        this.currLocation = loc;
-      } else {
+    // this.rx.select<ILocation>('location').pipe(takeUntil(this.onDestroy$)).subscribe(loc => {
+    //   if (loc) {
+    //     this.currLocation = loc;
+    //   } else {
         this.currLocation = { lat: 43.8461479, lng: -79.37935279999999 };
-      }
-    });
+    //   }
+    // });
   }
 
   ngOnInit() {
     const self = this;
     this.dateRange = this.getDateRange();
 
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
+    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
       self.account = account;
       // self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
-      self.assignmentSvc.find({ driverId: account.id, delivered: self.dateRange }).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
+      const dt = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
+      const q = { driverId: account.id, delivered: dt.toISOString() };
+      self.assignmentSvc.find(q).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
         self.assignments = xs;
         self.reload(xs);
       });
@@ -66,7 +68,9 @@ export class MapPageComponent implements OnInit, OnDestroy {
       green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
       red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
     };
-    self.orderSvc.find({ delivered: self.dateRange, status: { $nin: ['del', 'bad', 'tmp'] } }).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
+    const dt = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
+    const q = { delivered: dt.toISOString(), status: { $nin: ['del', 'bad', 'tmp'] } };
+    self.orderSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
       self.orders = orders;
       const places = [];
       orders.map((order: IOrder) => {

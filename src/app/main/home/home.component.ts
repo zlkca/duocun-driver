@@ -15,6 +15,9 @@ import { AccountActions } from '../../account/account.actions';
 import { Account, Role } from '../../account/account.model';
 import { ILocationAction } from '../../location/location.reducer';
 import { LocationActions } from '../../location/location.actions';
+import { AssignmentService } from '../../assignment/assignment.service';
+// import { MomentDateAdapter } from '../../../../node_modules/@angular/material-moment-adapter';
+import * as moment from 'moment';
 
 const APP = environment.APP;
 
@@ -44,6 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private accountSvc: AccountService,
+    private assignmentSvc: AssignmentService,
     private locationSvc: LocationService,
     private authSvc: AuthService,
     private router: Router,
@@ -55,8 +59,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const self = this;
     self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+      self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
       if (account) {
-        self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
         self.loginSuccessHandler(account);
       } else { // not login
         self.router.navigate(['account/login']);
@@ -66,56 +70,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ngOnInit() {
-  //   const self = this;
-  //   self.route.queryParamMap.pipe(takeUntil(this.onDestroy$)).subscribe(queryParams => {
-  //     const code = queryParams.get('code');
-
-  //     self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
-  //       if (account) {
-  //         self.loginSuccessHandler(account);
-  //       } else { // not login
-  //         if (code) { // try wechat login
-  //           this.accountSvc.wechatLogin(code).pipe(
-  //             takeUntil(this.onDestroy$)
-  //           ).subscribe((data: any) => {
-  //             if (data) {
-  //               self.authSvc.setUserId(data.userId);
-  //               self.authSvc.setAccessToken(data.id);
-  //               self.accountSvc.getCurrentUser().pipe(
-  //                 takeUntil(this.onDestroy$)
-  //               ).subscribe((acc: Account) => {
-  //                 if (acc) {
-  //                   self.account = acc;
-  //                   self.loginSuccessHandler(acc);
-  //                 } else {
-  //                   this.router.navigate(['account/setting']);
-  //                   // this.snackBar.open('', '微信登录失败。', {
-  //                   //   duration: 1000
-  //                   // });
-  //                 }
-  //               });
-  //             } else { // failed from shared link login
-  //               // tslint:disable-next-line:max-line-length
-  //               window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0591bdd165898739&redirect_uri=https://duocun.com.cn&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect';
-  //             }
-  //           });
-  //         } else { // no code in router
-  //           this.router.navigate(['account/setting']);
-  //         }
-  //       }
-  //     }, err => {
-  //       console.log('login failed');
-  //     });
-  //   });
-  // }
-
   loginSuccessHandler(account: Account) {
-    this.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
-
     const roles = account.roles;
-    if (roles && roles.length > 0 && roles.indexOf(Role.MERCHANT_ADMIN) !== -1) {
-      this.router.navigate(['order/package']);
+    if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
+      // const todayStart = moment().startOf('day').toDate();
+      // const todayEnd = moment().endOf('day').toDate();
+      // const q = { $lt: todayEnd, $gt: todayStart };
+      // this.assignmentSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
+        this.router.navigate(['order/package']);
+      // });
     } else { // not authorized for opreration merchant
       this.router.navigate(['account/setting'], { queryParams: { merchant: false } });
     }
@@ -156,9 +119,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         payload: r
       });
     },
-    err => {
-      console.log(err);
-    });
+      err => {
+        console.log(err);
+      });
   }
 
   ngOnDestroy() {

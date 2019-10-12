@@ -68,9 +68,16 @@ export class FooterComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  getColor(menu) {
+    return (this.selected === menu) ? '#4285F4' : 'black';
+    // .fill{
+    //   color: '#F4B400'; // '#0F9D58' // green
+    // }
+  }
+
   toHome() {
     if (this.account) {
-      this.router.navigate(['order/package']);
+      this.router.navigate(['order/home']);
     } else {
       this.router.navigate(['account/login']);
     }

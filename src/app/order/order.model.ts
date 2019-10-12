@@ -1,12 +1,14 @@
 import { Product } from '../product/product.model';
 // import { Picture } from '../picture.model';
-import { Address } from '../entity.model';
+import { Address, IMerchant } from '../entity.model';
 import { Restaurant } from '../restaurant/restaurant.model';
 import { ILocation } from '../location/location.model';
+import { IContact } from '../contact/contact.model';
 
 
 
 export interface IOrder {
+  _id?: string;
   id?: string;
   code?: string;
   clientId?: string;
@@ -35,6 +37,9 @@ export interface IOrder {
   received?: number; // 2019-05-29
   balance?: number;
   receivable?: number;
+
+  merchant?: IMerchant;
+  client?: IContact;
 }
 
 export class Order implements IOrder {
