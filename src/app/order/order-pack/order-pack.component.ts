@@ -31,7 +31,7 @@ import { Router } from '../../../../node_modules/@angular/router';
 })
 export class OrderPackComponent implements OnInit, OnDestroy {
   @Input() restaurant: IRestaurant;
-  @Input() dateRange; // { $lt: todayEnd, $gt: todayStart }
+  @Input() delivered; // moment object
   @Input() account: IAccount;
 
   orders: IOrder[] = [];
@@ -65,7 +65,7 @@ export class OrderPackComponent implements OnInit, OnDestroy {
     if (this.account) {
       const query = {
         driverId: this.account.id,
-        delivered: this.dateRange
+        delivered: this.delivered.toISOString()
       };
 
       this.assignmentSvc.find(query).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
@@ -137,8 +137,8 @@ export class OrderPackComponent implements OnInit, OnDestroy {
   reload(balances: IClientBalance[]) {
     const self = this;
     const os = [];
-    const orderQuery = { delivered: this.dateRange, status: { $nin: ['del', 'bad', 'tmp'] } };
-    const transactionQuery = { created: this.dateRange, type: 'credit', toId: this.account.id };
+    const orderQuery = { delivered: this.delivered.toISOString(), status: { $nin: ['del', 'bad', 'tmp'] } };
+    const transactionQuery = { created: this.delivered.toISOString(), type: 'credit', toId: this.account.id };
 
     this.transactionSvc.find(transactionQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {

@@ -31,6 +31,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   tax = 0;
   location: ILocation;
   bHide = false;
+  selected;
 
   private onDestroy$ = new Subject<void>();
 
@@ -40,10 +41,7 @@ export class FooterComponent implements OnInit, OnDestroy {
     private rx: NgRedux<IAppState>
   ) {
     const self = this;
-    // this.rx.select('account').pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
-    //   self.account = account;
-    // });
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    this.rx.select('account').pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
       self.account = account;
     });
 
@@ -76,6 +74,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   }
 
   toHome() {
+    this.selected = 'home';
     if (this.account) {
       this.router.navigate(['order/home']);
     } else {
@@ -84,6 +83,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   }
 
   toPack() {
+    this.selected = 'pack';
     if (this.account) {
       this.router.navigate(['order/package']);
     } else {
@@ -92,6 +92,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   }
 
   toMap() {
+    this.selected = 'map';
     if (this.account) {
       this.router.navigate(['order/map']);
     } else {
@@ -100,6 +101,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   }
 
   toAccount() {
+    this.selected = 'account';
     const account = this.account;
     if (account) {
       const roles = account.roles;
@@ -122,6 +124,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   }
 
   toMerchant() {
+    this.selected = 'merchant';
     if (this.account) {
       this.router.navigate(['payment/merchant']);
     } else {
@@ -146,6 +149,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   }
 
   toClient() {
+    this.selected = 'client';
     if (this.account) {
       this.router.navigate(['payment/client']);
     } else {

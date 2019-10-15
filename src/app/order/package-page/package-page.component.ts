@@ -18,12 +18,13 @@ import * as moment from 'moment';
 export class PackagePageComponent implements OnInit, OnDestroy {
 
   account: IAccount;
-  range;
+  // range;
   now;
   lunchEnd;
-  deliverTime;
+  deliverTime; // Display purpose
   onDestroy$ = new Subject();
   restaurant: IRestaurant;
+  delivered; // moment object
 
   constructor(
     private restaurantSvc: RestaurantService,
@@ -32,12 +33,12 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
   ) {
-      this.deliverTime = moment().startOf('day').set({ hour: 11, minute: 45, second: 0, millisecond: 0 })
-        .format('YYYY-MM-DD HH:mm:ss');
-
-      const todayStart = moment().startOf('day').toDate();
-      const todayEnd = moment().endOf('day').toDate();
-      this.range = { $lt: todayEnd, $gt: todayStart };
+    const delivered = moment().startOf('day').set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
+    this.deliverTime = delivered.format('YYYY-MM-DD HH:mm:ss');
+    this.delivered = delivered;
+    // const todayStart = moment().startOf('day').toDate();
+    // const todayEnd = moment().endOf('day').toDate();
+    // this.range = { $lt: todayEnd, $gt: todayStart };
   }
 
   ngOnInit() {
