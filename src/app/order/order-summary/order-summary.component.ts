@@ -35,7 +35,7 @@ export class OrderSummaryComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     const self = this;
     if (this.restaurant) {
-      self.reload(this.restaurant.id);
+      self.reload(this.restaurant._id);
     } else {
       self.orders = [];
     }
@@ -90,7 +90,7 @@ export class OrderSummaryComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(v) {
     if (v.restaurant && v.restaurant.currentValue) {
       const restaurant = v.restaurant.currentValue;
-      this.reload(restaurant.id);
+      this.reload(restaurant._id);
     }
   }
 

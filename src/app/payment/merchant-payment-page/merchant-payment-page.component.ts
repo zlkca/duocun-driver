@@ -94,7 +94,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     this.restaurantSvc.find({ status: 'active' }).pipe(takeUntil(this.onDestroy$)).subscribe(rs => {
       const ms = [];
       rs.map(r => {
-          ms.push({ merchantId: r.id, merchantName: r.name });
+          ms.push({ merchantId: r._id, merchantName: r.name });
       });
       this.merchants = ms;
     });

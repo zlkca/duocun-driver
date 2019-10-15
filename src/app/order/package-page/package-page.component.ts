@@ -33,7 +33,7 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
   ) {
-    const delivered = moment().startOf('day').set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
+    const delivered = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
     this.deliverTime = delivered.format('YYYY-MM-DD HH:mm:ss');
     this.delivered = delivered;
     // const todayStart = moment().startOf('day').toDate();

@@ -18,7 +18,7 @@
                   </div>
                   <div class="row client-col">
                       <div class="col-3" i18n="@@Client">Client</div>
-                      <div class="col-9">{{order.clientName}}</div>
+                      <div class="col-9">{{order.client.username}}</div>
                   </div>
                 </div>
                 <div class="col-2 status-col red" *ngIf="!order.paid">未送</div>
@@ -36,7 +36,7 @@
             </div> -->
             <div class="row merchant-col">
               <div class="col-3" i18n="@@Merchant">Merchant</div>
-              <div class="col-9">{{order.merchantName}}</div>
+              <div class="col-9">{{order.merchant.name}}</div>
             </div>
             <!-- <div class="row client-row">
               <div class="col-3" i18n="@@Client">Client</div>
@@ -45,9 +45,9 @@
             <div class="row phonenum-row">
               <div class="col-3" i18n="@@ClientPhoneNumber">Client Phone Number</div>
               <div class="col-9">
-                <span>{{order.clientPhoneNumber}}</span>&nbsp;
+                <span>{{order.client.phone}}</span>&nbsp;
                 <span style="white-space:pre"></span>
-                <a style="font-size:14px;" [href]="'tel:' + order.clientPhoneNumber" i18n="@@Call">Call</a>
+                <a style="font-size:14px;" [href]="'tel:' + order.client.phone" i18n="@@Call">Call</a>
               </div>
             </div>
             <div class="row address-row">
@@ -59,9 +59,9 @@
               <div class="col-9">{{order.note}}</div>
             </div>
             <div class="row product-block">
-              <div class="col-9">
+              <div class="col-9" *ngIf="order.items && order.items.length > 0">
                 <div *ngFor="let item of order.items" class="text-sm row">
-                  <div class="col-6 product-col">{{item.productName}}</div>
+                  <div class="col-6 product-col">{{item.product.name}}</div>
                   <div class="col-3 quantity-col">x{{item.quantity}}</div>
                   <!-- <div class="col-3 price-col">${{item.price * item.quantity | number : '1.2-2'}}</div> -->
                 </div>
@@ -87,7 +87,7 @@
                 </div>
               </div>
               <div class="col-7 right-col">
-                <form [formGroup]="forms[order.id]" class="received-form">
+                <form [formGroup]="forms[order._id]" class="received-form">
                   <div class="row received-block">
                     <div class="label">
                       <span i18n="@@Received">Received</span>:&nbsp;

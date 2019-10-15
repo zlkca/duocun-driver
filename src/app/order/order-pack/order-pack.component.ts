@@ -137,14 +137,19 @@ export class OrderPackComponent implements OnInit, OnDestroy {
   reload(balances: IClientBalance[]) {
     const self = this;
     const os = [];
+
+    const tStart = moment(this.delivered).startOf('day').toDate();
+    const tEnd = moment(this.delivered).endOf('day').toDate();
+    const range = { $lt: tEnd, $gt: tStart };
+
     const orderQuery = { delivered: this.delivered.toISOString(), status: { $nin: ['del', 'bad', 'tmp'] } };
-    const transactionQuery = { created: this.delivered.toISOString(), type: 'credit', toId: this.account.id };
+    const transactionQuery = { created: range, type: 'credit', toId: this.account.id };
 
     this.transactionSvc.find(transactionQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         this.forms = {};
         orders.map(order => {
-          const transaction = ts.find(t => t.orderId === order.id);
+          const transaction = ts.find(t => t.orderId === order._id);
           if (transaction) {
             order.received = transaction.amount;
           }
@@ -159,11 +164,11 @@ export class OrderPackComponent implements OnInit, OnDestroy {
             }
           }
           // only load order belongs to this driver
-          const assignment = this.assignments.find(x => x.orderId === order.id);
+          const assignment = this.assignments.find(x => x.orderId === order._id);
           if (assignment) {
             order.code = assignment.code;
             order.paid = (order.status === 'paid');
-            this.forms[order.id] = this.fb.group({
+            this.forms[order._id] = this.fb.group({
               received: [0]
             });
             os.push(order);
@@ -171,7 +176,6 @@ export class OrderPackComponent implements OnInit, OnDestroy {
         });
         self.orders = os;
         self.ordersByMerchants = this.groupByMerchants(os);
-        // self.orders = orders.filter(order => self.assignments.find(x => x.orderId === order.id) );
       });
     });
   }
@@ -238,8 +242,8 @@ export class OrderPackComponent implements OnInit, OnDestroy {
       driverName: this.account.username,
       receivable: order.receivable
     };
-    const received = Math.round(+this.forms[order.id].get('received').value * 100) / 100;
-    this.orderSvc.update({ id: order.id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
+    const received = Math.round(+this.forms[order._id].get('received').value * 100) / 100;
+    this.orderSvc.update({ id: order._id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
       if (x && x.ok) {
         self.snackBar.open('', '已更新客户' + order.clientName + '的订单', { duration: 1500 });
         self.saveTransaction(received, order, (r) => {
@@ -260,32 +264,32 @@ export class OrderPackComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.savePayment(received, order);
+    // this.savePayment(received, order);
   }
 
 
-  savePayment(received: number, order: IOrder) {
-    const clientPayment: IClientPayment = {
-      orderId: order.id,
-      clientId: order.clientId,
-      clientName: order.clientName,
-      driverId: this.account.id,
-      driverName: this.account.username,
-      amount: received,
-      type: 'credit',
-      delivered: order.delivered,
-      created: new Date(),
-      modified: new Date(),
-    };
+  // savePayment(received: number, order: IOrder) {
+  //   const clientPayment: IClientPayment = {
+  //     orderId: order._id,
+  //     clientId: order.clientId,
+  //     clientName: order.clientName,
+  //     driverId: this.account.id,
+  //     driverName: this.account.username,
+  //     amount: received,
+  //     type: 'credit',
+  //     delivered: order.delivered,
+  //     created: new Date(),
+  //     modified: new Date(),
+  //   };
 
-    this.clientPaymentSvc.save(clientPayment).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
-      this.snackBar.open('', '已保存客户的付款', { duration: 2300 });
-    });
-  }
+  //   this.clientPaymentSvc.save(clientPayment).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
+  //     this.snackBar.open('', '已保存客户的付款', { duration: 2300 });
+  //   });
+  // }
 
   saveTransaction(received: number, order: IOrder, cb?: any) {
     const tr: ITransaction = {
-      orderId: order.id,
+      orderId: order._id,
       fromId: order.clientId,
       fromName: order.clientName,
       toId: this.account.id,

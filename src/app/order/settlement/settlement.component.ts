@@ -35,7 +35,7 @@ export class SettlementComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     const self = this;
     if (this.restaurant) {
-      self.reload(this.restaurant.id);
+      self.reload(this.restaurant._id);
     } else {
       self.list = [];
     }
@@ -63,7 +63,7 @@ export class SettlementComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(v) {
     if (v.restaurant && v.restaurant.currentValue) {
       const restaurant = v.restaurant.currentValue;
-      this.reload(restaurant.id);
+      this.reload(restaurant._id);
     }
   }
 
@@ -95,7 +95,7 @@ export class SettlementComponent implements OnInit, OnChanges, OnDestroy {
         takeUntil(self.onDestroy$)
       ).subscribe((products: IProduct[]) => {
         self.list.map( it => {
-          const p = products.find(x => x.id === it.productId);
+          const p = products.find(x => x._id === it.productId);
           if (p) {
             it.cost = p.cost;
             it.total = it.cost * it.quantity;

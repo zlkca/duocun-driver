@@ -6,7 +6,7 @@ import { Order } from '../order/order.model';
 
 
 export interface IRestaurant {
-  id?: string;
+  _id?: string;
   name: string;
   description?: string;
   location?: GeoPoint;
@@ -31,7 +31,7 @@ export interface IRestaurant {
 
 // For database
 export class Restaurant implements IRestaurant {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   location: GeoPoint;
