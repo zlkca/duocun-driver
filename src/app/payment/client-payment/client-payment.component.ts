@@ -59,18 +59,7 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
       this.account = account;
       if (account && account.roles) {
         const roles = account.roles;
-        if (roles && roles.length > 0 && roles.indexOf(Role.SUPER) !== -1) {
-          // method 1 --- too slow
-          // this.transactionSvc.find({ type: 'credit' }).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
-          //   const clients = [];
-          //   ts.map(t => {
-          //     const client = clients.find(c => c.clientId === t.fromId);
-          //     if (!client) {
-          //       clients.push({ clientId: t.fromId, clientName: t.fromName });
-          //     }
-          //   });
-          //   this.clients = clients;
-          // });
+        // if (roles && roles.length > 0 && roles.indexOf(Role.SUPER) !== -1) {
           this.clientBalanceSvc.find().pipe(takeUntil(this.onDestroy$)).subscribe((cs: IClientBalance[]) => {
             this.clients = cs;
             this.filteredOptions = this.clientCtrl.valueChanges
@@ -79,7 +68,7 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
                 map((accountName: string) => accountName ? this._filter(accountName) : this.clients.slice())
               );
           });
-        }
+        // }
       } else {
 
       }
@@ -95,7 +84,7 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
     if (v) {
       const filterValue = typeof v === 'string' ? v.toLowerCase() : v.accountName.toLowerCase();
 
-      return this.clients.filter(option => option.accountName.toLowerCase().indexOf(filterValue) === 0);
+      return this.clients.filter(option => option.accountName && option.accountName.toLowerCase().indexOf(filterValue) !== -1);
     } else {
       return [];
     }

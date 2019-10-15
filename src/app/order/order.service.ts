@@ -23,7 +23,7 @@ export class OrderService extends EntityService {
   getCost(order: IOrder) {
     let total = 0;
     order.items.map((item: IOrderItem) => {
-      total += item.cost * item.quantity;
+      total += item.product.cost * item.quantity;
     });
     return total;
   }

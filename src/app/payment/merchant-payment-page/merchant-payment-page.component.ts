@@ -131,7 +131,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
         ts.map(t => {
           payments.push({
             date: t.created, receivable: 0, paid: t.amount, balance: 0, type: 'debit',
-            merchantId: t.toId, merchantName: t.toName, driverName: t.fromName
+            merchantId: t.toId, merchantName: t.to.username, driverName: t.from.username
           });
         });
 
