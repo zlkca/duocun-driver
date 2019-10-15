@@ -74,11 +74,11 @@ export class MapPageComponent implements OnInit, OnDestroy {
       self.orders = orders;
       const places = [];
       orders.map((order: IOrder) => {
-        const assignment = assignments.find(a => a.orderId === order.id);
+        const assignment = assignments.find(a => a.orderId === order._id);
         // paid will be green and will not be able to navigate
         if (assignment) {
           const icon = order.status === 'paid' ? icons['green'] : icons['red'];
-          places.push({ icon: icon, name: order.clientName, status: order.status, ...order.location });
+          places.push({ icon: icon, name: order.client.username, status: order.status, ...order.location });
         }
       });
       self.places = places;
