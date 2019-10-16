@@ -147,7 +147,7 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
             modified: order.modified
           };
           list.push({
-            date: t.created, description: 'From ' + order.merchantName, type: t.type, paid: 0,
+            date: t.created, description: 'From ' + order.merchant.name, type: t.type, paid: 0,
             consumed: t.amount, balance: 0
           });
         });

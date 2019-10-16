@@ -118,7 +118,7 @@ export class OrderPackComponent implements OnInit, OnDestroy {
     orders.map(order => {
       const item = groupedByMerchants.find(m => m.merchantId === order.merchantId);
       if (!item) {
-        groupedByMerchants.push({ merchantId: order.merchant._id, merchantName: order.merchantName, orders: [order] });
+        groupedByMerchants.push({ merchantId: order.merchant._id, merchantName: order.merchant.name, orders: [order] });
       } else {
         item.orders.push(order);
       }

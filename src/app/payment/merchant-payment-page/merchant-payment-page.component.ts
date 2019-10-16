@@ -75,7 +75,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     const t: ITransaction = {
       fromId: this.account.id,
       fromName: this.account.username,
-      toId: this.merchant.merchantId,
+      toId: this.merchant.merchantId, // should be an account type
       toName: this.merchant.merchantName,
       amount: amount,
       type: 'debit',
