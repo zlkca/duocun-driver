@@ -19,12 +19,4 @@ export class OrderService extends EntityService {
     super(authSvc, http);
     this.url = super.getBaseUrl() + 'Orders';
   }
-
-  getCost(order: IOrder) {
-    let total = 0;
-    order.items.map((item: IOrderItem) => {
-      total += item.product.cost * item.quantity;
-    });
-    return total;
-  }
 }

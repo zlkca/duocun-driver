@@ -121,7 +121,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
         Object.keys(receivables).map(date => {
           const os = receivables[date];
           let amount = 0;
-          os.map(order => { amount += this.orderSvc.getCost(order); });
+          os.map(order => { amount += order.cost; });
           payments.push({
             date: date, receivable: amount, paid: 0, balance: 0, type: 'credit',
             merchantId: merchantId, merchantName: merchant.merchantName, driverName: ''
