@@ -188,6 +188,4 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     this.merchant = this.merchants.find(m => m.merchantId === merchantId);
     this.reload(merchantId);
   }
-
-
 }

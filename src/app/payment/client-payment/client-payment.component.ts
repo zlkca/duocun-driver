@@ -102,16 +102,11 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
 
   reload(clientId: string) {
     const orderQuery = { clientId: clientId, status: { $nin: ['del', 'bad', 'tmp'] } };
-    this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((os: IOrder[]) => {
+    this.orderSvc.quickFind(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((os: IOrder[]) => {
       this.transactionSvc.find({ type: 'credit', fromId: clientId }).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
         let list = [];
         let balance = 0;
-        // ts.map(t => {
-        //   list.push({
-        //     date: t.created, description: 'To ' + t.toName, type: t.type, paid: t.amount,
-        //     consumed: 0, balance: 0
-        //   });
-        // });
+
         const payments = ts.filter(t => t.type === 'credit' && t.fromId === clientId);
         const tOuts = ts.filter(t => t.type === 'transfer' && t.fromId === clientId);
         const tIns = ts.filter(t => t.type === 'transfer' && t.toId === clientId);
@@ -147,7 +142,7 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
             modified: order.modified
           };
           list.push({
-            date: t.created, description: 'From ' + order.merchant.name, type: t.type, paid: 0,
+            date: t.created, description: 'From ' + order.merchantName, type: t.type, paid: 0,
             consumed: t.amount, balance: 0
           });
         });
