@@ -42,23 +42,21 @@ export class FooterComponent implements OnInit, OnDestroy {
   ) {
     const self = this;
     this.rx.select('account').pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
-      self.account = account;
+      if (account) {
+        self.account = account;
+      } else {
+        self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account2: Account) => {
+          self.account = account2;
+        });
+      }
     });
 
     this.rx.select('location').pipe(takeUntil(this.onDestroy$)).subscribe((loc: ILocation) => {
       self.location = loc;
     });
-
-    // this.rx.select<string>('page').pipe(takeUntil(this.onDestroy$)).subscribe(x => {
-
-    // });
   }
 
   ngOnInit() {
-    const self = this;
-    // self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
-    //   self.account = account;
-    // });
   }
 
   ngOnDestroy() {

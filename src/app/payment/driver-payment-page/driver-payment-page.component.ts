@@ -55,7 +55,7 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
 
   reload(driverId: string) {
     const query = { $or: [{ fromId: driverId }, { toId: driverId }] };
-    this.transactionSvc.find(query).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
+    this.transactionSvc.quickFind(query).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
       const transactions = ts.sort((a: ITransaction, b: ITransaction) => {
         const aMoment = moment(a.created);
         const bMoment = moment(b.created);

@@ -105,7 +105,7 @@ export class AccountPageComponent implements OnInit, OnDestroy {
 
   reload(driverId: string) {
     const q = { $or: [{ fromId: driverId }, { toId: driverId }] };
-    this.transactionSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
+    this.transactionSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
       let balance = 0;
       ts.map((t: ITransaction) => {
         if (t.type === 'credit' || (t.type === 'transfer' && t.toId === driverId)) {
