@@ -40,6 +40,8 @@ export interface IOrder {
 
   merchant?: IMerchant;
   client?: IContact;
+  nOrders?: number;
+  owe?: number;
 }
 
 export class Order implements IOrder {

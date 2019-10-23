@@ -72,7 +72,7 @@
             </div>
           </div>
           <div class="row receivables-row">
-              <div class="col-5 left-col">
+              <div class="col-6 left-col">
                 <!-- <div class="row balance-col">
                   <span>往日余额</span>:&nbsp;
                   <span>${{order.balance | number : '1.2-2'}}</span>
@@ -82,11 +82,20 @@
                   <span>${{order.total | number : '1.2-2'}}</span>
                 </div>
                 <div class="row receivable-col">
-                  <span i18n="@@Receivables">Receivables</span>:&nbsp;
+                  <span>总共应收</span>:&nbsp;
                   <span>${{order.receivable | number : '1.2-2'}}</span>
                 </div>
+                <div class="row nOrder-col" *ngIf="order.nOrders > 1">
+                  <span>应收高因为客户今天有</span>
+                  <span>{{order.nOrders}}</span>
+                  <span>个订单</span>
+                </div>
+                <div class="row nOrder-col" *ngIf="order.owe > 0">
+                  <span>应收高因为客户有欠款</span>
+                  <span>${{order.owe | number : '1.2-2'}}</span>
+                </div>
               </div>
-              <div class="col-7 right-col">
+              <div class="col-6 right-col">
                 <form [formGroup]="forms[order._id]" class="received-form">
                   <div class="row received-block">
                     <div class="label">

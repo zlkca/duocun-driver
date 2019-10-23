@@ -130,13 +130,21 @@
   margin-bottom: 6px;
 }
 
-.total-col, .balance-col, .receivable-col{
+.total-col, .balance-col, .receivable-col, .nOrder-col{
   font-size: 12px;
 }
 
-.mat-expansion-panel-body{
-  padding: 0px 16px 16px !important;
+.nOrder-col{
+  width: 185px;
 }
+
+div.mat-expansion-panel-body {
+  padding: 0 10px 16px !important;
+}
+
+// .mat-expansion-panel-body{
+//   padding: 0px 10px 16px !important;
+// }
 .mat-slide-toggle-bar {
   height: 28px !important;
   width: 88px !important;

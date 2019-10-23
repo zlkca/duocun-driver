@@ -12,6 +12,7 @@ export enum Role {
 }
 
 export interface IAccount {
+  _id?: string;
   type: string; // wechat, google, fb
   realm?: string;
   username?: string;

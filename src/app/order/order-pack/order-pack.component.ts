@@ -157,12 +157,18 @@ export class OrderPackComponent implements OnInit, OnDestroy {
           const balance: IClientBalance = balances.find(x => x.accountId === order.clientId);
           if (balance) {
             order.balance = balance.amount; // new balance
-            if (order.status === 'paid') {
-              // use database table order.receivable
-            } else {
-              order.receivable = (balance.amount > 0) ? 0 : Math.abs(balance.amount);
-            }
+            order.receivable = (balance.amount >= 0) ? 0 : Math.abs(balance.amount);
+          } else {
+            order.receivable = order.total;
           }
+
+          const ordersClient: IOrder[] = orders.filter(x => x.clientId === order.clientId);
+          order.nOrders = ordersClient.length;
+
+          let sum = 0;
+          ordersClient.map(x => sum += x.total);
+          order.owe = (balance.amount + sum) < 0 ? Math.abs(balance.amount + sum) : 0;
+
           // only load order belongs to this driver
           const assignment = this.assignments.find(x => x.orderId === order._id);
           if (assignment) {
@@ -236,32 +242,45 @@ export class OrderPackComponent implements OnInit, OnDestroy {
 
   togglePaid(e, order: IOrder) {
     const self = this;
-    const data = {
-      status: e.checked ? 'paid' : 'unpaid',
-      driverId: this.account.id,
-      driverName: this.account.username,
-      receivable: order.receivable
-    };
+    const toId = this.account._id;
+    const toName = this.account.username;
+    // const data = {
+    //   status: e.checked ? 'paid' : 'unpaid',
+    //   driverId: this.account.id,
+    //   driverName: this.account.username,
+    //   // receivable: order.receivable
+    // };
     const received = Math.round(+this.forms[order._id].get('received').value * 100) / 100;
-    this.orderSvc.update({ id: order._id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
-      if (x && x.ok) {
-        self.snackBar.open('', '已更新客户' + order.clientName + '的订单', { duration: 1500 });
-        self.saveTransaction(received, order, (r) => {
+    order.received = received;
+    // this.orderSvc.update({ id: order._id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
+    //   if (x && x.ok) {
+    //     self.snackBar.open('', '已更新客户' + order.clientName + '的订单', { duration: 1500 });
+    //     self.saveTransaction(received, order, (r) => {
 
-          const balance: IClientBalance = self.clientBalances.find(cb => cb.accountId === order.clientId);
-          const remain = Math.round((received + balance.amount) * 100) / 100;
-          const q = { accountId: order.clientId };
-          self.clientBalanceSvc.update(q, { amount: remain }).pipe(takeUntil(this.onDestroy$)).subscribe(bs => {
-            self.snackBar.open('', '余额已更新', { duration: 1800 });
+    //       const balance: IClientBalance = self.clientBalances.find(cb => cb.accountId === order.clientId);
+    //       const remain = Math.round((received + balance.amount) * 100) / 100;
+    //       const q = { accountId: order.clientId };
+    //       self.clientBalanceSvc.update(q, { amount: remain }).pipe(takeUntil(this.onDestroy$)).subscribe(bs => {
+    //         self.snackBar.open('', '余额已更新', { duration: 1800 });
 
-            const q1 = { accountId: { $in: self.clientIds } };
-            self.clientBalanceSvc.find(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
-              self.clientBalances = cbs;
-              self.reload(cbs);
-            });
-          });
-        });
-      }
+    //         const q1 = { accountId: { $in: self.clientIds } };
+    //         self.clientBalanceSvc.find(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
+    //           self.clientBalances = cbs;
+    //           self.reload(cbs);
+    //         });
+    //       });
+    //     });
+    //   }
+    // });
+
+    const balance: IClientBalance = self.clientBalances.find(cb => cb.accountId === order.clientId);
+    this.clientPaymentSvc.pay(toId, toName, received, balance.amount, order._id).pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
+      self.snackBar.open('', '余额已更新', { duration: 1800 });
+      const q1 = { accountId: { $in: self.clientIds } };
+      self.clientBalanceSvc.find(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
+        self.clientBalances = cbs;
+        self.reload(cbs);
+      });
     });
 
     // this.savePayment(received, order);
