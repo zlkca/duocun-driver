@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { IAccount, Role } from '../../account/account.model';
 import { AccountService } from '../../account/account.service';
 import { SharedService } from '../../shared/shared.service';
@@ -9,6 +9,8 @@ import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
 import * as moment from 'moment';
+import { AssignmentService } from '../../assignment/assignment.service';
+import { IAssignment } from '../../assignment/assignment.model';
 
 @Component({
   selector: 'app-package-page',
@@ -17,28 +19,44 @@ import * as moment from 'moment';
 })
 export class PackagePageComponent implements OnInit, OnDestroy {
 
+
   account: IAccount;
   // range;
   now;
   lunchEnd;
-  deliverTime; // Display purpose
+
   onDestroy$ = new Subject();
   restaurant: IRestaurant;
-  delivered; // moment object
+  phases: any[] = [];
+  // delivered; // moment object
+  // deliverTime; // Display purpose
 
   constructor(
     private restaurantSvc: RestaurantService,
     private sharedSvc: SharedService,
     private accountSvc: AccountService,
+    private assignmentSvc: AssignmentService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
-    const delivered = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
-    this.deliverTime = delivered.format('YYYY-MM-DD HH:mm:ss');
-    this.delivered = delivered;
+    // const delivered = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
+    // this.deliverTime = delivered.format('YYYY-MM-DD HH:mm:ss');
+    // this.delivered = delivered;
+
     // const todayStart = moment().startOf('day').toDate();
     // const todayEnd = moment().endOf('day').toDate();
     // this.range = { $lt: todayEnd, $gt: todayStart };
+  }
+
+  getPickupTimes(xs: IAssignment[]): string[] {
+    const delivers = this.sharedSvc.getDistinctValues(xs, 'delivered');
+    const a = [];
+    delivers.map(x => {
+      const h = moment(x).hour();
+      const m = moment(x).minute();
+      a.push(('0' + h).slice(-2) + ':' + ('0' + m).slice(-2));
+    });
+    return a;
   }
 
   ngOnInit() {
@@ -48,13 +66,31 @@ export class PackagePageComponent implements OnInit, OnDestroy {
       if (account && account.roles) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.restaurantSvc.find().pipe(takeUntil(this.onDestroy$)).subscribe((rs: IRestaurant[]) => {
+          self.restaurantSvc.quickFind().pipe(takeUntil(this.onDestroy$)).subscribe((rs: IRestaurant[]) => {
             if (rs && rs.length > 0) {
               self.restaurant = rs[0];
             } else {
               self.restaurant = null;
             }
           });
+
+          const tStart = moment().startOf('day').toISOString();
+          const tEnd = moment().endOf('day').toISOString();
+          const query = {
+            driverId: account._id,
+            delivered: { $lt: tEnd, $gt: tStart }
+          };
+
+          this.assignmentSvc.quickFind(query).pipe(takeUntil(self.onDestroy$)).subscribe((xs: IAssignment[]) => {
+            const pickups = this.getPickupTimes(xs);
+            const phases = [];
+            pickups.map(pickup => {
+              const assignments = xs.filter(x => x.delivered === this.sharedSvc.getTime(moment(), pickup).toISOString());
+              phases.push({pickup: pickup, assignments: assignments});
+            });
+            self.phases = phases;
+          });
+
         } else { // not authorized for opreration merchant
           this.router.navigate(['account/setting'], { queryParams: { merchant: false } });
         }

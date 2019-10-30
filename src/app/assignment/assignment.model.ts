@@ -17,7 +17,8 @@ export interface IAssignment {
   merchantName?: string;
   note?: string;
   location?: ILocation;
-  delivered?: Date;
+
+  delivered?: string;
   items?: IOrderItem[];
   total?: number;
 
@@ -44,7 +45,7 @@ export class Assignment implements IAssignment {
   merchantName?: string;
   note?: string;
   location?: ILocation;
-  delivered?: Date;
+  delivered?: string;
 
   items?: IOrderItem[];
   total?: number;

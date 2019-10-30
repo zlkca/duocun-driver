@@ -11,6 +11,8 @@ import { AccountService } from '../../account/account.service';
 import { AssignmentService } from '../../assignment/assignment.service';
 import { IAssignment } from '../../assignment/assignment.model';
 import { AccountActions } from '../../account/account.actions';
+import { SharedService } from '../../shared/shared.service';
+import { IAccount } from '../../account/account.model';
 @Component({
   selector: 'app-map-page',
   templateUrl: './map-page.component.html',
@@ -24,12 +26,14 @@ export class MapPageComponent implements OnInit, OnDestroy {
   dateRange;
   account;
   assignments: IAssignment[] = [];
+  delivered;
 
   constructor(
     private rx: NgRedux<IAppState>,
     private orderSvc: OrderService,
     private accountSvc: AccountService,
-    private assignmentSvc: AssignmentService
+    private assignmentSvc: AssignmentService,
+    private sharedSvc: SharedService
   ) {
     // this.rx.select<ILocation>('location').pipe(takeUntil(this.onDestroy$)).subscribe(loc => {
     //   if (loc) {
@@ -42,14 +46,17 @@ export class MapPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    this.dateRange = this.getDateRange();
 
-    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
+    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
       self.account = account;
       // self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
-      const dt = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
-      const q = { driverId: account.id, delivered: dt.toISOString() };
-      self.assignmentSvc.find(q).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
+
+      const t = moment().set({ hour: 11, minute: 20, second: 0, millisecond: 0 });
+      const pickup = moment().isSameOrBefore(t) ? '11:20' : '12:00';
+
+      this.delivered = this.sharedSvc.getTime(moment(), pickup);
+      const q = { driverId: account._id, delivered: this.delivered.toISOString() };
+      self.assignmentSvc.quickFind(q).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
         self.assignments = xs;
         self.reload(xs);
       });
@@ -68,8 +75,8 @@ export class MapPageComponent implements OnInit, OnDestroy {
       green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
       red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
     };
-    const dt = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
-    const q = { delivered: dt.toISOString(), status: { $nin: ['del', 'bad', 'tmp'] } };
+
+    const q = { delivered: this.delivered.toISOString(), status: { $nin: ['del', 'bad', 'tmp'] } };
     self.orderSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
       self.orders = orders;
       const places = [];
@@ -85,9 +92,4 @@ export class MapPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  getDateRange() {
-    const todayStart = moment().startOf('day').toDate();
-    const todayEnd = moment().endOf('day').toDate();
-    return { $lt: todayEnd, $gt: todayStart };
-  }
 }

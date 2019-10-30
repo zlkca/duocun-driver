@@ -20,6 +20,26 @@ export class SharedService {
     return this.subject.asObservable();
   }
 
+  // m --- moment object for date
+  // t --- string, eg: '11:20'
+  // return moment object
+  getTime(m: any, t: string) {
+    const hour = +(t.split(':')[0]);
+    const minute = +(t.split(':')[1]);
+    return m.set({ hour: hour, minute: minute, second: 0, millisecond: 0 });
+  }
+
+  getDistinctValues(xs: any[], field) {
+    const vs: any[] = [];
+    xs.map(x => {
+      const val = vs.find(v => v === x[field]);
+      if (!val) {
+        vs.push(x[field]);
+      }
+    });
+    return vs;
+  }
+
   // initSocket() {
   //   const socket = io('http://localhost:3000');
   //   socket.on('[POST]http://localhost:3000/api/Orders', function (data) {

@@ -1656,6 +1656,14 @@
           <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="PickupTime" datatype="html">
+        <source>Pickup Time</source>
+        <target>取餐时间</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/settlement-page/settlement-page.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

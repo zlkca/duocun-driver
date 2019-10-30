@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ɵɵNgOnChangesFeature, OnChanges } from '@angular/core';
 import { IRestaurant } from '../../restaurant/restaurant.model';
 import { IOrder, IOrderItem } from '../order.model';
 import { OrderService } from '../order.service';
@@ -29,20 +29,26 @@ import { Router } from '../../../../node_modules/@angular/router';
   templateUrl: './order-pack.component.html',
   styleUrls: ['./order-pack.component.scss']
 })
-export class OrderPackComponent implements OnInit, OnDestroy {
+export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
+
+  @Input() assignments;
+  @Input() pickupTime;
+
   @Input() restaurant: IRestaurant;
   @Input() delivered; // moment object
-  @Input() account: IAccount;
 
   orders: IOrder[] = [];
   list: IOrderItem[];
   ordersWithNote: IOrder[] = [];
   onDestroy$ = new Subject();
-  assignments;
+  // assignments;
   forms = {};
   clientBalances = [];
   ordersByMerchants = [];
   clientIds = [];
+  pickups = [];
+  account;
+
   constructor(
     private orderSvc: OrderService,
     private sharedSvc: SharedService,
@@ -61,33 +67,22 @@ export class OrderPackComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-
-    if (this.account) {
-      const query = {
-        driverId: this.account.id,
-        delivered: this.delivered.toISOString()
-      };
-
-      this.assignmentSvc.find(query).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
-        self.assignments = xs;
-
-        const clientIds: string[] = [];
-        xs.map(x => {
-          const client = clientIds.find(cId => cId === x.clientId);
-          if (!client) {
-            clientIds.push(x.clientId);
-          }
-        });
-        self.clientIds = clientIds;
-        const q = { accountId: { $in: clientIds } };
-        self.clientBalanceSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
-          self.clientBalances = cbs;
-          self.reload(cbs);
-        });
-      });
-    } else {
-      this.router.navigate(['account/login']);
-    }
+    const xs = this.assignments;
+    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+      self.account = account;
+      if (account) {
+        if (xs) {
+          self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
+          const q = { accountId: { $in: self.clientIds } };
+          self.clientBalanceSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
+            self.clientBalances = cbs;
+            self.reload(cbs, this.pickupTime);
+          });
+        }
+      } else {
+        this.router.navigate(['account/login']);
+      }
+    });
 
     // setTimeout(() => {
     //   self.reload();
@@ -113,6 +108,23 @@ export class OrderPackComponent implements OnInit, OnDestroy {
     // });
   }
 
+
+  ngOnChanges(v) {
+    const self = this;
+    if (v.assignments && v.assignments.currentValue) {
+      const xs = v.assignments.currentValue;
+      // this.reload(restaurant._id);
+      self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
+      if (self.clientIds && self.clientIds.length > 0) {
+        const q = { accountId: { $in: self.clientIds } };
+        self.clientBalanceSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
+          self.clientBalances = cbs;
+          self.reload(cbs, this.pickupTime);
+        });
+      }
+    }
+  }
+
   groupByMerchants(orders: IOrder[]) {
     const groupedByMerchants = [];
     orders.map(order => {
@@ -134,16 +146,20 @@ export class OrderPackComponent implements OnInit, OnDestroy {
     return quantity;
   }
 
-  reload(balances: IClientBalance[]) {
+  // getPickupTimes(xs: IAssignment[]): string[] {
+  //   return this.sharedSvc.getDistinctValues(xs, 'delivered').map(x => x.split('T')[1].split('.')[0]);
+  // }
+
+
+  reload(balances: IClientBalance[], pickupTime: string) {
     const self = this;
+    const accountId = this.account._id;
     const os = [];
+    const delivered = this.sharedSvc.getTime(moment(), pickupTime);
+    const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
 
-    const tStart = moment(this.delivered).startOf('day').toDate();
-    const tEnd = moment(this.delivered).endOf('day').toDate();
-    const range = { $lt: tEnd, $gt: tStart };
-
-    const orderQuery = { delivered: this.delivered.toISOString(), status: { $nin: ['del', 'bad', 'tmp'] } };
-    const transactionQuery = { created: range, type: 'credit', toId: this.account.id };
+    const orderQuery = { delivered: delivered, status: { $nin: ['del', 'bad', 'tmp'] } };
+    const transactionQuery = { created: range, type: 'credit', toId: accountId };
 
     this.transactionSvc.find(transactionQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
@@ -167,7 +183,11 @@ export class OrderPackComponent implements OnInit, OnDestroy {
 
           let sum = 0;
           ordersClient.map(x => sum += x.total);
-          order.owe = (balance.amount + sum) < 0 ? Math.abs(balance.amount + sum) : 0;
+          if (balance) {
+            order.owe = (balance.amount + sum) < 0 ? Math.abs(balance.amount + sum) : 0;
+          } else {
+            order.owe = 0;
+          }
 
           // only load order belongs to this driver
           const assignment = this.assignments.find(x => x.orderId === order._id);
@@ -279,7 +299,7 @@ export class OrderPackComponent implements OnInit, OnDestroy {
       const q1 = { accountId: { $in: self.clientIds } };
       self.clientBalanceSvc.find(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
         self.clientBalances = cbs;
-        self.reload(cbs);
+        self.reload(cbs, this.pickupTime);
       });
     });
 
@@ -315,9 +335,7 @@ export class OrderPackComponent implements OnInit, OnDestroy {
       toName: this.account.username,
       type: 'credit',
       amount: received,
-      note: '',
-      created: order.delivered,
-      modified: new Date()
+      note: ''
     };
 
     this.transactionSvc.save(tr).pipe(takeUntil(this.onDestroy$)).subscribe(x => {

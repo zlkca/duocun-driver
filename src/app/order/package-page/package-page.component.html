@@ -3,36 +3,19 @@
     <span class="title-bg" i18n="@@MyOrder">My Order</span>
   </div>
   <div class="content">
-      <div class="deliver-time">
-        <span i18n="@@DeliverTime">Deliver Time</span>: {{deliverTime}}
-      </div>
-
-      <!-- <div class="row date-input-block">
-        <form [formGroup]="dateForm">
-          <input class="date-input" matInput [matDatepicker]="picker" i18n-placeholder placeholder="Choose a date"
-            [formControl]="date"
-            (click)="picker.open()"
-            (dateChange)="onDateChange('change', $event)">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </form>
+    <!-- <div class="deliver-time">
+        <span i18n="@@PickupTime">Pickup Time</span>
       </div> -->
-      
-      <app-order-pack *ngIf="restaurant"
+    <mat-tab-group mat-align-tabs="center">
+      <mat-tab label="{{phase.pickup}}" *ngFor="let phase of phases">
+        <app-order-pack [assignments]="phase.assignments" [pickupTime]="phase.pickup"></app-order-pack>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- <app-order-pack *ngIf="restaurant"
         [account]="account"
         [restaurant]="restaurant"
         [delivered]="delivered">
-      </app-order-pack>
-    <!-- <mat-tab-group mat-align-tabs="center">
-      <mat-tab i18n-label label="LunchToday">
-        <app-order-pack [account]="account" [dateRange]="rangeToday"></app-order-pack>
-      </mat-tab>
-      <mat-tab i18n-label label="LunchTomorrow">
-        <app-order-pack [account]="account" [dateRange]="rangeTomorrow"></app-order-pack>
-      </mat-tab>
-      <mat-tab i18n-label label="LunchAfterTomorrow">
-        <app-order-pack [account]="account" [dateRange]="rangeAfterTomorrow"></app-order-pack>
-      </mat-tab>
-    </mat-tab-group> -->
+      </app-order-pack> -->
   </div>
 </div>
