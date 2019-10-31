@@ -23,10 +23,16 @@ export class SharedService {
   // m --- moment object for date
   // t --- string, eg: '11:20'
   // return moment object
-  getTime(m: any, t: string) {
+  getDateTime(m: any, t: string) {
     const hour = +(t.split(':')[0]);
     const minute = +(t.split(':')[1]);
     return m.set({ hour: hour, minute: minute, second: 0, millisecond: 0 });
+  }
+
+  getTimeString(t: string) {
+    const h = moment(t).hour();
+    const m = moment(t).minute();
+    return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2);
   }
 
   getDistinctValues(xs: any[], field) {
@@ -84,19 +90,6 @@ export class SharedService {
   getNextDayStart(offset: number) {
     const m = moment(); // .utcOffset(0);
     return m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).add(offset, 'days').toDate();
-  }
-
-
-  getDateTime(s) {
-    if (s) {
-      return moment(s);
-    } else {
-      return moment();
-    }
-  }
-
-  getNow() {
-    return moment();
   }
 
   // type --- 'day', 'date', week', 'month', 'year', 12:00 am

@@ -52,9 +52,8 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     const delivers = this.sharedSvc.getDistinctValues(xs, 'delivered');
     const a = [];
     delivers.map(x => {
-      const h = moment(x).hour();
-      const m = moment(x).minute();
-      a.push(('0' + h).slice(-2) + ':' + ('0' + m).slice(-2));
+      const t = this.sharedSvc.getTimeString(x);
+      a.push(t);
     });
     return a;
   }
@@ -85,7 +84,7 @@ export class PackagePageComponent implements OnInit, OnDestroy {
             const pickups = this.getPickupTimes(xs);
             const phases = [];
             pickups.map(pickup => {
-              const assignments = xs.filter(x => x.delivered === this.sharedSvc.getTime(moment(), pickup).toISOString());
+              const assignments = xs.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
               phases.push({pickup: pickup, assignments: assignments});
             });
             self.phases = phases;

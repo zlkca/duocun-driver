@@ -7,6 +7,7 @@ import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { Subject } from '../../../../node_modules/rxjs';
 import { Restaurant, IRestaurant } from '../../restaurant/restaurant.model';
 import { RestaurantService } from '../../restaurant/restaurant.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-summary-page',
@@ -26,7 +27,7 @@ export class SummaryPageComponent implements OnInit, OnDestroy {
     private accountSvc: AccountService,
     private route: ActivatedRoute
   ) {
-    const now = this.sharedSvc.getNow();
+    const now = moment();
     const dayEnd = this.sharedSvc.getStartOf('day').set({ hour: 19, minute: 30, second: 0, millisecond: 0 });
 
     if (now.isAfter(dayEnd)) {
