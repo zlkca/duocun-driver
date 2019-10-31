@@ -51,11 +51,10 @@ export class MapPageComponent implements OnInit, OnDestroy {
       self.account = account;
       // self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
 
-      const t = moment().set({ hour: 11, minute: 20, second: 0, millisecond: 0 });
-      const pickup = moment().isSameOrBefore(t) ? '11:20' : '12:00';
+      const date = moment();
+      const range = { $gt: date.startOf('day').toISOString(), $lt: date.endOf('day').toISOString() };
+      const q = { driverId: account._id, delivered: range };
 
-      this.delivered = this.sharedSvc.getTime(moment(), pickup);
-      const q = { driverId: account._id, delivered: this.delivered.toISOString() };
       self.assignmentSvc.quickFind(q).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
         self.assignments = xs;
         self.reload(xs);
