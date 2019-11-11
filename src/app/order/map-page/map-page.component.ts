@@ -74,8 +74,9 @@ export class MapPageComponent implements OnInit, OnDestroy {
       green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
       red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
     };
-
-    const q = { delivered: this.delivered.toISOString(), status: { $nin: ['del', 'bad', 'tmp'] } };
+    const date = moment();
+    const range = { $gt: date.startOf('day').toISOString(), $lt: date.endOf('day').toISOString() };
+    const q = { delivered: range, status: { $nin: ['del', 'bad', 'tmp'] } };
     self.orderSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
       self.orders = orders;
       const places = [];

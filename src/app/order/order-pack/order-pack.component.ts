@@ -155,7 +155,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     const self = this;
     const accountId = this.account._id;
     const os = [];
-    const delivered = this.sharedSvc.getTime(moment(), pickupTime);
+    const delivered = this.sharedSvc.getDateTime(moment(), pickupTime);
     const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
 
     const orderQuery = { delivered: delivered, status: { $nin: ['del', 'bad', 'tmp'] } };

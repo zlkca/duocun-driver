@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router
 import { IRestaurant } from '../../restaurant/restaurant.model';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-settlement-page',
@@ -41,7 +42,7 @@ export class SettlementPageComponent implements OnInit, OnDestroy {
     this.rangeWeek = { $lt: weekEnd, $gt: weekStart};
     this.rangeMonth = { $lt: monthEnd, $gt: monthStart};
 
-    const now = this.sharedSvc.getNow();
+    const now = moment();
     const timeEnd = this.sharedSvc.getStartOf('day').set({ hour: 19, minute: 30, second: 0, millisecond: 0 });
 
     if (now.isAfter(dayEnd)) {
