@@ -1,0 +1,49 @@
+
+
+.btn-row{
+  border-top: solid 1px #eee;
+}
+
+.row{
+  padding-top: 20px;
+}
+
+.actions-row{
+  padding-top: 40px;
+
+  .btn-cancel, .btn-pay{
+    width: 45%;
+    height: 52px;
+    text-align: center;
+    padding-top: 15px;
+    float: left;
+    margin-top: 15px;
+    margin-right: 10px;
+  }
+}
+
+.balance-dialog{
+  position: absolute !important;
+  top: 5%;
+  left: 2%;
+  width: 96% !important;
+  height: 90%;
+  max-width: none !important;
+  .mat-dialog-container{
+    padding: 0px !important;
+    // width: 100%;
+    // max-width: none !important;
+  }
+}
+.title-bg{
+  color: blue;
+}
+$mobile: "(max-width: 767px)";
+$tablet: "(min-width: 768px) and (max-width: 1199px)";
+$desktop: "(min-width: 1200px)";
+
+
+
+@media #{$mobile}{
+
+}

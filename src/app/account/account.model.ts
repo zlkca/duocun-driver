@@ -30,6 +30,7 @@ export interface IAccount {
   roles?: number[]; // 'super', 'merchant-admin', 'merchant-stuff', 'driver', 'user'
   visited?: boolean;
   merchants?: string[]; // merchant Ids
+  balance?: number;
 }
 
 export class Account implements IAccount {
@@ -50,6 +51,8 @@ export class Account implements IAccount {
   roles?: number[]; // 'super', 'merchant-admin', 'merchant-stuff', 'driver', 'user'
   visited?: boolean;
   merchants?: string[]; // merchant Ids
+  balance?: number;
+
   constructor(data?: IAccount) {
     Object.assign(this, data);
   }

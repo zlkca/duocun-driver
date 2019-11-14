@@ -22,9 +22,16 @@ import { MapPageComponent } from './map-page/map-page.component';
 import { ClientPaymentService } from '../payment/client-payment.service';
 import { MerchantBalanceService } from '../payment/merchant-balance.service';
 import { ClientBalanceService } from '../payment/client-balance.service';
+
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+
 import { TransactionService } from '../transaction/transaction.service';
+import { ReceiveCashDialogComponent } from './receive-cash-dialog/receive-cash-dialog.component';
+import { ClientBalanceDialogComponent } from './client-balance-dialog/client-balance-dialog.component';
 
 @NgModule({
   imports: [
@@ -33,6 +40,9 @@ import { TransactionService } from '../transaction/transaction.service';
     MatExpansionModule,
     MatSlideToggleModule,
     MatMomentDateModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
@@ -58,10 +68,13 @@ import { TransactionService } from '../transaction/transaction.service';
     SummaryPageComponent,
     PackagePageComponent,
     SettlementPageComponent,
-    MapPageComponent
+    MapPageComponent,
+    ReceiveCashDialogComponent,
+    ClientBalanceDialogComponent
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
-  ]
+  ],
+  entryComponents: [ReceiveCashDialogComponent, ClientBalanceDialogComponent]
 })
 export class OrderModule { }

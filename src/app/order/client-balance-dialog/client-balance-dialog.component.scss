@@ -1,0 +1,20 @@
+
+
+
+$mobile: "(max-width: 767px)";
+$tablet: "(min-width: 768px) and (max-width: 1199px)";
+$desktop: "(min-width: 1200px)";
+
+.balance-table-container{
+  height: 600px;
+  overflow: auto;
+
+  table{
+    width: 100%;
+  }
+}
+
+
+@media #{$mobile}{
+
+}

@@ -18,7 +18,7 @@
                   </div>
                   <div class="row client-col">
                       <div class="col-3" i18n="@@Client">Client</div>
-                      <div class="col-9">{{order.client.username}}</div>
+                      <div class="col-9">{{order.clientName}}</div>
                   </div>
                 </div>
                 <div class="col-2 status-col red" *ngIf="!order.paid">未送</div>
@@ -36,12 +36,13 @@
             </div> -->
             <div class="row merchant-col">
               <div class="col-3" i18n="@@Merchant">Merchant</div>
-              <div class="col-9">{{order.merchant.name}}</div>
+              <div class="col-9">{{order.merchantName}}</div>
             </div>
-            <!-- <div class="row client-row">
+            
+            <div class="row client-row">
               <div class="col-3" i18n="@@Client">Client</div>
               <div class="col-9">{{order.clientName}}</div>
-            </div> -->
+            </div>
             <div class="row phonenum-row">
               <div class="col-3" i18n="@@ClientPhoneNumber">Client Phone Number</div>
               <div class="col-9">
@@ -50,6 +51,7 @@
                 <a style="font-size:14px;" [href]="'tel:' + order.client.phone" i18n="@@Call">Call</a>
               </div>
             </div>
+
             <div class="row address-row">
               <div class="col-3" i18n="@@DeliverAddress">Delivery Address</div>
               <div class="col-9">{{order.address}}</div>
@@ -72,11 +74,8 @@
             </div>
           </div>
           <div class="row receivables-row">
-              <div class="col-6 left-col">
-                <!-- <div class="row balance-col">
-                  <span>往日余额</span>:&nbsp;
-                  <span>${{order.balance | number : '1.2-2'}}</span>
-                </div> -->
+            <div class="btn btn-primary" (click)="openReceiveCashDialog(order)">收款</div>
+              <!-- <div class="col-6 left-col">
                 <div class="row total-col">
                   <span>今天订单</span>:&nbsp;
                   <span>${{order.total | number : '1.2-2'}}</span>
@@ -108,7 +107,8 @@
                 <div class="row paid-toggle" *ngIf="!order.paid">
                   <mat-slide-toggle i18n="@@Paid" [checked]="order.paid" (click)="$event.preventDefault()" (change)="togglePaid($event, order)">Paid</mat-slide-toggle>
                 </div>
-              </div><!--end of right-col -->
+              </div> -->
+              <!--end of right-col -->
             </div>
         </mat-expansion-panel>
 

@@ -10,7 +10,7 @@ import { IMall } from '../../mall/mall.model';
 import { LocationService } from '../../location/location.service';
 import { AccountService } from '../../account/account.service';
 import { IAccount } from '../../account/account.model';
-import { MatSnackBar } from '../../../../node_modules/@angular/material';
+import { MatSnackBar, MatDialog } from '../../../../node_modules/@angular/material';
 import { AssignmentService } from '../../assignment/assignment.service';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
 import { ClientPaymentService } from '../../payment/client-payment.service';
@@ -23,6 +23,10 @@ import * as moment from 'moment';
 import { TransactionService } from '../../transaction/transaction.service';
 import { ITransaction } from '../../transaction/transaction.model';
 import { Router } from '../../../../node_modules/@angular/router';
+import { ReceiveCashDialogComponent } from '../receive-cash-dialog/receive-cash-dialog.component';
+import { ICommand } from '../../shared/command.reducers';
+import { NgRedux } from '../../../../node_modules/@angular-redux/store';
+import { IAppState } from '../../store';
 
 @Component({
   selector: 'app-order-pack',
@@ -60,13 +64,25 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     private clientBalanceSvc: ClientBalanceService,
     private transactionSvc: TransactionService,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private rx: NgRedux<IAppState>,
+    public dialog: MatDialog
   ) {
     const self = this;
   }
 
   ngOnInit() {
     const self = this;
+
+    this.rx.select<ICommand>('cmd').pipe(takeUntil(this.onDestroy$)).subscribe((x: ICommand) => {
+      if (x.name === 'reload-orders') {
+        const q = { accountId: { $in: self.clientIds } };
+          self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+          self.reload(accounts, this.pickupTime);
+        });
+      }
+    });
+
     const xs = this.assignments;
     this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
@@ -74,10 +90,10 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
         if (xs) {
           self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
           const q = { accountId: { $in: self.clientIds } };
-          self.clientBalanceSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
-            self.clientBalances = cbs;
-            self.reload(cbs, this.pickupTime);
-          });
+          // self.clientBalanceSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
+          //   self.clientBalances = cbs;
+          //   self.reload(cbs, this.pickupTime);
+          // });
         }
       } else {
         this.router.navigate(['account/login']);
@@ -117,9 +133,9 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
       self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
       if (self.clientIds && self.clientIds.length > 0) {
         const q = { accountId: { $in: self.clientIds } };
-        self.clientBalanceSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
-          self.clientBalances = cbs;
-          self.reload(cbs, this.pickupTime);
+        self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+          self.clientBalances = accounts;
+          self.reload(accounts, this.pickupTime);
         });
       }
     }
@@ -130,7 +146,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     orders.map(order => {
       const item = groupedByMerchants.find(m => m.merchantId === order.merchantId);
       if (!item) {
-        groupedByMerchants.push({ merchantId: order.merchant._id, merchantName: order.merchant.name, orders: [order] });
+        groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, orders: [order] });
       } else {
         item.orders.push(order);
       }
@@ -151,17 +167,17 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   // }
 
 
-  reload(balances: IClientBalance[], pickupTime: string) {
+  // pickupTime --- eg. '11:20'
+  reload(accounts: IAccount[], pickupTime: string) {
     const self = this;
     const accountId = this.account._id;
     const os = [];
-    const delivered = this.sharedSvc.getDateTime(moment(), pickupTime);
     const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
 
-    const orderQuery = { delivered: delivered, status: { $nin: ['del', 'bad', 'tmp'] } };
+    const orderQuery = { pickup: pickupTime, status: { $nin: ['del', 'bad', 'tmp'] } };
     const transactionQuery = { created: range, type: 'credit', toId: accountId };
 
-    this.transactionSvc.find(transactionQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
+    this.transactionSvc.quickFind(transactionQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         this.forms = {};
         orders.map(order => {
@@ -170,10 +186,10 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
             order.received = transaction.amount;
           }
 
-          const balance: IClientBalance = balances.find(x => x.accountId === order.clientId);
-          if (balance) {
-            order.balance = balance.amount; // new balance
-            order.receivable = (balance.amount >= 0) ? 0 : Math.abs(balance.amount);
+          const account: IAccount = accounts.find(x => x._id === order.clientId);
+          if (account) {
+            order.balance = account.balance; // new balance
+            order.receivable = (account.balance >= 0) ? 0 : Math.abs(account.balance);
           } else {
             order.receivable = order.total;
           }
@@ -183,8 +199,8 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
           let sum = 0;
           ordersClient.map(x => sum += x.total);
-          if (balance) {
-            order.owe = (balance.amount + sum) < 0 ? Math.abs(balance.amount + sum) : 0;
+          if (account && account.balance) {
+            order.owe = (account.balance + sum) < 0 ? Math.abs(account.balance + sum) : 0;
           } else {
             order.owe = 0;
           }
@@ -294,10 +310,10 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     // });
 
     const balance: IClientBalance = self.clientBalances.find(cb => cb.accountId === order.clientId);
-    this.clientPaymentSvc.pay(toId, toName, received, balance.amount, order._id).pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
+    this.clientPaymentSvc.pay(toId, toName, received, order._id, '').pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
       self.snackBar.open('', '余额已更新', { duration: 1800 });
       const q1 = { accountId: { $in: self.clientIds } };
-      self.clientBalanceSvc.find(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
+      self.accountSvc.quickFind(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IAccount[]) => {
         self.clientBalances = cbs;
         self.reload(cbs, this.pickupTime);
       });
@@ -345,4 +361,23 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
       }
     });
   }
+
+
+  openReceiveCashDialog(order: IOrder) {
+    const orderId = order._id;
+    const params = {
+      width: '300px',
+      data: {
+        title: '收款', content: '', buttonTextNo: '取消', buttonTextYes: '确认收款',
+        orderId: orderId, accountId: this.account._id, accountName: this.account.username
+      },
+      panelClass: 'receive-cash-dialog'
+    };
+    const dialogRef = this.dialog.open(ReceiveCashDialogComponent, params);
+
+    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(result => {
+
+    });
+  }
+
 }

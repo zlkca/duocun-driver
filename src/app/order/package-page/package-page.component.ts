@@ -11,6 +11,7 @@ import { FormBuilder } from '../../../../node_modules/@angular/forms';
 import * as moment from 'moment';
 import { AssignmentService } from '../../assignment/assignment.service';
 import { IAssignment } from '../../assignment/assignment.model';
+import { ICommand } from '../../shared/command.reducers';
 
 @Component({
   selector: 'app-package-page',
@@ -39,6 +40,7 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
   ) {
+
     // const delivered = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
     // this.deliverTime = delivered.format('YYYY-MM-DD HH:mm:ss');
     // this.delivered = delivered;
