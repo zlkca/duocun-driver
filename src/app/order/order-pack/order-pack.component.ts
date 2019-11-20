@@ -276,6 +276,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     return groupedOrders;
   }
 
+  // deprecated
   togglePaid(e, order: IOrder) {
     const self = this;
     const toId = this.account._id;
@@ -288,26 +289,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     // };
     const received = Math.round(+this.forms[order._id].get('received').value * 100) / 100;
     order.received = received;
-    // this.orderSvc.update({ id: order._id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
-    //   if (x && x.ok) {
-    //     self.snackBar.open('', '已更新客户' + order.clientName + '的订单', { duration: 1500 });
-    //     self.saveTransaction(received, order, (r) => {
 
-    //       const balance: IClientBalance = self.clientBalances.find(cb => cb.accountId === order.clientId);
-    //       const remain = Math.round((received + balance.amount) * 100) / 100;
-    //       const q = { accountId: order.clientId };
-    //       self.clientBalanceSvc.update(q, { amount: remain }).pipe(takeUntil(this.onDestroy$)).subscribe(bs => {
-    //         self.snackBar.open('', '余额已更新', { duration: 1800 });
-
-    //         const q1 = { accountId: { $in: self.clientIds } };
-    //         self.clientBalanceSvc.find(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
-    //           self.clientBalances = cbs;
-    //           self.reload(cbs);
-    //         });
-    //       });
-    //     });
-    //   }
-    // });
 
     const balance: IClientBalance = self.clientBalances.find(cb => cb.accountId === order.clientId);
     this.clientPaymentSvc.pay(toId, toName, received, order._id, '').pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
@@ -341,26 +323,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   //     this.snackBar.open('', '已保存客户的付款', { duration: 2300 });
   //   });
   // }
-
-  saveTransaction(received: number, order: IOrder, cb?: any) {
-    const tr: ITransaction = {
-      orderId: order._id,
-      fromId: order.clientId,
-      fromName: order.clientName,
-      toId: this.account.id,
-      toName: this.account.username,
-      type: 'credit',
-      amount: received,
-      note: ''
-    };
-
-    this.transactionSvc.save(tr).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
-      this.snackBar.open('', '已保存交易', { duration: 1000 });
-      if (cb) {
-        cb(received);
-      }
-    });
-  }
 
 
   openReceiveCashDialog(order: IOrder) {

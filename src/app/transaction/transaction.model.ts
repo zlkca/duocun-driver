@@ -7,6 +7,7 @@ export interface ITransaction {
   toId?: string;
   toName?: string;
   type: string;
+  action: string;
   amount: number;
   note?: string;
   created?: Date;

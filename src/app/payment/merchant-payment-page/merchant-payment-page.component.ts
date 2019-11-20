@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AccountService } from '../../account/account.service';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
-import { Role } from '../../account/account.model';
+import { Role, IAccount } from '../../account/account.model';
 import { IMerchantPayment, IMerchantPaymentData, IMerchantBalance } from '../payment.model';
 import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms';
 import { MatSnackBar, MatTableDataSource, MatSort } from '../../../../node_modules/@angular/material';
@@ -12,6 +12,10 @@ import { ITransaction } from '../../transaction/transaction.model';
 import { OrderService } from '../../order/order.service';
 import { IOrder } from '../../order/order.model';
 import { RestaurantService } from '../../restaurant/restaurant.service';
+import { IRestaurant } from '../../restaurant/restaurant.model';
+
+const CASH_ID = '5c9511bb0851a5096e044d10';
+const CASH_NAME = 'Cash';
 
 @Component({
   selector: 'app-merchant-payment-page',
@@ -26,7 +30,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
   debits: IMerchantPayment[];
 
   selectedMerchant;
-  displayedColumns: string[] = ['date', 'driverName', 'receivable', 'paid', 'balance'];
+  displayedColumns: string[] = ['created', 'description', 'receivable', 'received', 'balance'];
 
   payments: IMerchantPaymentData[];
   selectedPayments: IMerchantPaymentData[];
@@ -48,12 +52,14 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
   ) {
     const self = this;
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
       this.account = account;
       if (account && account.roles) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.loadMerchants();
+          this.accountSvc.quickFind({ type: 'merchant' }).pipe(takeUntil(this.onDestroy$)).subscribe(rs => {
+            this.merchants = rs;
+          });
         }
       } else {
 
@@ -71,32 +77,22 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
   }
 
   payMerchant() {
+    const account: IAccount = this.account;
+    const merchant: IAccount = this.merchant;
     const amount = parseFloat(this.payForm.get('amount').value);
     const t: ITransaction = {
-      fromId: this.account.id,
-      fromName: this.account.username,
-      toId: this.merchant.merchantId, // should be an account type
-      toName: this.merchant.merchantName,
-      amount: amount,
-      type: 'debit',
-      created: new Date(),
-      modified: new Date()
+      fromId: account._id,
+      fromName: account.username,
+      toId: merchant._id, // should be an account type
+      toName: merchant.username,
+      amount: Math.round(amount * 100) / 100,
+      type: 'pay merchant',
+      action: 'pay merchant',
     };
 
     this.transactionSvc.save(t).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      this.snackBar.open('', '已付款 $' + amount + '给商家' + this.merchant.merchantName, { duration: 1500 });
-      this.reload(this.merchant.merchantId);
-    });
-  }
-
-
-  loadMerchants() {
-    this.restaurantSvc.find({ status: 'active' }).pipe(takeUntil(this.onDestroy$)).subscribe(rs => {
-      const ms = [];
-      rs.map(r => {
-          ms.push({ merchantId: r._id, merchantName: r.name });
-      });
-      this.merchants = ms;
+      this.snackBar.open('', '已付款 $' + amount + '给商家' + merchant.username, { duration: 1500 });
+      this.reload(merchant._id);
     });
   }
 
@@ -110,82 +106,112 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     }), {});
   }
 
+  groupBySameDay(items, key) {
+    const groups = {};
+    items.map(it => {
+      let date = null;
+      if (it.hasOwnProperty('delivered')) {
+        date = moment(it.delivered).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      } else {
+        date = moment(it[key]).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      }
+      const dt = Object.keys(groups).find(x => moment(x).isSame(date, 'day'));
+
+      if (dt) {
+        groups[dt].push(it);
+      } else {
+        groups[date.toISOString()] = [it];
+      }
+    });
+
+    return groups;
+  }
+
   reload(merchantId: string) {
-    const merchant = this.merchants.find(m => m.merchantId === merchantId);
-    const debitQuery = { type: 'debit', toId: merchantId };
-    this.transactionSvc.find(debitQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
-      const orderQuery = {merchantId: merchantId, status: {$nin: ['del', 'tmp']}};
-      this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
-        const receivables = this.groupBy(orders, 'delivered');
-        const payments: IMerchantPaymentData[] = [];
-        Object.keys(receivables).map(date => {
-          const os = receivables[date];
-          let amount = 0;
-          os.map(order => { amount += order.cost; });
-          payments.push({
-            date: date, receivable: amount, paid: 0, balance: 0, type: 'credit',
-            merchantId: merchantId, merchantName: merchant.merchantName, driverName: ''
-          });
-        });
+    const q = {
+      '$or': [{ fromId: merchantId }, { toId: merchantId }],
+      status: { $ne: 'del' },
+      action: { $ne: 'duocun cancel order from merchant' }
+    };
+    this.transactionSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
+      let list = [];
+      let balance = 0;
+      const credits = ts.filter(t => t.fromId === merchantId);
+      const debits = ts.filter(t => t.toId === merchantId);
+      const receivables = this.groupBySameDay(credits, 'created');
+      Object.keys(receivables).map(dt => {
+        const its = receivables[dt];
+        let amount = 0;
+        its.map(it => { amount += it.amount; });
+        list.push({ created: dt, description: '', type: 'credit', receivable: amount, received: 0, balance: 0 });
+      });
 
-        ts.map(t => {
-          payments.push({
-            date: t.created, receivable: 0, paid: t.amount, balance: 0, type: 'debit',
-            merchantId: t.toId, merchantName: t.to.username, driverName: t.from.username
-          });
-        });
+      debits.map(t => {
+        const description = t.toId === merchantId ? t.fromName : t.toName;
+        list.push({ created: t.created, description: description, type: 'debit', receivable: 0, received: t.amount, balance: 0 });
+      });
 
-        const ps = payments.sort((a: IMerchantPaymentData, b: IMerchantPaymentData) => {
-          const aMoment = moment(a.date);
-          const bMoment = moment(b.date);
-          if (aMoment.isAfter(bMoment)) {
-            return 1; // b at top
-          } else if (bMoment.isAfter(aMoment)) {
-            return -1;
-          } else {
-            if (a.type === 'debit' && b.type === 'credit') {
-              return 1;
-            } else {
-              return -1;
-            }
-          }
-        });
-
-        let balance = 0;
-        ps.map(p => {
-          if (p.type === 'credit') {
-            balance += p.receivable;
-          } else {
-            balance -= p.paid;
-          }
-          p.balance = balance;
-        });
-
-        this.payments = ps.sort((a: IMerchantPaymentData, b: IMerchantPaymentData) => {
-          const aMoment = moment(a.date).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-          const bMoment = moment(b.date).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-          if (aMoment.isAfter(bMoment)) {
-            return -1;
-          } else if (bMoment.isAfter(aMoment)) {
+      list = list.sort((a: any, b: any) => {
+        const aMoment = moment(a.created);
+        const bMoment = moment(b.created);
+        if (aMoment.isSame(bMoment, 'day')) {
+          if (a.type === 'debit') {
             return 1;
           } else {
-            if (a.type === 'credit') {
-              return 1;
+            if (aMoment.isAfter(bMoment)) {
+              return 1; // a to bottom
             } else {
               return -1;
             }
           }
-        });
-
-        this.dataSource = new MatTableDataSource(payments);
-        this.dataSource.sort = this.sort;
+        } else {
+          if (aMoment.isAfter(bMoment)) {
+            return 1;
+          } else {
+            return -1;
+          }
+        }
       });
+
+      list.map(item => {
+        if (item.type === 'credit') {
+          balance += item.receivable;
+        } else {
+          balance -= item.received;
+        }
+        item.balance = balance;
+      });
+
+      const rows = list.sort((a: any, b: any) => {
+        const aMoment = moment(a.created);
+        const bMoment = moment(b.created);
+        if (aMoment.isSame(bMoment, 'day')) {
+          if (a.type === 'debit') {
+            return -1;
+          } else {
+            if (aMoment.isAfter(bMoment)) {
+              return -1; // a to top
+            } else {
+              return 1;
+            }
+          }
+        } else {
+          if (aMoment.isAfter(bMoment)) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+      });
+
+      this.dataSource = new MatTableDataSource(rows);
+      this.dataSource.sort = this.sort;
     });
   }
 
   onMerchantSelectionChanged(e) {
     const merchantId = e.value;
-    this.merchant = this.merchants.find(m => m.merchantId === merchantId);
+    this.merchant = this.merchants.find(m => m._id === merchantId);
     this.reload(merchantId);
   }
 }
