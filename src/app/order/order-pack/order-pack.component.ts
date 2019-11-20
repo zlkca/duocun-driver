@@ -76,8 +76,8 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
     this.rx.select<ICommand>('cmd').pipe(takeUntil(this.onDestroy$)).subscribe((x: ICommand) => {
       if (x.name === 'reload-orders') {
-        const q = { accountId: { $in: self.clientIds } };
-          self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+        const q = { _id: { $in: self.clientIds } };
+          self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
           self.reload(accounts, this.pickupTime);
         });
       }
@@ -89,11 +89,11 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
       if (account) {
         if (xs) {
           self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
-          const q = { accountId: { $in: self.clientIds } };
-          // self.clientBalanceSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IClientBalance[]) => {
-          //   self.clientBalances = cbs;
-          //   self.reload(cbs, this.pickupTime);
-          // });
+          const q = { _id: { $in: self.clientIds } };
+          self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+            self.clientBalances = accounts;
+            self.reload(accounts, this.pickupTime);
+          });
         }
       } else {
         this.router.navigate(['account/login']);
@@ -132,8 +132,8 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
       // this.reload(restaurant._id);
       self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
       if (self.clientIds && self.clientIds.length > 0) {
-        const q = { accountId: { $in: self.clientIds } };
-        self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+        const q = { _id: { $in: self.clientIds } };
+        self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
           self.clientBalances = accounts;
           self.reload(accounts, this.pickupTime);
         });
