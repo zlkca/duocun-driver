@@ -47,8 +47,8 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   onDestroy$ = new Subject();
   // assignments;
   forms = {};
-  clientBalances = [];
-  ordersByMerchants = [];
+  accounts = [];
+  groups = [];
   clientIds = [];
   pickups = [];
   account;
@@ -77,7 +77,8 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     this.rx.select<ICommand>('cmd').pipe(takeUntil(this.onDestroy$)).subscribe((x: ICommand) => {
       if (x.name === 'reload-orders') {
         const q = { _id: { $in: self.clientIds } };
-          self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+        self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+          self.accounts = accounts;
           self.reload(accounts, this.pickupTime);
         });
       }
@@ -91,7 +92,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
           self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
           const q = { _id: { $in: self.clientIds } };
           self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
-            self.clientBalances = accounts;
+            self.accounts = accounts;
             self.reload(accounts, this.pickupTime);
           });
         }
@@ -134,21 +135,30 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
       if (self.clientIds && self.clientIds.length > 0) {
         const q = { _id: { $in: self.clientIds } };
         self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
-          self.clientBalances = accounts;
+          self.accounts = accounts;
           self.reload(accounts, this.pickupTime);
         });
       }
     }
   }
 
-  groupByMerchants(orders: IOrder[]) {
+  // return array of {merchantId: x, merchantName: x, items: [{order:x, status: x}, ... ]}
+  groupByMerchants(orders: IOrder[], assignments: any[]) {
     const groupedByMerchants = [];
     orders.map(order => {
-      const item = groupedByMerchants.find(m => m.merchantId === order.merchantId);
-      if (!item) {
-        groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, orders: [order] });
-      } else {
-        item.orders.push(order);
+      const grp = groupedByMerchants.find(m => m.merchantId === order.merchantId);
+      const assignment = assignments.find(a => a.orderId === order._id);
+
+      if (assignment) {
+        const code = assignment ? assignment.code : 'N/A';
+        const status = assignment ? assignment.status : 'new';
+
+        if (!grp) {
+          const item = { order: order, code: code, status: status, paid: (order.status === 'paid') };
+          groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, items: [item] });
+        } else {
+          grp.items.push({ order: order, code: code, status: status, paid: (order.status === 'paid') });
+        }
       }
     });
     return groupedByMerchants;
@@ -175,49 +185,12 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
 
     const orderQuery = { pickup: pickupTime, status: { $nin: ['del', 'bad', 'tmp'] } };
-    const transactionQuery = { created: range, type: 'credit', toId: accountId };
-
-    this.transactionSvc.quickFind(transactionQuery).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
+    const assignmentQuery = { delivered: range, driverId: accountId };
+    this.assignmentSvc.quickFind(assignmentQuery).pipe(takeUntil(this.onDestroy$)).subscribe(assignments => {
+      this.assignments = assignments;
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         this.forms = {};
-        orders.map(order => {
-          const transaction = ts.find(t => t.orderId === order._id);
-          if (transaction) {
-            order.received = transaction.amount;
-          }
-
-          const account: IAccount = accounts.find(x => x._id === order.clientId);
-          if (account) {
-            order.balance = account.balance; // new balance
-            order.receivable = (account.balance >= 0) ? 0 : Math.abs(account.balance);
-          } else {
-            order.receivable = order.total;
-          }
-
-          const ordersClient: IOrder[] = orders.filter(x => x.clientId === order.clientId);
-          order.nOrders = ordersClient.length;
-
-          let sum = 0;
-          ordersClient.map(x => sum += x.total);
-          if (account && account.balance) {
-            order.owe = (account.balance + sum) < 0 ? Math.abs(account.balance + sum) : 0;
-          } else {
-            order.owe = 0;
-          }
-
-          // only load order belongs to this driver
-          const assignment = this.assignments.find(x => x.orderId === order._id);
-          if (assignment) {
-            order.code = assignment.code;
-            order.paid = (order.status === 'paid');
-            this.forms[order._id] = this.fb.group({
-              received: [0]
-            });
-            os.push(order);
-          }
-        });
-        self.orders = os;
-        self.ordersByMerchants = this.groupByMerchants(os);
+        self.groups = this.groupByMerchants(orders, this.assignments);
       });
     });
   }
@@ -278,28 +251,20 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
   // deprecated
   togglePaid(e, order: IOrder) {
-    const self = this;
-    const toId = this.account._id;
-    const toName = this.account.username;
-    // const data = {
-    //   status: e.checked ? 'paid' : 'unpaid',
-    //   driverId: this.account.id,
-    //   driverName: this.account.username,
-    //   // receivable: order.receivable
-    // };
-    const received = Math.round(+this.forms[order._id].get('received').value * 100) / 100;
-    order.received = received;
+    // const self = this;
+    // const toId = this.account._id;
+    // const toName = this.account.username;
+    // const received = Math.round(+this.forms[order._id].get('received').value * 100) / 100;
+    // order.received = received;
 
-
-    const balance: IClientBalance = self.clientBalances.find(cb => cb.accountId === order.clientId);
-    this.clientPaymentSvc.pay(toId, toName, received, order._id, '').pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
-      self.snackBar.open('', '余额已更新', { duration: 1800 });
-      const q1 = { accountId: { $in: self.clientIds } };
-      self.accountSvc.quickFind(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IAccount[]) => {
-        self.clientBalances = cbs;
-        self.reload(cbs, this.pickupTime);
-      });
-    });
+    // this.clientPaymentSvc.pay(toId, toName, received, order._id, '').pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
+    //   self.snackBar.open('', '余额已更新', { duration: 1800 });
+    //   const q1 = { accountId: { $in: self.clientIds } };
+    //   self.accountSvc.quickFind(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IAccount[]) => {
+    //     self.accounts = cbs;
+    //     self.reload(cbs, this.pickupTime);
+    //   });
+    // });
 
     // this.savePayment(received, order);
   }
@@ -342,4 +307,10 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  finishDelivery(order: IOrder) {
+    this.assignmentSvc.update({ orderId: order._id }, { status: 'done' }).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.snackBar.open('', '此订单已完成', { duration: 1800 });
+        this.reload(this.accounts, this.pickupTime);
+    });
+  }
 }

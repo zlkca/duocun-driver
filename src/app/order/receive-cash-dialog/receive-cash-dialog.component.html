@@ -16,7 +16,7 @@
       </div>
       <div class="row receivable-col">
         <span>总共应收</span>:&nbsp;
-        <span class="title-bg" (click)="openBalanceDialog(order)"><a>${{receivable | number : '1.2-2'}}</a></span>
+        <span class="title-bg" (click)="openBalanceDialog(order)">${{receivable | number : '1.2-2'}}</span>
       </div>
       <!-- <div class="row nOrder-col" *ngIf="nOrders > 1">
         <span>应收高因为客户今天有</span>

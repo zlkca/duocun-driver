@@ -15,6 +15,7 @@ import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms
 import { AccountService } from '../../account/account.service';
 import { IAccount } from '../../account/account.model';
 import { ClientBalanceDialogComponent } from '../client-balance-dialog/client-balance-dialog.component';
+import { AssignmentService } from '../../assignment/assignment.service';
 
 
 export interface DialogData {
@@ -51,7 +52,6 @@ export class ReceiveCashDialogComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private rx: NgRedux<IAppState>,
-    private router: Router,
     private accountSvc: AccountService,
     private orderSvc: OrderService,
     private snackBar: MatSnackBar,
@@ -116,12 +116,10 @@ export class ReceiveCashDialogComponent implements OnInit, OnDestroy {
           const toId = this.data.accountId;
           const toName = this.data.accountName;
           this.orderSvc.pay(toId, toName, +received, orderId, note).pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
-            // this.snackBar.open('', '余额已更新', { duration: 1800 });
-
-            this.dialogRef.close();
-            this.rx.dispatch({ type: CommandActions.SEND, payload: { name: 'reload-orders', args: null } }); // refresh order history
-
-            // this.router.navigate(['order/package']);
+            // this.assignmentSvc.update({orderId: orderId}, {status: 'done'}).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+              this.dialogRef.close();
+              this.rx.dispatch({ type: CommandActions.SEND, payload: { name: 'reload-orders', args: null } }); // refresh order history
+            // });
           });
         }
       }
