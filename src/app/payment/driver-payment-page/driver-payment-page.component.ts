@@ -64,7 +64,7 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
     }), {});
   }
 
-  getDescription(t, clientId) {
+  getDescription(t, driverId) {
     if (t.action === 'client cancel order from duocun') {
       return '取消' + t.toName;
     } else if (t.action === 'pay by card') {
@@ -77,8 +77,14 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
       return '信用卡充值';
     } else if (t.action === 'client add credit by WECHATPAY') {
       return '微信充值';
+    } else if (t.action === 'pay merchant') {
+      return t.toName;
+    } else if (t.action === 'transfer' && t.fromId === driverId) {
+      return '转给' + t.toName;
+    } else if (t.action === 'transfer' && t.toId === driverId) {
+      return '转自' + t.fromName;
     } else {
-      return t.fromId === clientId ? t.toName : t.fromName;
+      return t.fromId === driverId ? t.toName : t.fromName;
     }
   }
 

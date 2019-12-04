@@ -115,7 +115,7 @@ export class ReceiveCashDialogComponent implements OnInit, OnDestroy {
           const orderId = this.data.orderId;
           const toId = this.data.accountId;
           const toName = this.data.accountName;
-          this.orderSvc.pay(toId, toName, +received, orderId, note).pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
+          this.orderSvc.payOrder(toId, toName, +received, orderId, note).pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
             // this.assignmentSvc.update({orderId: orderId}, {status: 'done'}).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
               this.dialogRef.close();
               this.rx.dispatch({ type: CommandActions.SEND, payload: { name: 'reload-orders', args: null } }); // refresh order history

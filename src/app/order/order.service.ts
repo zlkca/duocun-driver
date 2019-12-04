@@ -21,14 +21,9 @@ export class OrderService extends EntityService {
     this.url = super.getBaseUrl() + 'Orders';
   }
 
-  // payOrder(req: Request, res: Response) {
-  //   const toId = req.body.toId;
-  //   const toName = req.body.toName;
-  //   const received = +req.body.received;
-  //   const orderId = req.body.orderId;
-  //   const note = req.body.note;
-  pay(toId: string, toName: string, received: number, orderId: string, note: string): Observable<any> {
-    const url = this.url + '/pay';
+
+  payOrder(toId: string, toName: string, received: number, orderId: string, note: string): Observable<any> {
+    const url = this.url + '/payOrder';
     return this.doPost(url, { toId: toId, toName: toName, received: received, orderId: orderId, note: note });
   }
 }
