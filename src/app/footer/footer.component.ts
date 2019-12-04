@@ -74,7 +74,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   toHome() {
     this.selected = 'home';
     if (this.account) {
-      this.router.navigate(['order/home']);
+      this.router.navigate(['order/package']);
     } else {
       this.router.navigate(['account/login']);
     }

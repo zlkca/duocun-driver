@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PaymentRoutingModule } from './payment-routing.module';
@@ -21,6 +21,7 @@ import { RestaurantService } from '../restaurant/restaurant.service';
 import { ClientPaymentComponent } from './client-payment/client-payment.component';
 import { ClientPaymentPageComponent } from './client-payment-page/client-payment-page.component';
 import { ClientBalanceService } from './client-balance.service';
+import { PaginatePipe, NgxPaginationModule } from '../../../node_modules/ngx-pagination';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { ClientBalanceService } from './client-balance.service';
     MatSelectModule,
     MatInputModule,
     MatAutocompleteModule,
+    NgxPaginationModule,
   ],
   declarations: [
     MerchantPaymentPageComponent,
@@ -49,7 +51,9 @@ import { ClientBalanceService } from './client-balance.service';
     MerchantBalanceService,
     OrderService,
     RestaurantService,
-    ClientBalanceService
-  ]
+    ClientBalanceService,
+    PaginatePipe
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PaymentModule { }

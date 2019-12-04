@@ -1,23 +1,16 @@
 .payment-table-container{
-  height: 600px;
+  margin-top: 60px;
+  height: 540px;
   overflow: auto;
-
-  .mat-cell{
-    font-size: 12px;
-  }
-
-  .mat-column-name{
-    width: 100px;
-    flex: 0 0 100px;
-    word-wrap: break-word;
-    word-break: break-word;
-    font-size: 12px;
-    padding-right: 5px;
-  }
 }
 
 table{
   width: 100%;
+}
+
+td.mat-cell{
+  padding-left: 4px;
+  font-size: 13px;
 }
 
 td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, th.mat-header-cell:first-of-type {
@@ -25,7 +18,67 @@ td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, th.mat-header-cell:
 }
 
 td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type, th.mat-header-cell:last-of-type {
-  padding-right: 4px;
+  padding-right: 0px;
+}
+// .detail-list{
+//   margin-top: 60px;
+//   padding: 10px;
+
+//   .row{
+//     height: 22px;
+//   }
+
+//   .date-col, .credit-col, .debit-col{
+//     padding: 0px;
+//   }
+
+//   .date-col{
+//     font-weight: 600;
+//   }
+// }
+
+// .balance-block{
+//   border-top: 1px solid #666;
+//   padding-top: 10px;
+//   padding-left: 40px;
+//   margin: 10px;
+// }
+
+.balance-list{
+  margin-top: 20px;
+  .col-2{
+    padding-left: 5px;
+    padding-right: 2px;
+  }
+  .col-3{
+    margin-left: -12px;
+    padding-right: 2px;
+    padding-left: 0px;
+  }
+
+  .col-3:first-child{
+    margin-left: 0px;
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  .list-item{
+    padding-bottom: 2px;
+  }
 }
 
+.balance-pagination {
+  .ngx-pagination {
+    padding-left: 4px;
+  }
+}
 
+.title-row{
+  height: 60px;
+  margin: auto;
+  border-bottom: solid 1px #eee;
+  .title-bg{
+    padding-top: 15px;
+    width: 200px;
+    text-align: center;
+  }
+}

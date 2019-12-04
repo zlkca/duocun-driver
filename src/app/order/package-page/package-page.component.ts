@@ -50,16 +50,6 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     // this.range = { $lt: todayEnd, $gt: todayStart };
   }
 
-  getPickupTimes(xs: IAssignment[]): string[] {
-    const delivers = this.sharedSvc.getDistinctValues(xs, 'delivered');
-    const a = [];
-    delivers.map(x => {
-      const t = this.sharedSvc.getTimeString(x);
-      a.push(t);
-    });
-    return a;
-  }
-
   ngOnInit() {
     const self = this;
     this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
@@ -83,7 +73,7 @@ export class PackagePageComponent implements OnInit, OnDestroy {
           };
 
           this.assignmentSvc.quickFind(query).pipe(takeUntil(self.onDestroy$)).subscribe((xs: IAssignment[]) => {
-            const pickups = this.getPickupTimes(xs);
+            const pickups = this.assignmentSvc.getPickupTimes(xs);
             const phases = [];
             pickups.map(pickup => {
               const assignments = xs.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());

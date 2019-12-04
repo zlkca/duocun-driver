@@ -17,6 +17,7 @@ import { AccountPageComponent } from './account-page/account-page.component';
 import { MatSelectModule } from '@angular/material/select';
 import { RestaurantService } from '../restaurant/restaurant.service';
 import { MatSnackBarModule } from '../../../node_modules/@angular/material';
+import { AssignmentService } from '../assignment/assignment.service';
 
 @NgModule({
     imports: [
@@ -41,7 +42,8 @@ import { MatSnackBarModule } from '../../../node_modules/@angular/material';
     providers: [
       AccountService,
       AuthService,
-      RestaurantService
+      RestaurantService,
+      AssignmentService
     ]
 })
 export class AccountModule { }

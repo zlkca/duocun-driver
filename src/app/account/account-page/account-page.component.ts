@@ -6,14 +6,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { Subject } from '../../../../node_modules/rxjs';
 import { PageActions } from '../../main/main.actions';
-import { RestaurantService } from '../../restaurant/restaurant.service';
-import { IRestaurant } from '../../restaurant/restaurant.model';
 import { MatSnackBar } from '../../../../node_modules/@angular/material';
 import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms';
 import { TransactionService } from '../../transaction/transaction.service';
 import { ITransaction, ITransactionData } from '../../transaction/transaction.model';
 import * as moment from 'moment';
 import { AssignmentService } from '../../assignment/assignment.service';
+import { IAccount } from '../account.model';
 
 @Component({
   selector: 'app-account-page',
@@ -21,7 +20,7 @@ import { AssignmentService } from '../../assignment/assignment.service';
   styleUrls: ['./account-page.component.scss']
 })
 export class AccountPageComponent implements OnInit, OnDestroy {
-  account: Account;
+  account: IAccount;
   phone;
   address;
   onDestroy$ = new Subject<any>();
@@ -32,7 +31,6 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   bMerchant = false;
   bApplied = false;
   merchantId: string;
-  balance;
   salary;
 
   get name() { return this.form.get('name'); }
@@ -63,10 +61,9 @@ export class AccountPageComponent implements OnInit, OnDestroy {
     this.sub = this.route.queryParams.subscribe(params => {
       // this.bMerchant = params['merchant'].toLowerCase() === 'true' ? true : false;
 
-      this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
+      this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
         self.account = account;
-        self.reload(account.id);
-        self.loadSalary(account.id);
+        // self.loadSalary(account._id);
       });
     });
   }
@@ -101,21 +98,6 @@ export class AccountPageComponent implements OnInit, OnDestroy {
 
   toSalaryPage() {
     this.router.navigate(['payment/salary']);
-  }
-
-  reload(driverId: string) {
-    const q = { $or: [{ fromId: driverId }, { toId: driverId }] };
-    this.transactionSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
-      let balance = 0;
-      ts.map((t: ITransaction) => {
-        if (t.type === 'credit' || (t.type === 'transfer' && t.toId === driverId)) {
-          balance += t.amount;
-        } else if (t.type === 'debit' || (t.type === 'transfer' && t.fromId === driverId)) {
-          balance -= t.amount;
-        }
-      });
-      this.balance = balance;
-    });
   }
 
   groupBy(items, key) {

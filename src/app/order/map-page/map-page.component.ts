@@ -27,6 +27,7 @@ export class MapPageComponent implements OnInit, OnDestroy {
   account;
   assignments: IAssignment[] = [];
   delivered;
+  phases = [];
 
   constructor(
     private rx: NgRedux<IAppState>,
@@ -55,10 +56,7 @@ export class MapPageComponent implements OnInit, OnDestroy {
       const range = { $gt: date.startOf('day').toISOString(), $lt: date.endOf('day').toISOString() };
       const q = { driverId: account._id, delivered: range };
 
-      self.assignmentSvc.quickFind(q).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
-        self.assignments = xs;
-        self.reload(xs);
-      });
+      self.reload();
     });
   }
 
@@ -67,29 +65,65 @@ export class MapPageComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  reload(assignments: IAssignment[]) {
+  reload() {
     const self = this;
     const icons = {
       yellow: 'http://maps.google.com/mapfiles/ms/icons/yellow.png',
       green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
       red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
     };
-    const date = moment();
-    const range = { $gt: date.startOf('day').toISOString(), $lt: date.endOf('day').toISOString() };
-    const q = { delivered: range, status: { $nin: ['del', 'bad', 'tmp'] } };
-    self.orderSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
-      self.orders = orders;
-      const places = [];
-      orders.map((order: IOrder) => {
-        const assignment = assignments.find(a => a.orderId === order._id);
-        // paid will be green and will not be able to navigate
-        if (assignment) {
-          const icon = order.status === 'paid' ? icons['green'] : icons['red'];
-          places.push({ icon: icon, name: order.client.username, status: order.status, ...order.location });
-        }
+
+
+    // const date = moment();
+    // const range = { $gt: date.startOf('day').toISOString(), $lt: date.endOf('day').toISOString() };
+    // const q = { delivered: range, status: { $nin: ['del', 'bad', 'tmp'] } };
+    // self.orderSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
+    //   self.orders = orders;
+    //   const places = [];
+    //   orders.map((order: IOrder) => {
+    //     const assignment = assignments.find(a => a.orderId === order._id);
+    //     // paid will be green and will not be able to navigate
+    //     if (assignment) {
+    //       const icon = order.status === 'paid' ? icons['green'] : icons['red'];
+    //       places.push({ icon: icon, name: order.client.username, status: order.status, ...order.location });
+    //     }
+    //   });
+    //   self.places = places;
+    // });
+
+    const accountId = this.account._id;
+    const os = [];
+    const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
+
+    const assignmentQuery = { delivered: range, driverId: accountId };
+    this.assignmentSvc.quickFind(assignmentQuery).pipe(takeUntil(this.onDestroy$)).subscribe(assignments => {
+      this.assignments = assignments;
+      const pickups = this.assignmentSvc.getPickupTimes(assignments);
+      const orderQuery = { delivered: range, status: { $nin: ['del', 'bad', 'tmp'] } };
+
+      this.orderSvc.quickFind(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
+
+        const phases = [];
+        pickups.map(pickup => {
+          const os1 = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
+          const places = [];
+
+          os1.map(order => {
+            const assignment = assignments.find(a => a.orderId === order._id);
+            if (assignment) {
+              const icon = assignment.status === 'done' ? icons['green'] : icons['red'];
+              places.push({ icon: icon, name: order.clientName, status: assignment.status, ...order.location });
+            }
+          });
+
+          phases.push({pickup: pickup, places: places});
+        });
+
+        self.phases = phases;
       });
-      self.places = places;
     });
+
+
   }
 
 }

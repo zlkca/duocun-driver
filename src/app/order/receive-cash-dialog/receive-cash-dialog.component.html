@@ -4,13 +4,13 @@
   <mat-form-field>
   </mat-form-field> -->
 
-  <div class="receivables-row">
+  <div class="receivables-row" *ngIf="order">
     <div class="col-12">
       <!-- <div class="row balance-col">
         <span>往日余额</span>:&nbsp;
         <span>${{order.balance | number : '1.2-2'}}</span>
       </div> -->
-      <div class="row total-col" *ngIf="order">
+      <div class="row total-col">
         <span>今天订单</span>:&nbsp;
         <span>${{order.total | number : '1.2-2'}}</span>
       </div>
@@ -35,7 +35,7 @@
             <span i18n="@@Received">Received</span>:&nbsp;
           </div>
           <!-- <div class="dollar-sign">$&nbsp;<span *ngIf="order.paid">{{received | number : '1.2-2'}}</span></div> -->
-          <input class="received-input" name="received" formControlName="received" />
+          <input type="number" pattern="[\d\.]*" step="0.01" class="received-input" name="received" formControlName="received" />
         </div>
 
         <div class="row note-block">
@@ -54,7 +54,7 @@
 
 </div>
 
-<div mat-dialog-actions class="actions-row">
+<div mat-dialog-actions class="actions-row" *ngIf="order">
   <div class="btn btn-secondary btn-cancel" (click)="onCancel()" >取消</div>
   <div *ngIf="order.status!=='paid'" class="btn btn-primary btn-pay" (click)="onPay()" >确认收款</div>
 </div>

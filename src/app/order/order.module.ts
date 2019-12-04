@@ -32,6 +32,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { TransactionService } from '../transaction/transaction.service';
 import { ReceiveCashDialogComponent } from './receive-cash-dialog/receive-cash-dialog.component';
 import { ClientBalanceDialogComponent } from './client-balance-dialog/client-balance-dialog.component';
+import { AssignmentService } from '../assignment/assignment.service';
 
 @NgModule({
   imports: [
@@ -58,7 +59,8 @@ import { ClientBalanceDialogComponent } from './client-balance-dialog/client-bal
     ClientBalanceService,
     ClientPaymentService,
     MerchantBalanceService,
-    TransactionService
+    TransactionService,
+    AssignmentService
   ],
   declarations: [
     OrderHistoryComponent,

@@ -101,16 +101,16 @@ export class ReceiveCashDialogComponent implements OnInit, OnDestroy {
   }
 
   onPay() {
-    const received = this.received.value.trim();
+    const received = this.received.value;
     const note = this.note.value.trim();
     if (received === '') {
       return;
     } else {
       if (isNaN(received)) {
-        alert('Received Must be Number');
+        alert('此处需要输入数字');
       } else {
-        if (+received === 0 && note === '') {
-          alert('Must enter reason');
+        if (this.receivable > 0 && (+received + 1) <= this.receivable && note === '') {
+          alert('请输入少收款的原因');
         } else {
           const orderId = this.data.orderId;
           const toId = this.data.accountId;

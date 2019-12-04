@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, ɵɵNgOnChangesFeature, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
 import { IRestaurant } from '../../restaurant/restaurant.model';
 import { IOrder, IOrderItem } from '../order.model';
 import { OrderService } from '../order.service';
@@ -13,15 +13,7 @@ import { IAccount } from '../../account/account.model';
 import { MatSnackBar, MatDialog } from '../../../../node_modules/@angular/material';
 import { AssignmentService } from '../../assignment/assignment.service';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
-import { ClientPaymentService } from '../../payment/client-payment.service';
-import { IClientPayment } from '../../payment/payment.model';
-import { IAssignment } from '../../assignment/assignment.model';
-import { ClientBalanceService } from '../../payment/client-balance.service';
-import { IMerchantBalance, IClientBalance } from '../../payment/payment.model';
-import { group } from '../../../../node_modules/@angular/animations';
 import * as moment from 'moment';
-import { TransactionService } from '../../transaction/transaction.service';
-import { ITransaction } from '../../transaction/transaction.model';
 import { Router } from '../../../../node_modules/@angular/router';
 import { ReceiveCashDialogComponent } from '../receive-cash-dialog/receive-cash-dialog.component';
 import { ICommand } from '../../shared/command.reducers';
@@ -60,9 +52,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     private router: Router,
     private locationSvc: LocationService,
     private assignmentSvc: AssignmentService,
-    private clientPaymentSvc: ClientPaymentService,
-    private clientBalanceSvc: ClientBalanceService,
-    private transactionSvc: TransactionService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
     private rx: NgRedux<IAppState>,
@@ -143,21 +132,23 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   // return array of {merchantId: x, merchantName: x, items: [{order:x, status: x}, ... ]}
-  groupByMerchants(orders: IOrder[], assignments: any[]) {
+  groupByMerchants(accounts: IAccount[], orders: IOrder[], assignments: any[]) {
     const groupedByMerchants = [];
     orders.map(order => {
       const grp = groupedByMerchants.find(m => m.merchantId === order.merchantId);
       const assignment = assignments.find(a => a.orderId === order._id);
-
+      const account = accounts.find(a => a._id === order.clientId);
       if (assignment) {
         const code = assignment ? assignment.code : 'N/A';
         const status = assignment ? assignment.status : 'new';
 
+        const balance = account.balance;
+
         if (!grp) {
-          const item = { order: order, code: code, status: status, paid: (order.status === 'paid') };
+          const item = { balance: balance, order: order, code: code, status: status, paid: (order.status === 'paid') };
           groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, items: [item] });
         } else {
-          grp.items.push({ order: order, code: code, status: status, paid: (order.status === 'paid') });
+          grp.items.push({ balance: balance, order: order, code: code, status: status, paid: (order.status === 'paid') });
         }
       }
     });
@@ -171,10 +162,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     });
     return quantity;
   }
-
-  // getPickupTimes(xs: IAssignment[]): string[] {
-  //   return this.sharedSvc.getDistinctValues(xs, 'delivered').map(x => x.split('T')[1].split('.')[0]);
-  // }
 
 
   // pickupTime --- eg. '11:20'
@@ -190,7 +177,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
       this.assignments = assignments;
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         this.forms = {};
-        self.groups = this.groupByMerchants(orders, this.assignments);
+        self.groups = this.groupByMerchants(accounts, orders, this.assignments);
       });
     });
   }

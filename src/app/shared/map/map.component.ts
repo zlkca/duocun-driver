@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ViewChild, ElementRef } from '@angular/core';
 
 declare let google: any;
 
@@ -21,6 +21,7 @@ export class MapComponent implements OnInit, OnChanges {
   @Input() center: any;
   @Input() zoom: any;
   @Input() places: any[];
+  @ViewChild('map', { static: true }) input: ElementRef;
 
   constructor() { }
 
@@ -35,7 +36,9 @@ export class MapComponent implements OnInit, OnChanges {
   initMap() {
     const self = this;
     if (typeof google !== 'undefined') {
-      const map = new google.maps.Map(document.getElementById('map'), {
+      const mapDom = this.input.nativeElement;
+      const map = new google.maps.Map(mapDom, {
+      // const map = new google.maps.Map(document.getElementById('map'), {
         zoom: self.zoom,
         center: self.center,
         mapTypeControl: false,
@@ -63,7 +66,7 @@ export class MapComponent implements OnInit, OnChanges {
             }
           });
 
-          if (p.status === 'paid') {
+          if (p.status === 'done') {
             google.maps.event.removeListener(p.listener);
           } else {
             p.listener = marker1.addListener('click', getFunc(self.places[i]));
