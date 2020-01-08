@@ -21,6 +21,7 @@ import { AddressAutocompleteComponent } from './address-autocomplete/address-aut
 import { EntityService } from '../entity.service';
 import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
 import { ProgressSpinnerComponent } from './progress-spinner/progress-spinner.component';
+import { DeliveryDialogComponent } from '../order/delivery-dialog/delivery-dialog.component';
 
 // import { PageService } from '../pages/page.service';
 // import { PagesModule } from '../pages/pages.module';
@@ -59,6 +60,7 @@ import { ProgressSpinnerComponent } from './progress-spinner/progress-spinner.co
     AddressAutocompleteComponent,
     WarningDialogComponent,
     ProgressSpinnerComponent
-  ]
+  ],
+  entryComponents: [DeliveryDialogComponent]
 })
 export class SharedModule { }

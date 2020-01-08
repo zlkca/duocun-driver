@@ -33,6 +33,9 @@ import { TransactionService } from '../transaction/transaction.service';
 import { ReceiveCashDialogComponent } from './receive-cash-dialog/receive-cash-dialog.component';
 import { ClientBalanceDialogComponent } from './client-balance-dialog/client-balance-dialog.component';
 import { AssignmentService } from '../assignment/assignment.service';
+import { SharedService } from '../shared/shared.service';
+import { LocationService } from '../location/location.service';
+import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.component';
 
 @NgModule({
   imports: [
@@ -60,7 +63,9 @@ import { AssignmentService } from '../assignment/assignment.service';
     ClientPaymentService,
     MerchantBalanceService,
     TransactionService,
-    AssignmentService
+    AssignmentService,
+    LocationService,
+    SharedService
   ],
   declarations: [
     OrderHistoryComponent,
@@ -72,7 +77,8 @@ import { AssignmentService } from '../assignment/assignment.service';
     SettlementPageComponent,
     MapPageComponent,
     ReceiveCashDialogComponent,
-    ClientBalanceDialogComponent
+    ClientBalanceDialogComponent,
+    DeliveryDialogComponent
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

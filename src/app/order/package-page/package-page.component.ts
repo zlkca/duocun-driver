@@ -52,7 +52,7 @@ export class PackagePageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
       if (account && account.roles) {
         const roles = account.roles;

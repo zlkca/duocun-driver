@@ -61,7 +61,7 @@ export class AccountPageComponent implements OnInit, OnDestroy {
     this.sub = this.route.queryParams.subscribe(params => {
       // this.bMerchant = params['merchant'].toLowerCase() === 'true' ? true : false;
 
-      this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
+      this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
         self.account = account;
         // self.loadSalary(account._id);
       });

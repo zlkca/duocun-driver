@@ -55,7 +55,7 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       this.account = account;
       if (account && account.roles) {
         const roles = account.roles;

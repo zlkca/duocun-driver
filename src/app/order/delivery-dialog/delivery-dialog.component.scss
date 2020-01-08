@@ -1,0 +1,208 @@
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  line-height: 14px;
+  min-width: auto;
+}
+
+.address-block{
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-top: 1px solid #aaa;
+  margin-top: 10px;
+}
+
+.order-list{
+  margin-top: 50px;
+}
+
+.order{
+  border-bottom: solid 1px #eee;
+  margin: 0px;
+  padding: 10px;
+
+  .row{
+    margin: 0px;
+  }
+
+  .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
+    font-size: 12px;
+    .col-3 {
+      padding: 0px;
+    }
+    .col-9 {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .order-id-col, .merchant-col{
+    font-size: 12px;
+    .col-3 {
+      padding: 0px;
+    }
+    .col-9 {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .product-block{
+    padding-top: 10px;
+    .col-9, .col-3{
+      padding: 0px;
+    }
+
+    .product-col{
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    
+    .quantity-col{
+      padding-left: 5px;
+    }
+
+    .phonenum-row{
+      a{
+        font-size: 14px;
+      }
+    }
+  }
+
+  .navigate-row{
+    .btn{
+      float: right;
+    }
+  }
+
+  .paid-toggle{
+    margin-top: 10px;
+  }
+}
+
+.order-header{
+  width: 100%;
+
+  .col-8{
+    padding: 0px;
+  }
+
+  .code-col, .client-col, .quantity-col, .status-col{
+    // font-size: 14px;
+    padding: 0px;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .col-3 {
+    padding: 0px;
+  }
+  .col-9 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .red{
+    color: red;
+  }
+
+  .green{
+    color: green;
+  }
+}
+
+.receivables-row{
+  font-size: 14px;
+  padding-top: 10px;
+  margin: 5px;
+
+  .left-col{
+    padding: 0px;
+  }
+
+  .right-col{
+    padding-right: 0px;
+
+    .paid-toggle{
+      margin-top: 10px;
+    }
+  }
+}
+
+.received-form{
+  font-size: 16px;
+  padding-right: 0px;
+  .label, .dollar-sign{
+    padding-top: 5px;
+  }
+  .received-input{
+    float: left;
+    width: calc(100% - 56px);
+    height: 32px;
+    padding: 5px;
+  }
+}
+
+.order-block{
+  margin-bottom: 6px;
+}
+
+.total-col, .balance-col, .receivable-col, .nOrder-col{
+  font-size: 12px;
+}
+
+.nOrder-col{
+  width: 185px;
+}
+
+div.mat-expansion-panel-body {
+  padding: 0px !important;
+}
+
+// .mat-expansion-panel-body{
+//   padding: 0px 10px 16px !important;
+// }
+.mat-slide-toggle-bar {
+  height: 28px !important;
+  width: 88px !important;
+}
+
+.mat-slide-toggle-thumb {
+  height: 28px !important;
+  width: 28px !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
+    transform: translate3d(60px,0,0) !important;
+}
+
+.mat-slide-toggle-thumb-container {
+    width: 28px !important;
+    height: 28px !important;
+    top: 0px !important;
+}
+
+.mat-expansion-panel-header {
+  padding-left: 12px !important;
+  font-weight: 600;
+}
+
+.mat-expansion-panel-header-title {
+  padding-right: 0px;
+}
+
+.mat-slide-toggle-content {
+    font-size: 12px;
+}
+
+// material css
+.receive-cash-dialog{
+  position: absolute !important;
+  top: 8%;
+  left: 6%;
+  width: 88% !important;
+  height: 70%;
+  max-width: none !important;
+}

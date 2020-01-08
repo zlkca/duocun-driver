@@ -1,4 +1,8 @@
-import { Component, OnInit, Input, OnChanges, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { MatDialog } from '../../../../node_modules/@angular/material';
+import { takeUntil } from '../../../../node_modules/rxjs/operators';
+import { Subject } from '../../../../node_modules/rxjs';
+import { DeliveryDialogComponent } from '../../order/delivery-dialog/delivery-dialog.component';
 
 declare let google: any;
 
@@ -17,13 +21,18 @@ function getFunc(location) {
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, OnChanges {
+export class MapComponent implements OnInit, OnDestroy, OnChanges {
   @Input() center: any;
   @Input() zoom: any;
   @Input() places: any[];
+  @Input() pickup: any;
   @ViewChild('map', { static: true }) input: ElementRef;
 
-  constructor() { }
+  onDestroy$ = new Subject();
+
+  constructor(
+    public dialogSvc: MatDialog
+  ) { }
 
   ngOnInit() {
     this.initMap();
@@ -31,6 +40,26 @@ export class MapComponent implements OnInit, OnChanges {
 
   ngOnChanges(v) {
     this.initMap();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  openDeliveryDialog(location: any) {
+    const params = {
+      width: '300px',
+      data: {
+        title: '订单', content: '', buttonTextNo: '取消', buttonTextYes: '确认', location: location, pickup: this.pickup
+      },
+      panelClass: 'delivery-dialog'
+    };
+    const dialogRef = this.dialogSvc.open(DeliveryDialogComponent, params);
+
+    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(result => {
+
+    });
   }
 
   initMap() {
@@ -66,11 +95,13 @@ export class MapComponent implements OnInit, OnChanges {
             }
           });
 
-          if (p.status === 'done') {
-            google.maps.event.removeListener(p.listener);
-          } else {
-            p.listener = marker1.addListener('click', getFunc(self.places[i]));
-          }
+          // if (p.status === 'done') {
+          //   google.maps.event.removeListener(p.listener);
+          // } else {
+            p.listener = marker1.addListener('click', function() {
+              self.openDeliveryDialog(self.places[i]);
+            });
+          // }
 
 
           // marker1.setMap(map);

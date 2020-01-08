@@ -458,6 +458,30 @@ select:not([multiple]) {
   padding-right: 1.5em
 }
 
+
+.dialog-head{
+  height: 60px;
+  width: 100%;
+}
+
+.delivery-dialog{
+  position: absolute !important;
+  top: 2%;
+  left: 2%;
+  width: 96% !important;
+  height: 96%;
+  max-width: none !important;
+
+  .mat-dialog-container{
+    padding: 0px !important;
+  }
+
+  // .cdk-overlay-pane.my-dialog {
+  //   position: relative!important;
+  // }
+
+}
+
   @media #{$desktop}{
 
   }

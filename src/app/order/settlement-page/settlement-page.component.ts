@@ -58,7 +58,7 @@ export class SettlementPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrentUser().pipe(
+    self.accountSvc.getCurrentAccount().pipe(
       takeUntil(this.onDestroy$)
     ).subscribe(account => {
         const roles = account.roles;

@@ -32,10 +32,10 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
   }
   ngOnInit() {
     const self = this;
-    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
-      if (account && account.id) {
-        self.reload(account.id);
+      if (account && account._id) {
+        self.reload(account._id);
       } else {
         // should never be here.
         self.orders = [];
@@ -84,22 +84,4 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
   toDateTimeString(s) {
     return s ? this.sharedSvc.toDateTimeString(s) : '';
   }
-
-  // takeOrder(order) {
-  //   const self = this;
-  //   order.workerStatus = 'process';
-  //   this.orderSvc.replace(order).subscribe(x => {
-  //     // self.afterSave.emit({name: 'OnUpdateOrder'});
-  //     self.reload(self.account.id);
-  //   });
-  // }
-
-  // sendForDeliver(order) {
-  //   const self = this;
-  //   order.workerStatus = 'done';
-  //   this.orderSvc.replace(order).subscribe(x => {
-  //     // self.afterSave.emit({name: 'OnUpdateOrder'});
-  //     self.reload(self.account.id);
-  //   });
-  // }
 }

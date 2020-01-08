@@ -39,7 +39,7 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    this.accountSvc.getCurrent().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
+    this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
       this.account = account;
       if (account) {
         this.OnPageChange(this.currentPageNumber);
@@ -89,7 +89,6 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
   }
 
   OnPageChange(pageNumber) {
-    const accountId = this.account._id;
     const itemsPerPage = this.itemsPerPage;
     const driverId = this.account._id;
 
@@ -134,7 +133,7 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
 
 //   ngOnInit() {
 //     const self = this;
-//     self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+//     self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
 //       this.account = account;
 //       if (account && account.roles) {
 //         const roles = account.roles;

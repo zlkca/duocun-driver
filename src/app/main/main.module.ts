@@ -7,6 +7,7 @@ import { LocationModule } from '../location/location.module';
 import { SharedModule } from '../shared/shared.module';
 import { AccountService } from '../account/account.service';
 import { AuthService } from '../account/auth.service';
+import { LocationService } from '../location/location.service';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { AuthService } from '../account/auth.service';
   ],
   providers: [
     AccountService,
+    LocationService,
     AuthService
   ]
 })

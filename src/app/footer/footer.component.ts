@@ -45,7 +45,7 @@ export class FooterComponent implements OnInit, OnDestroy {
       if (account) {
         self.account = account;
       } else {
-        self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account2: Account) => {
+        self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe((account2: Account) => {
           self.account = account2;
         });
       }
@@ -75,6 +75,15 @@ export class FooterComponent implements OnInit, OnDestroy {
     this.selected = 'home';
     if (this.account) {
       this.router.navigate(['order/package']);
+    } else {
+      this.router.navigate(['account/login']);
+    }
+  }
+
+  toDeliver() {
+    this.selected = 'deliver';
+    if (this.account) {
+      this.router.navigate(['order/delivery']);
     } else {
       this.router.navigate(['account/login']);
     }

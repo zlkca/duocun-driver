@@ -80,9 +80,9 @@
             </div>
           </div>
           <div class="row receivables-row">
-            <div class="btn btn-primary" *ngIf="it.balance < 0" (click)="openReceiveCashDialog(it.order)">收款</div>
-            <div class="btn btn-primary" *ngIf="it.balance >= 0 && it.status !== 'done'" (click)="finishDelivery(it.order)">完成订单</div>
-              <!-- <div class="col-6 left-col">
+            <div class="btn btn-primary" *ngIf="it.order.paymentMethod==='cash'" (click)="openReceiveCashDialog(it.order)">收款</div>
+            <div class="btn btn-primary" *ngIf="it.paid && it.status !== 'done'" (click)="finishDelivery(it.order)">完成订单</div>
+              <!-- it.balance < 0 <div class="col-6 left-col">
                 <div class="row total-col">
                   <span>今天订单</span>:&nbsp;
                   <span>${{order.total | number : '1.2-2'}}</span>

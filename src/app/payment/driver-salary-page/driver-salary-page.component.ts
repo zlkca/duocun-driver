@@ -36,7 +36,7 @@ export class DriverSalaryPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       if (account && account.roles) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {

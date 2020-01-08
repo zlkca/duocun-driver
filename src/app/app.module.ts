@@ -19,6 +19,7 @@ import { EntityService } from './entity.service';
 import { createStore } from '../../node_modules/redux';
 import { GestureConfig } from '../../node_modules/@angular/material';
 import { AccountService } from './account/account.service';
+import { SharedService } from './shared/shared.service';
 
 
 const appRoutes: Routes = [
@@ -103,12 +104,13 @@ const appRoutes: Routes = [
       EntityService,
       AuthService,
       AccountService,
-      {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig}
+      // SharedService,
+      // {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig}
     ],
 
 })
 export class AppModule {
     constructor(ngRedux: NgRedux<any>) {
-        ngRedux.configureStore(rootReducer, INITIAL_STATE);
+      ngRedux.configureStore(rootReducer, INITIAL_STATE);
    }
 }

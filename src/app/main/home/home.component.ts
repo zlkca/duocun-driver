@@ -15,7 +15,6 @@ import { AccountActions } from '../../account/account.actions';
 import { Account, Role } from '../../account/account.model';
 import { ILocationAction } from '../../location/location.reducer';
 import { LocationActions } from '../../location/location.actions';
-import { AssignmentService } from '../../assignment/assignment.service';
 // import { MomentDateAdapter } from '../../../../node_modules/@angular/material-moment-adapter';
 import * as moment from 'moment';
 
@@ -47,7 +46,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private accountSvc: AccountService,
-    private assignmentSvc: AssignmentService,
     private locationSvc: LocationService,
     private authSvc: AuthService,
     private router: Router,
@@ -58,7 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
       if (account) {
         self.loginSuccessHandler(account);
@@ -86,9 +84,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   wechatLoginHandler(data: any) {
     const self = this;
-    self.authSvc.setUserId(data.userId);
-    self.authSvc.setAccessToken(data.id);
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
+    self.authSvc.setAccessTokenId(data.id);
+    self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe((account: Account) => {
       if (account) {
         self.account = account;
 

@@ -52,7 +52,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
   ) {
     const self = this;
-    self.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
+    self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
       this.account = account;
       if (account && account.roles) {
         const roles = account.roles;

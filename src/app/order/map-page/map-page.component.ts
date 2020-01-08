@@ -36,26 +36,14 @@ export class MapPageComponent implements OnInit, OnDestroy {
     private assignmentSvc: AssignmentService,
     private sharedSvc: SharedService
   ) {
-    // this.rx.select<ILocation>('location').pipe(takeUntil(this.onDestroy$)).subscribe(loc => {
-    //   if (loc) {
-    //     this.currLocation = loc;
-    //   } else {
-        this.currLocation = { lat: 43.8461479, lng: -79.37935279999999 };
-    //   }
-    // });
+    this.currLocation = { lat: 43.8461479, lng: -79.37935279999999 };
   }
 
   ngOnInit() {
     const self = this;
 
-    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
+    this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
       self.account = account;
-      // self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
-
-      const date = moment();
-      const range = { $gt: date.startOf('day').toISOString(), $lt: date.endOf('day').toISOString() };
-      const q = { driverId: account._id, delivered: range };
-
       self.reload();
     });
   }
@@ -72,24 +60,6 @@ export class MapPageComponent implements OnInit, OnDestroy {
       green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
       red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
     };
-
-
-    // const date = moment();
-    // const range = { $gt: date.startOf('day').toISOString(), $lt: date.endOf('day').toISOString() };
-    // const q = { delivered: range, status: { $nin: ['del', 'bad', 'tmp'] } };
-    // self.orderSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(orders => {
-    //   self.orders = orders;
-    //   const places = [];
-    //   orders.map((order: IOrder) => {
-    //     const assignment = assignments.find(a => a.orderId === order._id);
-    //     // paid will be green and will not be able to navigate
-    //     if (assignment) {
-    //       const icon = order.status === 'paid' ? icons['green'] : icons['red'];
-    //       places.push({ icon: icon, name: order.client.username, status: order.status, ...order.location });
-    //     }
-    //   });
-    //   self.places = places;
-    // });
 
     const accountId = this.account._id;
     const os = [];
@@ -112,18 +82,19 @@ export class MapPageComponent implements OnInit, OnDestroy {
             const assignment = assignments.find(a => a.orderId === order._id);
             if (assignment) {
               const icon = assignment.status === 'done' ? icons['green'] : icons['red'];
-              places.push({ icon: icon, name: order.clientName, status: assignment.status, ...order.location });
+
+              const a = places.find(p => p && p.placeId === order.location.placeId);
+              if (!a) {
+                places.push({ icon: icon, name: order.clientName, status: assignment.status, ...order.location });
+              }
             }
           });
 
-          phases.push({pickup: pickup, places: places});
+          phases.push({ pickup: pickup, places: places });
         });
 
         self.phases = phases;
       });
     });
-
-
   }
-
 }

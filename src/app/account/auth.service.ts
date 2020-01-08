@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as Cookies from 'js-cookie';
 
+const COOKIE_EXPIRY_DAYS = 365;
+
+
 @Injectable()
 export class AuthService {
 
@@ -9,25 +12,17 @@ export class AuthService {
 
   }
 
-  setAccessToken(token: string) {
-    // localStorage.setItem('token', token);
-    Cookies.remove('duocun-token');
-    Cookies.set('duocun-token', token);
+  setAccessTokenId(token: string) {
+    if (token) {
+      Cookies.set('duocun-token-id', token, { expires: COOKIE_EXPIRY_DAYS });
+    }
   }
 
-  getAccessToken(): string {
-    // return localStorage.getItem('token');
-    return Cookies.get('duocun-token');
+  getAccessTokenId(): string {
+    const tokenId = Cookies.get('duocun-token-id');
+    return tokenId ? tokenId : null;
   }
 
-  setUserId(id: string) {
-    Cookies.remove('duocun-userId');
-    Cookies.set('duocun-userId', id);
-  }
-
-  getUserId(): string {
-    return Cookies.get('duocun-userId');
-  }
 
   // setLocation(loc: ILocation) {
   //   Cookies.remove('duocun-location');
@@ -44,8 +39,6 @@ export class AuthService {
   // }
 
   removeCookies() {
-    // Cookies.remove('duocun-location');
-    Cookies.remove('duocun-userId');
-    Cookies.remove('duocun-token');
+    Cookies.remove('duocun-token-id');
   }
 }

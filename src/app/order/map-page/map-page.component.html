@@ -8,7 +8,7 @@
     <mat-tab label="{{phase.pickup}}" *ngFor="let phase of phases">
       <!-- <app-order-pack [assignments]="phase.assignments" [pickupTime]="phase.pickup"></app-order-pack> -->
       <div class="map-block" *ngIf="phase && phase.places && phase.places.length>0">
-        <app-map [center]="currLocation" [zoom]="11" [places]="phase.places"></app-map>
+        <app-map [center]="currLocation" [zoom]="11" [places]="phase.places" [pickup]="phase.pickup"></app-map>
       </div>
     </mat-tab>
   </mat-tab-group>

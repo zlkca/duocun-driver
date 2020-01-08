@@ -63,11 +63,10 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     const v = this.form.value;
     this.authSvc.removeCookies();
     if (this.form.valid) {
-      this.accountSvc.login(v.account, v.password).subscribe((data: any) => {
-        if (data) {
-          self.authSvc.setUserId(data.userId);
-          self.authSvc.setAccessToken(data.id);
-          self.accountSvc.getCurrentUser().subscribe((account: Account) => {
+      this.accountSvc.login(v.account, v.password).subscribe((tokentId: string) => {
+        if (tokentId) {
+          self.authSvc.setAccessTokenId(tokentId);
+          self.accountSvc.getCurrentAccount().subscribe((account: Account) => {
             if (account) {
               self.rx.dispatch({ type: AccountActions.UPDATE, payload: account }); // update header, footer icons
               const roles = account.roles;

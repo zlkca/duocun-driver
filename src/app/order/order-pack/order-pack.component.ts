@@ -12,7 +12,6 @@ import { AccountService } from '../../account/account.service';
 import { IAccount } from '../../account/account.model';
 import { MatSnackBar, MatDialog } from '../../../../node_modules/@angular/material';
 import { AssignmentService } from '../../assignment/assignment.service';
-import { FormBuilder } from '../../../../node_modules/@angular/forms';
 import * as moment from 'moment';
 import { Router } from '../../../../node_modules/@angular/router';
 import { ReceiveCashDialogComponent } from '../receive-cash-dialog/receive-cash-dialog.component';
@@ -37,7 +36,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   list: IOrderItem[];
   ordersWithNote: IOrder[] = [];
   onDestroy$ = new Subject();
-  // assignments;
   forms = {};
   accounts = [];
   groups = [];
@@ -53,7 +51,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     private locationSvc: LocationService,
     private assignmentSvc: AssignmentService,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder,
     private rx: NgRedux<IAppState>,
     public dialog: MatDialog
   ) {
@@ -66,15 +63,18 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     this.rx.select<ICommand>('cmd').pipe(takeUntil(this.onDestroy$)).subscribe((x: ICommand) => {
       if (x.name === 'reload-orders') {
         const q = { _id: { $in: self.clientIds } };
-        self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
-          self.accounts = accounts;
-          self.reload(accounts, this.pickupTime);
+        this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+          self.account = account;
+          self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+            self.accounts = accounts;
+            self.reload(account, accounts, this.pickupTime);
+          });
         });
       }
     });
 
     const xs = this.assignments;
-    this.accountSvc.getCurrentUser().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
       if (account) {
         if (xs) {
@@ -82,36 +82,13 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
           const q = { _id: { $in: self.clientIds } };
           self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
             self.accounts = accounts;
-            self.reload(accounts, this.pickupTime);
+            self.reload(account, accounts, this.pickupTime);
           });
         }
       } else {
         this.router.navigate(['account/login']);
       }
     });
-
-    // setTimeout(() => {
-    //   self.reload();
-    // }, 2000);
-
-    // this.socketSvc.on('updateOrders', x => {
-    //   // self.onFilterOrders(this.selectedRange);
-    //   if (x.clientId === self.account.id) {
-    //     const index = self.orders.findIndex(i => i.id === x.id);
-    //     if (index !== -1) {
-    //       self.orders[index] = x;
-    //     } else {
-    //       self.orders.push(x);
-    //     }
-    //     self.orders.sort((a: Order, b: Order) => {
-    //       if (this.sharedSvc.compareDateTime(a.created, b.created)) {
-    //         return -1;
-    //       } else {
-    //         return 1;
-    //       }
-    //     });
-    //   }
-    // });
   }
 
 
@@ -119,13 +96,16 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     const self = this;
     if (v.assignments && v.assignments.currentValue) {
       const xs = v.assignments.currentValue;
-      // this.reload(restaurant._id);
       self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
       if (self.clientIds && self.clientIds.length > 0) {
         const q = { _id: { $in: self.clientIds } };
-        self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
-          self.accounts = accounts;
-          self.reload(accounts, this.pickupTime);
+
+        self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+          self.account = account;
+          self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
+            self.accounts = accounts;
+            self.reload(account, accounts, this.pickupTime);
+          });
         });
       }
     }
@@ -165,10 +145,9 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
 
   // pickupTime --- eg. '11:20'
-  reload(accounts: IAccount[], pickupTime: string) {
+  reload(account: IAccount, accounts: IAccount[], pickupTime: string) {
     const self = this;
-    const accountId = this.account._id;
-    const os = [];
+    const accountId = account._id;
     const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
 
     const orderQuery = { pickup: pickupTime, status: { $nin: ['del', 'bad', 'tmp'] } };
@@ -189,20 +168,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   toDateTimeString(s) {
     return s ? this.sharedSvc.toDateTimeString(s) : '';
   }
-
-  // ngOnChanges(v) {
-  //   // this.reload();
-  //   const self = this;
-  //   self.accountSvc.getCurrentUser().pipe(
-  //     takeUntil(this.onDestroy$)
-  //   ).subscribe(account => {
-  //     self.account = account;
-  //     self.assignmentSvc.find({ where: { driverId: account.id } }).pipe(takeUntil(self.onDestroy$)).subscribe(xs => {
-  //       self.assignments = xs;
-  //       self.reload(xs);
-  //     });
-  //   });
-  // }
 
   ngOnDestroy() {
     this.onDestroy$.next();
@@ -238,44 +203,8 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
   // deprecated
   togglePaid(e, order: IOrder) {
-    // const self = this;
-    // const toId = this.account._id;
-    // const toName = this.account.username;
-    // const received = Math.round(+this.forms[order._id].get('received').value * 100) / 100;
-    // order.received = received;
 
-    // this.clientPaymentSvc.pay(toId, toName, received, order._id, '').pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
-    //   self.snackBar.open('', '余额已更新', { duration: 1800 });
-    //   const q1 = { accountId: { $in: self.clientIds } };
-    //   self.accountSvc.quickFind(q1).pipe(takeUntil(this.onDestroy$)).subscribe((cbs: IAccount[]) => {
-    //     self.accounts = cbs;
-    //     self.reload(cbs, this.pickupTime);
-    //   });
-    // });
-
-    // this.savePayment(received, order);
   }
-
-
-  // savePayment(received: number, order: IOrder) {
-  //   const clientPayment: IClientPayment = {
-  //     orderId: order._id,
-  //     clientId: order.clientId,
-  //     clientName: order.clientName,
-  //     driverId: this.account.id,
-  //     driverName: this.account.username,
-  //     amount: received,
-  //     type: 'credit',
-  //     delivered: order.delivered,
-  //     created: new Date(),
-  //     modified: new Date(),
-  //   };
-
-  //   this.clientPaymentSvc.save(clientPayment).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
-  //     this.snackBar.open('', '已保存客户的付款', { duration: 2300 });
-  //   });
-  // }
-
 
   openReceiveCashDialog(order: IOrder) {
     const orderId = order._id;
@@ -297,7 +226,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   finishDelivery(order: IOrder) {
     this.assignmentSvc.update({ orderId: order._id }, { status: 'done' }).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.snackBar.open('', '此订单已完成', { duration: 1800 });
-        this.reload(this.accounts, this.pickupTime);
+      this.reload(this.account, this.accounts, this.pickupTime);
     });
   }
 }
