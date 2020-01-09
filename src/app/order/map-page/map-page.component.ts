@@ -85,7 +85,7 @@ export class MapPageComponent implements OnInit, OnDestroy {
 
               const a = places.find(p => p && p.placeId === order.location.placeId);
               if (!a) {
-                places.push({ icon: icon, name: order.clientName, status: assignment.status, ...order.location });
+                places.push({ status: assignment.status, icon: icon, name: order.clientName,  ...order.location });
               }
             }
           });

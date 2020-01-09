@@ -7,7 +7,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 
 // import { ProductModule } from '../product/product.module';
 // import { OrderModule } from '../order/order.module';
-import { RestaurantService } from './restaurant.service';
+import { MerchantService } from './restaurant.service';
 // import { LocationService } from '../shared/location/location.service';
 // import { ImageUploadModule } from 'angular2-image-upload';
 import { ImageUploaderModule } from '../image-uploader/image-uploader.module';
@@ -33,7 +33,7 @@ import { OrderService } from '../order/order.service';
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
-      RestaurantService,
+      MerchantService,
       ProductService,
       CategoryService,
       OrderService

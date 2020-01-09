@@ -22,6 +22,7 @@ export class OrderService extends EntityService {
   }
 
 
+  // return -- eg. { status: 'success' }
   payOrder(toId: string, toName: string, received: number, orderId: string, note: string): Observable<any> {
     const url = this.url + '/payOrder';
     return this.doPost(url, { toId: toId, toName: toName, received: received, orderId: orderId, note: note });

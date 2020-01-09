@@ -4,7 +4,7 @@ import { OrderService } from '../../order/order.service';
 import { SharedService } from '../../shared/shared.service';
 import { IOrderItem, IOrder } from '../order.model';
 // import { SocketService } from '../../shared/socket.service';
-import { IRestaurant } from '../../restaurant/restaurant.model';
+import { IMerchant } from '../../restaurant/restaurant.model';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { Subject } from '../../../../node_modules/rxjs';
 
@@ -14,7 +14,7 @@ import { Subject } from '../../../../node_modules/rxjs';
   styleUrls: ['./order-summary.component.scss']
 })
 export class OrderSummaryComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() restaurant: IRestaurant;
+  @Input() restaurant: IMerchant;
   @Input() dateRange;
 
   orders: IOrder[] = [];

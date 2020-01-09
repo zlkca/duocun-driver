@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { IAccount, Role } from '../../account/account.model';
 import { AccountService } from '../../account/account.service';
 import { SharedService } from '../../shared/shared.service';
-import { IRestaurant } from '../../restaurant/restaurant.model';
+import { IMerchant, MerchantType } from '../../restaurant/restaurant.model';
 import { Subject } from '../../../../node_modules/rxjs';
-import { RestaurantService } from '../../restaurant/restaurant.service';
+import { MerchantService } from '../../restaurant/restaurant.service';
 import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
@@ -27,13 +27,13 @@ export class PackagePageComponent implements OnInit, OnDestroy {
   lunchEnd;
 
   onDestroy$ = new Subject();
-  restaurant: IRestaurant;
+  restaurant: IMerchant;
   phases: any[] = [];
   // delivered; // moment object
   // deliverTime; // Display purpose
 
   constructor(
-    private restaurantSvc: RestaurantService,
+    private merchantSvc: MerchantService,
     private sharedSvc: SharedService,
     private accountSvc: AccountService,
     private assignmentSvc: AssignmentService,
@@ -52,12 +52,13 @@ export class PackagePageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
+    const q = { status: 'active', type: MerchantType.RESTAURANT };
     this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
       if (account && account.roles) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.restaurantSvc.quickFind().pipe(takeUntil(this.onDestroy$)).subscribe((rs: IRestaurant[]) => {
+          self.merchantSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((rs: IMerchant[]) => {
             if (rs && rs.length > 0) {
               self.restaurant = rs[0];
             } else {

@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IAccount, Role } from '../../account/account.model';
 import { AccountService } from '../../account/account.service';
 import { SharedService } from '../../shared/shared.service';
-import { RestaurantService } from '../../restaurant/restaurant.service';
+import { MerchantService } from '../../restaurant/restaurant.service';
 import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router';
-import { IRestaurant } from '../../restaurant/restaurant.model';
+import { IMerchant, MerchantType } from '../../restaurant/restaurant.model';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import * as moment from 'moment';
@@ -21,11 +21,11 @@ export class SettlementPageComponent implements OnInit, OnDestroy {
   rangeWeek;
   rangeMonth;
   onDestroy$ = new Subject();
-  restaurant: IRestaurant;
+  restaurant: IMerchant;
   deliverTime;
 
   constructor(
-    private restaurantSvc: RestaurantService,
+    private merchantSvc: MerchantService,
     private sharedSvc: SharedService,
     private accountSvc: AccountService,
     private router: Router,
@@ -58,14 +58,11 @@ export class SettlementPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    self.accountSvc.getCurrentAccount().pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(account => {
+    const q = { status: 'active', type: MerchantType.RESTAURANT };
+    self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.restaurantSvc.find().pipe(
-            takeUntil(this.onDestroy$)
-          ).subscribe((rs: IRestaurant[]) => {
+          self.merchantSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((rs: IMerchant[]) => {
             if (rs && rs.length > 0) {
               self.restaurant = rs[0];
             } else {

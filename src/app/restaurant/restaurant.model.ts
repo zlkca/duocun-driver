@@ -4,8 +4,12 @@ import { Address } from '../account/account.model';
 import { GeoPoint } from '../location/location.model';
 import { Order } from '../order/order.model';
 
+export enum MerchantType {
+  RESTAURANT = 1,
+  TELECOM
+}
 
-export interface IRestaurant {
+export interface IMerchant {
   _id?: string;
   name: string;
   description?: string;
@@ -13,8 +17,10 @@ export interface IRestaurant {
   ownerId?: string;
   malls?: string[]; // mall id
   inRange?: boolean;
-  created?: Date;
-  modified?: Date;
+  type: MerchantType;
+  created?: string;
+  modified?: string;
+
   closed?: Date[];
   dow?: string[]; // day of week opening
   isClosed?: boolean;
@@ -30,22 +36,23 @@ export interface IRestaurant {
 }
 
 // For database
-export class Restaurant implements IRestaurant {
+export class Restaurant implements IMerchant {
   _id: string;
   name: string;
   description: string;
   location: GeoPoint;
   ownerId: string;
   malls: string[]; // mall id
-  created: Date;
-  modified: Date;
+  type: MerchantType;
+  created: string;
+  modified: string;
   closed?: Date[];
   dow?: string[]; // day of week opening
   products: Product[];
   pictures: Picture[];
   address: Address;
   order?: number;
-  constructor(data?: IRestaurant) {
+  constructor(data?: IMerchant) {
     Object.assign(this, data);
   }
 }

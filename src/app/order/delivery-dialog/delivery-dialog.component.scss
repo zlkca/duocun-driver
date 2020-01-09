@@ -1,18 +1,36 @@
-.close {
+.header-row{
+  margin: 0px;
+  padding: 10px;
+  z-index: 900;
+  width: 100%;
+  background: white;
+  border-bottom: 1px solid #eee;
+
   position: absolute;
-  top: 0;
-  right: 0;
-  padding: 5px;
-  line-height: 14px;
-  min-width: auto;
+  left: 0px;
+  top: 0px;
+
+  .row{
+    margin: 0px;
+  }
+
+  .address-col{
+    padding: 0px;
+
+  }
+
+  .nav-col{
+    padding: 0px;
+  }
+
+  .close-btn{
+    padding-right: 5px;
+    .close{
+      height: 25px;
+    }
+  }
 }
 
-.address-block{
-  padding-top: 8px;
-  padding-bottom: 8px;
-  border-top: 1px solid #aaa;
-  margin-top: 10px;
-}
 
 .order-list{
   margin-top: 50px;

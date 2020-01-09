@@ -1,21 +1,6 @@
 import { Picture } from '../picture.model';
-import { Restaurant, IRestaurant } from '../restaurant/restaurant.model';
+import { IMerchant } from '../restaurant/restaurant.model';
 
-// export interface IProduct {
-//   _id?: string;
-//   name: string;
-//   description?: string;
-//   price: number;
-//   cost: number;
-//   merchantId: string;
-//   categoryId: string;
-//   created?: Date;
-//   modified?: Date;
-//   owner?: Restaurant;
-//   restaurant?: Restaurant;
-//   category?: Category;
-//   pictures?: Picture[];
-// }
 export interface IProduct {
   _id?: string;
   id?: string;
@@ -25,10 +10,11 @@ export interface IProduct {
   cost?: number;
   merchantId: string;
   categoryId: string;
-  created?: Date;
-  modified?: Date;
+  created?: string;
+  modified?: string;
   openDays?: number[];
-  restaurant?: IRestaurant;
+
+  merchant?: IMerchant;
   category?: ICategory;
   pictures?: Picture[];
   dow?: string[];
@@ -43,10 +29,10 @@ export class Product implements IProduct {
   cost: number;
   categoryId: string;
   merchantId: string;
-  created: Date;
-  modified: Date;
-  owner: Restaurant;
-  restaurant: Restaurant;
+  created: string;
+  modified: string;
+
+  merchant: IMerchant;
   category: Category;
   pictures: Picture[];
   constructor(data?: IProduct) {

@@ -29,6 +29,8 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('map', { static: true }) input: ElementRef;
 
   onDestroy$ = new Subject();
+  markers = [];
+  map;
 
   constructor(
     public dialogSvc: MatDialog
@@ -57,17 +59,106 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     };
     const dialogRef = this.dialogSvc.open(DeliveryDialogComponent, params);
 
-    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(result => {
-
+    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(group => {
+      if (group) {
+        this.updatePlace(this.map, group);
+      }
     });
   }
+
+  addPlaces(map) {
+    const self = this;
+    if (this.places && this.places.length) {
+      this.places.map((p, i) => {
+        const iconUrl = p.icon ? p.icon : 'http://labs.google.com/ridefinder/images/mm_20_red.png';
+        const marker1 = new google.maps.Marker({
+          position: { lat: p.lat, lng: p.lng },
+          label: {
+            text: self.places[i].name,
+            fontSize: '11px'
+          },
+          icon: {
+            url: iconUrl
+          },
+          placeId: p.placeId
+        });
+
+        // if (p.status === 'done') {
+        //   google.maps.event.removeListener(p.listener);
+        // } else {
+        p.listener = marker1.addListener('click', function () {
+          self.openDeliveryDialog(self.places[i]);
+        });
+        // }
+
+        marker1.setMap(map);
+        this.markers.push(marker1);
+      });
+    }// end of this.places
+  }
+
+  removePlaces() {
+    if (this.places && this.places.length) {
+      this.places.map((p, i) => {
+        google.maps.event.removeListener(p.listener);
+      });
+    }
+    this.markers.map(m => {
+      m.setMap(null);
+    });
+  }
+
+  updatePlace(map: any, group: any) {
+    const self = this;
+    const icons = {
+      yellow: 'http://maps.google.com/mapfiles/ms/icons/yellow.png',
+      green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
+      red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
+    };
+
+    const place: any = this.places.find(p => p.placeId === group.placeId);
+    const marker: any = this.markers.find(m => m.placeId === group.placeId);
+    let isDone = true; // place.status === 'done';
+    // group.items.push({ balance: balance, order: order, code: code, status: status, paid: (order.status === 'paid') });
+    group.items.map(x => {
+      if (x.status !== 'done') {
+        isDone = false;
+      }
+    });
+    place.icon = isDone ? icons['green'] : icons['red'];
+
+    google.maps.event.removeListener(place.listener);
+
+    marker.setMap(null);
+
+    const iconUrl = place.icon ? place.icon : 'http://labs.google.com/ridefinder/images/mm_20_red.png';
+    const newMarker = new google.maps.Marker({
+      position: place,
+      label: {
+        text: place.name,
+        fontSize: '11px'
+      },
+      icon: {
+        url: iconUrl
+      },
+      placeId: group.placeId
+    });
+
+    place.listener = newMarker.addListener('click', function () {
+      self.openDeliveryDialog(place);
+    });
+
+    newMarker.setMap(map);
+    this.markers.push(newMarker);
+  }
+
 
   initMap() {
     const self = this;
     if (typeof google !== 'undefined') {
       const mapDom = this.input.nativeElement;
       const map = new google.maps.Map(mapDom, {
-      // const map = new google.maps.Map(document.getElementById('map'), {
+        // const map = new google.maps.Map(document.getElementById('map'), {
         zoom: self.zoom,
         center: self.center,
         mapTypeControl: false,
@@ -75,39 +166,8 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
         fullscreenControl: false
       });
 
-      if (this.places && this.places.length > 0) {
-        // var infowindow = new google.maps.InfoWindow({
-        //   content: contentString
-        // });
-
-
-        this.places.map((p, i) => {
-          // return
-          const marker1 = new google.maps.Marker({
-            position: { lat: p.lat, lng: p.lng },
-            label: {
-              text: self.places[i].name,
-              fontSize: '11px'
-            },
-            map: map,
-            icon: {
-              url: p.icon
-            }
-          });
-
-          // if (p.status === 'done') {
-          //   google.maps.event.removeListener(p.listener);
-          // } else {
-            p.listener = marker1.addListener('click', function() {
-              self.openDeliveryDialog(self.places[i]);
-            });
-          // }
-
-
-          // marker1.setMap(map);
-        });
-      }// end of this.places
-
+      this.addPlaces(map);
+      this.map = map;
     }
   }
 

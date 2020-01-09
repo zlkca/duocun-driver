@@ -31,6 +31,7 @@ export interface IAccount {
   visited?: boolean;
   merchants?: string[]; // merchant Ids
   balance?: number;
+  info?: string;      // client info input by drivers
 }
 
 export class Account implements IAccount {

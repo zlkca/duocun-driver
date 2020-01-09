@@ -1,10 +1,9 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
-import { IAccount } from '../../account/account.model';
-import { Restaurant, IRestaurant } from '../../restaurant/restaurant.model';
-import { IOrder, IOrderItem } from '../order.model';
+import { IMerchant } from '../../restaurant/restaurant.model';
+import { IOrder } from '../order.model';
 import { OrderService } from '../order.service';
 import { SharedService } from '../../shared/shared.service';
-import { RestaurantService } from '../../restaurant/restaurant.service';
+import { MerchantService } from '../../restaurant/restaurant.service';
 import { ProductService } from '../../product/product.service';
 import { IProduct } from '../../product/product.model';
 import { Subject } from '../../../../node_modules/rxjs';
@@ -18,7 +17,7 @@ import { takeUntil } from '../../../../node_modules/rxjs/operators';
 export class SettlementComponent implements OnInit, OnChanges, OnDestroy {
   @Input() dateRange;
 
-  @Input() restaurant: Restaurant;
+  @Input() restaurant: IMerchant;
   list: any[] = [];
   ordersWithNote: IOrder[] = [];
   total = 0;
@@ -27,7 +26,6 @@ export class SettlementComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private orderSvc: OrderService,
     private sharedSvc: SharedService,
-    private restaurantSvc: RestaurantService,
     private productSvc: ProductService
   ) {
 

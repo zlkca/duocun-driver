@@ -630,6 +630,14 @@
           <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="ClientInfo" datatype="html">
+        <source>ClientInfo</source>
+        <target>客户信息</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/order/order-detail/order-detail.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="Subtotal" datatype="html">
         <source>Sub Total</source>
         <target>小计</target>

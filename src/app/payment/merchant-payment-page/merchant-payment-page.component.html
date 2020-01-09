@@ -8,7 +8,7 @@
       <mat-form-field>
         <mat-label><span i18n="@@Restaurant">Restaurant</span></mat-label>
         <mat-select [(value)]="selectedMerchant" (selectionChange)="onMerchantSelectionChanged($event)">
-          <mat-option *ngFor="let r of merchants" [value]="r._id">
+          <mat-option *ngFor="let r of merchantAccounts" [value]="r._id">
             {{r.username}}
           </mat-option>
         </mat-select>

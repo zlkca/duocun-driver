@@ -5,8 +5,8 @@ import { IAccount, Role } from '../../account/account.model';
 import { ActivatedRoute } from '../../../../node_modules/@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { Subject } from '../../../../node_modules/rxjs';
-import { Restaurant, IRestaurant } from '../../restaurant/restaurant.model';
-import { RestaurantService } from '../../restaurant/restaurant.service';
+import { IMerchant, MerchantType } from '../../restaurant/restaurant.model';
+import { MerchantService } from '../../restaurant/restaurant.service';
 import * as moment from 'moment';
 
 @Component({
@@ -19,10 +19,10 @@ export class SummaryPageComponent implements OnInit, OnDestroy {
   range;
   deliverTime;
   onDestroy$ = new Subject();
-  restaurant: IRestaurant;
+  restaurant: IMerchant;
 
   constructor(
-    private restaurantSvc: RestaurantService,
+    private merchantSvc: MerchantService,
     private sharedSvc: SharedService,
     private accountSvc: AccountService,
     private route: ActivatedRoute
@@ -51,11 +51,12 @@ export class SummaryPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
+    const q = { status: 'active', type: MerchantType.RESTAURANT };
     self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       if (account) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.restaurantSvc.find().pipe(takeUntil(this.onDestroy$)).subscribe((rs: IRestaurant[]) => {
+          self.merchantSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((rs: IMerchant[]) => {
             if (rs && rs.length > 0) {
               self.restaurant = rs[0];
             } else {

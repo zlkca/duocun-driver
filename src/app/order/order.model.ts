@@ -1,9 +1,9 @@
 import { Product, IProduct } from '../product/product.model';
 // import { Picture } from '../picture.model';
-import { Address, IMerchant } from '../entity.model';
-import { Restaurant } from '../restaurant/restaurant.model';
+import { Address } from '../entity.model';
 import { ILocation } from '../location/location.model';
-import { IContact } from '../contact/contact.model';
+import { IAccount } from '../account/account.model';
+import { IMerchant } from '../restaurant/restaurant.model';
 
 
 
@@ -39,7 +39,7 @@ export interface IOrder {
   receivable?: number;
 
   merchant?: IMerchant;
-  client?: IContact;
+  client?: IAccount;
   nOrders?: number;
   owe?: number;
 }

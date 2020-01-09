@@ -10,7 +10,7 @@ import { SharedModule } from '../shared/shared.module';
 import { OrderService } from './order.service';
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { OrderRoutingModule } from './order-routing.module';
-import { RestaurantService } from '../restaurant/restaurant.service';
+import { MerchantService } from '../restaurant/restaurant.service';
 import { AccountService } from '../account/account.service';
 import { SummaryPageComponent } from './summary-page/summary-page.component';
 import { PackagePageComponent } from './package-page/package-page.component';
@@ -57,7 +57,7 @@ import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.compo
   ],
   providers: [
     OrderService,
-    RestaurantService,
+    MerchantService,
     AccountService,
     ClientBalanceService,
     ClientPaymentService,

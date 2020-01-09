@@ -15,7 +15,7 @@ import { AccountService } from './account.service';
 import { AuthService } from './auth.service';
 import { AccountPageComponent } from './account-page/account-page.component';
 import { MatSelectModule } from '@angular/material/select';
-import { RestaurantService } from '../restaurant/restaurant.service';
+import { MerchantService } from '../restaurant/restaurant.service';
 import { MatSnackBarModule } from '../../../node_modules/@angular/material';
 import { AssignmentService } from '../assignment/assignment.service';
 
@@ -42,7 +42,7 @@ import { AssignmentService } from '../assignment/assignment.service';
     providers: [
       AccountService,
       AuthService,
-      RestaurantService,
+      MerchantService,
       AssignmentService
     ]
 })

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
-import { IRestaurant } from '../../restaurant/restaurant.model';
+import { IMerchant } from '../../restaurant/restaurant.model';
 import { IOrder, IOrderItem } from '../order.model';
 import { OrderService } from '../order.service';
 import { SharedService } from '../../shared/shared.service';
@@ -29,14 +29,13 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   @Input() assignments;
   @Input() pickupTime;
 
-  @Input() restaurant: IRestaurant;
+  @Input() restaurant: IMerchant;
   @Input() delivered; // moment object
 
   orders: IOrder[] = [];
   list: IOrderItem[];
   ordersWithNote: IOrder[] = [];
   onDestroy$ = new Subject();
-  forms = {};
   accounts = [];
   groups = [];
   clientIds = [];
@@ -155,7 +154,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     this.assignmentSvc.quickFind(assignmentQuery).pipe(takeUntil(this.onDestroy$)).subscribe(assignments => {
       this.assignments = assignments;
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
-        this.forms = {};
         self.groups = this.groupByMerchants(accounts, orders, this.assignments);
       });
     });
