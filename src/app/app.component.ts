@@ -1,12 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-// import { CommandActions } from './shared/command.actions';
-// import { NgRedux } from '../../node_modules/@angular-redux/store';
-// import { IAppState } from './store';
-// import { takeUntil } from '../../node_modules/rxjs/operators';
 import { Subject } from '../../node_modules/rxjs';
-import { AuthService } from './account/auth.service';
-// import { ILocation } from './location/location.model';
-// import { LocationService } from './location/location.service';
 
 @Component({
   selector: 'app-root',
@@ -23,9 +16,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
   ) {
-    window.addEventListener('orientationchange', function () {
-      window.location.reload();
-    }, false);
+    // window.addEventListener('orientationchange', function () {
+    //   window.location.reload();
+    // }, false);
 
     // window.addEventListener('unload', (event) => {
     //    self.authSvc.removeCookies();
