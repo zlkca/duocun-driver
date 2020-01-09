@@ -36,7 +36,8 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
   group;
   clientIds = [];
   accounts;
-  forms = {};
+  forms = {};  // { orderId: any }
+  bAllowSave = {}; // { orderId: bool }
 
   constructor(
     private orderSvc: OrderService,
@@ -110,6 +111,7 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
               this.forms[order._id] = this.fb.group({
                 info: [infoText]
               });
+              this.bAllowSave[order._id] = false;
             });
             self.group = this.groupByAddress(location, accounts, orders, this.assignments);
             resolve(self.group);
@@ -200,10 +202,15 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
     if (order) {
       const clientId = order.clientId;
       const info = this.forms[order._id].get('info').value;
-      const data = {info: info};
-      this.accountSvc.update({_id: clientId}, data).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      const data = { info: info };
+      this.accountSvc.update({ _id: clientId }, data).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
         this.snackBar.open('', '客户信息已经更新', { duration: 1800 });
+        this.bAllowSave[order._id] = false;
       });
     }
+  }
+
+  onClickClientInfo(order) {
+    this.bAllowSave[order._id] = true;
   }
 }

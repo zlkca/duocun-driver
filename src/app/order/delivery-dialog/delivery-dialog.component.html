@@ -3,7 +3,7 @@
     <div class="col-2 nav-col">
       <div class="btn btn-sm btn-primary pull-right" i18n="@@NavigateToHere" (click)="navigateTo(data.location)">NavigateToHere</div>
     </div>
-    
+
     <div class="col-9 address-col">
       <!-- <span i18n="@@Address">Address</span>: -->
       <span class="text-sm" *ngIf="group">{{group.address}}</span>
@@ -49,15 +49,15 @@
       </mat-expansion-panel-header>
 
       <div class="order">
-        <div class="row merchant-col">
+        <div class="row merchant-row">
           <div class="col-3" i18n="@@Merchant">Merchant</div>
           <div class="col-9">{{it.order.merchantName}}</div>
         </div>
 
-        <div class="row client-row">
+        <!-- <div class="row client-row">
           <div class="col-3" i18n="@@Client">Client</div>
           <div class="col-9">{{it.order.clientName}}</div>
-        </div>
+        </div> -->
         <div class="row phonenum-row">
           <div class="col-3" i18n="@@ClientPhoneNumber">Client Phone Number</div>
           <div class="col-9">
@@ -67,21 +67,23 @@
           </div>
         </div>
 
-        <div class="row address-row">
+        <!-- <div class="row address-row">
           <div class="col-3" i18n="@@DeliverAddress">Delivery Address</div>
           <div class="col-9">{{it.order.address}}</div>
-        </div>
-        <div class="row note-row">
+        </div> -->
+        <div class="row note-row" *ngIf="it.order.note">
           <div class="col-3" i18n="@@Note">Note</div>
-          <div class="col-9">{{it.order.note}}</div>
+          <div class="col-9" class="note-text">{{it.order.note}}</div>
         </div>
         <form [formGroup]="forms[it.order._id]" class="info-form">
-          <div class="row info-block">
-            <div class="label">
-              <span i18n="@@ClientInfo">Client Info</span>:&nbsp;
-            </div>
-            <textarea class="info-input" name="info" formControlName="info"></textarea>
-            <div class="btn btn-primary" (click)="onSubmitClientInfo(it.order)" i18n="@@Save">Save</div>
+          <div class="row info-row">
+              <div class="col-3 label-col">
+                <div i18n="@@ClientInfo">Client Info</div>
+                <div *ngIf="bAllowSave[it.order._id]" class="btn btn-primary" (click)="onSubmitClientInfo(it.order)" i18n="@@Save">Save</div>
+              </div>
+              <div class="col-9" class="note-col">
+                <textarea class="info-input" name="info" formControlName="info" (click)="onClickClientInfo(it.order)"></textarea>
+              </div>
           </div>
         </form>
         <div class="row product-block">

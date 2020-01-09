@@ -39,14 +39,15 @@
 .order{
   border-bottom: solid 1px #eee;
   margin: 0px;
-  padding: 10px;
+  padding: 0px;
 
   .row{
     margin: 0px;
   }
 
-  .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
-    font-size: 12px;
+  .merchant-row, .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
+    font-size: 14px;
+    padding-bottom: 5px;
     .col-3 {
       padding: 0px;
     }
@@ -54,9 +55,29 @@
       padding-left: 0px;
       padding-right: 0px;
     }
+    .note-text{
+      color: red;
+    }
   }
 
-  .order-id-col, .merchant-col{
+  .info-row{
+    .label-col{
+      padding: 0px;
+    }
+    .note-col{
+      padding-top: 5px;
+      
+      textarea{
+        height: 54px;
+        width: 210px;
+        padding: 5px;
+        color: red;
+        border: 1px solid #bbb !important;
+      }
+    }
+  }
+
+  .order-id-col{
     font-size: 12px;
     .col-3 {
       padding: 0px;
@@ -175,13 +196,10 @@
   width: 185px;
 }
 
-div.mat-expansion-panel-body {
+.mat-expansion-panel-body {
   padding: 0px !important;
 }
 
-// .mat-expansion-panel-body{
-//   padding: 0px 10px 16px !important;
-// }
 .mat-slide-toggle-bar {
   height: 28px !important;
   width: 88px !important;
