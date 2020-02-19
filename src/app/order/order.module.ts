@@ -28,11 +28,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatSelectModule } from '../../../node_modules/@angular/material';
 
 import { TransactionService } from '../transaction/transaction.service';
 import { ReceiveCashDialogComponent } from './receive-cash-dialog/receive-cash-dialog.component';
 import { ClientBalanceDialogComponent } from './client-balance-dialog/client-balance-dialog.component';
-import { AssignmentService } from '../assignment/assignment.service';
+
 import { SharedService } from '../shared/shared.service';
 import { LocationService } from '../location/location.service';
 import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.component';
@@ -50,6 +51,7 @@ import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.compo
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
+    MatSelectModule,
     OrderRoutingModule,
     SharedModule
   ],
@@ -63,7 +65,6 @@ import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.compo
     ClientPaymentService,
     MerchantBalanceService,
     TransactionService,
-    AssignmentService,
     LocationService,
     SharedService
   ],

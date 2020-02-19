@@ -74,9 +74,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       // const todayStart = moment().startOf('day').toDate();
       // const todayEnd = moment().endOf('day').toDate();
       // const q = { $lt: todayEnd, $gt: todayStart };
-      // this.assignmentSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe(x => {
-        this.router.navigate(['order/package']);
-      // });
+      this.router.navigate(['order/package']);
     } else { // not authorized for opreration merchant
       this.router.navigate(['account/setting'], { queryParams: { merchant: false } });
     }

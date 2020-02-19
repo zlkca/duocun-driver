@@ -9,10 +9,9 @@ import { PageActions } from '../../main/main.actions';
 import { MatSnackBar } from '../../../../node_modules/@angular/material';
 import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms';
 import { TransactionService } from '../../transaction/transaction.service';
-import { ITransaction, ITransactionData } from '../../transaction/transaction.model';
 import * as moment from 'moment';
-import { AssignmentService } from '../../assignment/assignment.service';
 import { IAccount } from '../account.model';
+import { OrderService } from '../../order/order.service';
 
 @Component({
   selector: 'app-account-page',
@@ -41,7 +40,7 @@ export class AccountPageComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private assignmentSvc: AssignmentService,
+    private orderSvc: OrderService,
     private transactionSvc: TransactionService,
     private snackBar: MatSnackBar
   ) {
@@ -111,8 +110,8 @@ export class AccountPageComponent implements OnInit, OnDestroy {
   }
 
   loadSalary(driverId: string) {
-    this.assignmentSvc.find({ driverId: driverId }).pipe(takeUntil(this.onDestroy$)).subscribe((assignments) => {
-      const groups = this.groupBy(assignments, 'delivered');
+    this.orderSvc.find({ driverId: driverId }).pipe(takeUntil(this.onDestroy$)).subscribe((orders) => {
+      const groups = this.groupBy(orders, 'delivered');
       const salaryItems = [];
       const dates = Object.keys(groups);
       let balance = 0;

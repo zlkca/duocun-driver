@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="col-12">
-      <form [formGroup]="form" class="received-form" *ngIf="order.status!=='paid'">
+      <form [formGroup]="form" class="received-form">
         <div class="row received-block">
           <div class="label">
             <span i18n="@@Received">Received</span>:&nbsp;
@@ -36,5 +36,5 @@
 
 <div mat-dialog-actions class="actions-row" *ngIf="order">
   <div class="btn btn-secondary btn-cancel" (click)="onCancel()">取消</div>
-  <div *ngIf="order.status!=='paid'" class="btn btn-primary btn-pay" (click)="onPay()">确认收款</div>
+  <div class="btn btn-primary btn-pay" (click)="onPay()">确认收款</div>
 </div>

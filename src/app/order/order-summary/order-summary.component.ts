@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { AccountService } from '../../account/account.service';
 import { OrderService } from '../../order/order.service';
 import { SharedService } from '../../shared/shared.service';
-import { IOrderItem, IOrder } from '../order.model';
+import { IOrderItem, IOrder, OrderStatus } from '../order.model';
 // import { SocketService } from '../../shared/socket.service';
 import { IMerchant } from '../../restaurant/restaurant.model';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
@@ -62,7 +62,8 @@ export class OrderSummaryComponent implements OnInit, OnChanges, OnDestroy {
 
   reload(merchantId: string) {
     const self = this;
-    const q = { merchantId: merchantId, delivered: self.dateRange, status: { $nin: ['del', 'bad', 'tmp'] } };
+    const q = { merchantId: merchantId, delivered: self.dateRange,
+      status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] } };
     self.orderSvc.find(q).pipe(takeUntil(self.onDestroy$)).subscribe(orders => {
       const list = [];
       const ordersWithNote = [];

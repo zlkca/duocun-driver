@@ -147,14 +147,6 @@ export class FooterComponent implements OnInit, OnDestroy {
     }
   }
 
-  toPickup() {
-    if (this.account) {
-      this.router.navigate(['assignment/pickup']);
-    } else {
-      this.router.navigate(['account/login']);
-    }
-  }
-
   toClient() {
     this.selected = 'client';
     if (this.account) {

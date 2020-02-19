@@ -9,6 +9,7 @@ import { MatSnackBar, MatTableDataSource, MatSort } from '../../../../node_modul
 import * as moment from 'moment';
 import { TransactionService } from '../../transaction/transaction.service';
 import { ITransaction } from '../../transaction/transaction.model';
+import { environment } from '../../../environments/environment.prod';
 
 const CASH_ID = '5c9511bb0851a5096e044d10';
 const CASH_NAME = 'Cash';
@@ -34,10 +35,11 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
   merchantAccounts;
   merchantAccount;
   payForm;
+  lang = environment.language;
 
   dataSource: MatTableDataSource<IMerchantPaymentData>;
   // @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private accountSvc: AccountService,
@@ -100,73 +102,36 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
     }), {});
   }
 
-  groupBySameDay(items, key) {
+  groupByDelivered(items) {
     const groups = {};
     items.map(it => {
-      let date = null;
+      let delivered = null;
       if (it.hasOwnProperty('delivered')) {
-        date = moment(it.delivered).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+        delivered = moment(it.delivered);
+        const dt = Object.keys(groups).find(x => moment(x).isSame(delivered, 'day'));
+        if (dt) {
+          groups[dt].push(it);
+        } else {
+          groups[delivered.toISOString()] = [it];
+        }
       } else {
-        date = moment(it[key]).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-      }
-      const dt = Object.keys(groups).find(x => moment(x).isSame(date, 'day'));
-
-      if (dt) {
-        groups[dt].push(it);
-      } else {
-        groups[date.toISOString()] = [it];
+        console.log('No delivered Transaction:' + it._id);
       }
     });
-
     return groups;
   }
 
+  getDescription(t, merchantAccountId) {
+    if (t.items && t.items.length > 0) {
+      return '客户撤销订单';
+    } else {
+      return t.toId === merchantAccountId ? t.fromName : t.toName;
+    }
+  }
+
   reload(merchantAccountId: string) {
-    const q = {
-      '$or': [{ fromId: merchantAccountId }, { toId: merchantAccountId }],
-      status: { $ne: 'del' },
-      action: { $ne: 'duocun cancel order from merchant' }
-    };
-    this.transactionSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
-      let list = [];
+    this.transactionSvc.getMerchantBalance(merchantAccountId, this.lang).pipe(takeUntil(this.onDestroy$)).subscribe((list: any[]) => {
       let balance = 0;
-      const credits = ts.filter(t => t.fromId === merchantAccountId);
-      const debits = ts.filter(t => t.toId === merchantAccountId);
-      const receivables = this.groupBySameDay(credits, 'created');
-      Object.keys(receivables).map(dt => {
-        const its = receivables[dt];
-        let amount = 0;
-        its.map(it => { amount += it.amount; });
-        list.push({ created: dt, description: '', type: 'credit', receivable: amount, received: 0, balance: 0 });
-      });
-
-      debits.map(t => {
-        const description = t.toId === merchantAccountId ? t.fromName : t.toName;
-        list.push({ created: t.created, description: description, type: 'debit', receivable: 0, received: t.amount, balance: 0 });
-      });
-
-      list = list.sort((a: any, b: any) => {
-        const aMoment = moment(a.created);
-        const bMoment = moment(b.created);
-        if (aMoment.isSame(bMoment, 'day')) {
-          if (a.type === 'debit') {
-            return 1;
-          } else {
-            if (aMoment.isAfter(bMoment)) {
-              return 1; // a to bottom
-            } else {
-              return -1;
-            }
-          }
-        } else {
-          if (aMoment.isAfter(bMoment)) {
-            return 1;
-          } else {
-            return -1;
-          }
-        }
-      });
-
       list.map(item => {
         if (item.type === 'credit') {
           balance += item.receivable;

@@ -6,6 +6,7 @@ import { EntityService } from '../entity.service';
 import { AuthService } from '../account/auth.service';
 import { IOrder, IOrderItem } from './order.model';
 import { Observable } from '../../../node_modules/rxjs';
+import { SharedService } from '../shared/shared.service';
 
 
 
@@ -15,12 +16,22 @@ export class OrderService extends EntityService {
 
   constructor(
     public authSvc: AuthService,
+    public sharedSvc: SharedService,
     public http: HttpClient
   ) {
     super(authSvc, http);
     this.url = super.getBaseUrl() + 'Orders';
   }
 
+  getPickupTimes(orders: IOrder[]): string[] {
+    const delivers = this.sharedSvc.getDistinctValues(orders, 'delivered');
+    const a = [];
+    delivers.map(x => {
+      const t = this.sharedSvc.getTimeString(x);
+      a.push(t);
+    });
+    return a;
+  }
 
   // return -- eg. { status: 'success' }
   payOrder(toId: string, toName: string, received: number, orderId: string, note: string): Observable<any> {

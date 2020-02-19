@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
 import { IMerchant } from '../../restaurant/restaurant.model';
-import { IOrder, IOrderItem } from '../order.model';
+import { IOrder, IOrderItem, OrderStatus } from '../order.model';
 import { OrderService } from '../order.service';
 import { SharedService } from '../../shared/shared.service';
 import { Subject } from '../../../../node_modules/rxjs';
@@ -11,7 +11,6 @@ import { LocationService } from '../../location/location.service';
 import { AccountService } from '../../account/account.service';
 import { IAccount } from '../../account/account.model';
 import { MatSnackBar, MatDialog } from '../../../../node_modules/@angular/material';
-import { AssignmentService } from '../../assignment/assignment.service';
 import * as moment from 'moment';
 import { Router } from '../../../../node_modules/@angular/router';
 import { ReceiveCashDialogComponent } from '../receive-cash-dialog/receive-cash-dialog.component';
@@ -26,13 +25,12 @@ import { IAppState } from '../../store';
 })
 export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
-  @Input() assignments;
+  @Input() orders;
   @Input() pickupTime;
 
   @Input() restaurant: IMerchant;
   @Input() delivered; // moment object
 
-  orders: IOrder[] = [];
   list: IOrderItem[];
   ordersWithNote: IOrder[] = [];
   onDestroy$ = new Subject();
@@ -41,6 +39,9 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   clientIds = [];
   pickups = [];
   account;
+  picked = {};
+  Status = OrderStatus;
+  loading = false;
 
   constructor(
     private orderSvc: OrderService,
@@ -48,17 +49,17 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     private accountSvc: AccountService,
     private router: Router,
     private locationSvc: LocationService,
-    private assignmentSvc: AssignmentService,
     private snackBar: MatSnackBar,
     private rx: NgRedux<IAppState>,
     public dialog: MatDialog
   ) {
-    const self = this;
+
   }
 
   ngOnInit() {
     const self = this;
 
+    // why ??
     this.rx.select<ICommand>('cmd').pipe(takeUntil(this.onDestroy$)).subscribe((x: ICommand) => {
       if (x.name === 'reload-orders') {
         const q = { _id: { $in: self.clientIds } };
@@ -66,22 +67,22 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
           self.account = account;
           self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
             self.accounts = accounts;
-            self.reload(account, accounts, this.pickupTime);
+            self.reload(accounts, this.pickupTime);
           });
         });
       }
     });
 
-    const xs = this.assignments;
-    this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
+    this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe((account: IAccount) => {
       self.account = account;
       if (account) {
-        if (xs) {
-          self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
+        if (this.orders) {
+          self.clientIds = this.sharedSvc.getDistinctValues(this.orders, 'clientId');
           const q = { _id: { $in: self.clientIds } };
           self.accountSvc.find(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
             self.accounts = accounts;
-            self.reload(account, accounts, this.pickupTime);
+
+            self.reload(accounts, this.pickupTime);
           });
         }
       } else {
@@ -93,45 +94,78 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(v) {
     const self = this;
-    if (v.assignments && v.assignments.currentValue) {
-      const xs = v.assignments.currentValue;
-      self.clientIds = this.sharedSvc.getDistinctValues(xs, 'clientId');
+    if (v.orders && v.orders.currentValue) {
+      self.clientIds = this.sharedSvc.getDistinctValues(v.orders.currentValue, 'clientId');
       if (self.clientIds && self.clientIds.length > 0) {
         const q = { _id: { $in: self.clientIds } };
-
+        self.loading = true;
         self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
           self.account = account;
           self.accountSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((accounts: IAccount[]) => {
             self.accounts = accounts;
-            self.reload(account, accounts, this.pickupTime);
+            self.reload(accounts, this.pickupTime);
           });
         });
       }
     }
   }
 
+
+  getProductCssClass(item) {
+    if (item && item.product && item.product.categoryId === '5cbc5df61f85de03fd9e1f12') {
+      return 'beverage';
+    } else {
+      return 'product';
+    }
+  }
+
+  hasBeverage(order) {
+    let bHas = false;
+    order.items.map(item => {
+      if (item && item.product && item.product.categoryId === '5cbc5df61f85de03fd9e1f12') {
+        bHas = true;
+      }
+    });
+    return bHas;
+  }
+
+  shouldExpend(it) {
+    return (it.status !== OrderStatus.DONE || it.status !== OrderStatus.LOADED) && this.hasBeverage(it.order);
+  }
+
   // return array of {merchantId: x, merchantName: x, items: [{order:x, status: x}, ... ]}
-  groupByMerchants(accounts: IAccount[], orders: IOrder[], assignments: any[]) {
+  groupByMerchants(accounts: IAccount[], orders: IOrder[]) {
     const groupedByMerchants = [];
     orders.map(order => {
       const grp = groupedByMerchants.find(m => m.merchantId === order.merchantId);
-      const assignment = assignments.find(a => a.orderId === order._id);
       const account = accounts.find(a => a._id === order.clientId);
-      if (assignment) {
-        const code = assignment ? assignment.code : 'N/A';
-        const status = assignment ? assignment.status : 'new';
+      const balance = account ? account.balance : 0;
+      if (!account) {
+        console.log(order.clientId);
+      }
 
-        const balance = account.balance;
-
-        if (!grp) {
-          const item = { balance: balance, order: order, code: code, status: status, paid: (order.status === 'paid') };
-          groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, items: [item] });
-        } else {
-          grp.items.push({ balance: balance, order: order, code: code, status: status, paid: (order.status === 'paid') });
-        }
+      if (!grp) {
+        const item = { balance: balance, order: order, code: order.code, status: order.status, isPicked: this.isPicked(order) };
+        groupedByMerchants.push({ merchantId: order.merchantId, merchantName: order.merchantName, items: [item] });
+      } else {
+        grp.items.push({ balance: balance, order: order, code: order.code, status: order.status, isPicked: this.isPicked(order) });
       }
     });
     return groupedByMerchants;
+  }
+
+  isPicked(order: IOrder) {
+    return order.status === OrderStatus.LOADED || order.status === OrderStatus.DONE;
+  }
+
+  onChangePicked(order: IOrder) {
+    if (order.status !== OrderStatus.DONE) {
+      const data = { status: order.status === OrderStatus.LOADED ? OrderStatus.NEW : OrderStatus.LOADED };
+      this.orderSvc.update({ _id: order._id }, data).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+        this.snackBar.open('', '取餐状态已更改', { duration: 1000 });
+        this.reload(this.accounts, this.pickupTime);
+      });
+    }
   }
 
   getQuantity(order: IOrder) {
@@ -144,18 +178,19 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
 
   // pickupTime --- eg. '11:20'
-  reload(account: IAccount, accounts: IAccount[], pickupTime: string) {
+  reload(accounts: IAccount[], pickupTime: string) {
     const self = this;
-    const accountId = account._id;
     const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
+    const orderQuery = {
+      driverId: this.account._id,
+      delivered: range,
+      pickup: pickupTime,
+      status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }
+    };
 
-    const orderQuery = { pickup: pickupTime, status: { $nin: ['del', 'bad', 'tmp'] } };
-    const assignmentQuery = { delivered: range, driverId: accountId };
-    this.assignmentSvc.quickFind(assignmentQuery).pipe(takeUntil(this.onDestroy$)).subscribe(assignments => {
-      this.assignments = assignments;
-      this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
-        self.groups = this.groupByMerchants(accounts, orders, this.assignments);
-      });
+    this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
+      self.loading = false;
+      self.groups = this.groupByMerchants(accounts, orders);
     });
   }
 
@@ -222,9 +257,13 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   finishDelivery(order: IOrder) {
-    this.assignmentSvc.update({ orderId: order._id }, { status: 'done' }).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+    this.orderSvc.update({ _id: order._id }, { status: OrderStatus.DONE }).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.snackBar.open('', '此订单已完成', { duration: 1800 });
-      this.reload(this.account, this.accounts, this.pickupTime);
+      this.reload(this.accounts, this.pickupTime);
     });
+  }
+
+  getAddress(location: ILocation) {
+    return this.locationSvc.getAddrString(location);
   }
 }

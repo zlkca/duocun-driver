@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { IMerchant } from '../../restaurant/restaurant.model';
-import { IOrder } from '../order.model';
+import { IOrder, OrderStatus } from '../order.model';
 import { OrderService } from '../order.service';
 import { SharedService } from '../../shared/shared.service';
 import { MerchantService } from '../../restaurant/restaurant.service';
@@ -72,7 +72,7 @@ export class SettlementComponent implements OnInit, OnChanges, OnDestroy {
 
   reload(merchantId: string) {
     const self = this;
-    self.orderSvc.find({ merchantId: merchantId, delivered: self.dateRange, status: { $nin: ['del', 'bad', 'tmp'] }}).pipe(
+    self.orderSvc.find({ merchantId: merchantId, delivered: self.dateRange, status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }}).pipe(
       takeUntil(self.onDestroy$)
     ).subscribe(orders => {
       const list = [];

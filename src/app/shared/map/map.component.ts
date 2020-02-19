@@ -3,6 +3,7 @@ import { MatDialog } from '../../../../node_modules/@angular/material';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { Subject } from '../../../../node_modules/rxjs';
 import { DeliveryDialogComponent } from '../../order/delivery-dialog/delivery-dialog.component';
+import { OrderStatus } from '../../order/order.model';
 
 declare let google: any;
 
@@ -121,7 +122,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     let isDone = true; // place.status === 'done';
     // group.items.push({ balance: balance, order: order, code: code, status: status, paid: (order.status === 'paid') });
     group.items.map(x => {
-      if (x.status !== 'done') {
+      if (x.status !== OrderStatus.DONE) {
         isDone = false;
       }
     });

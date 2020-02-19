@@ -12,7 +12,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { OrderService } from '../../order/order.service';
 import { TransactionService } from '../../transaction/transaction.service';
 import { ITransaction } from '../../transaction/transaction.model';
-import { IOrder } from '../../order/order.model';
+import { IOrder, OrderStatus } from '../../order/order.model';
 import { ClientBalanceService } from '../client-balance.service';
 import { FormControl } from '../../../../node_modules/@angular/forms';
 
@@ -101,7 +101,7 @@ export class ClientPaymentComponent implements OnInit, OnDestroy {
   }
 
   reload(clientId: string) {
-    const orderQuery = { clientId: clientId, status: { $nin: ['del', 'bad', 'tmp'] } };
+    const orderQuery = { clientId: clientId, status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] } };
     this.orderSvc.quickFind(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((os: IOrder[]) => {
       this.transactionSvc.find({ type: 'credit', fromId: clientId }).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
         let list = [];

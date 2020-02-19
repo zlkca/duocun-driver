@@ -7,11 +7,9 @@ import { Subject } from '../../../../node_modules/rxjs';
 import { MerchantService } from '../../restaurant/restaurant.service';
 import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
-import { FormBuilder } from '../../../../node_modules/@angular/forms';
 import * as moment from 'moment';
-import { AssignmentService } from '../../assignment/assignment.service';
-import { IAssignment } from '../../assignment/assignment.model';
-import { ICommand } from '../../shared/command.reducers';
+import { OrderService } from '../order.service';
+import { IOrder, OrderStatus } from '../order.model';
 
 @Component({
   selector: 'app-package-page',
@@ -36,7 +34,7 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     private merchantSvc: MerchantService,
     private sharedSvc: SharedService,
     private accountSvc: AccountService,
-    private assignmentSvc: AssignmentService,
+    private orderSvc: OrderService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
@@ -70,15 +68,16 @@ export class PackagePageComponent implements OnInit, OnDestroy {
           const tEnd = moment().endOf('day').toISOString();
           const query = {
             driverId: account._id,
-            delivered: { $lt: tEnd, $gt: tStart }
+            delivered: { $lt: tEnd, $gt: tStart },
+            status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }
           };
 
-          this.assignmentSvc.quickFind(query).pipe(takeUntil(self.onDestroy$)).subscribe((xs: IAssignment[]) => {
-            const pickups = this.assignmentSvc.getPickupTimes(xs);
+          this.orderSvc.find(query).pipe(takeUntil(self.onDestroy$)).subscribe((orders: IOrder[]) => {
+            const pickups = this.orderSvc.getPickupTimes(orders);
             const phases = [];
             pickups.map(pickup => {
-              const assignments = xs.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
-              phases.push({pickup: pickup, assignments: assignments});
+              const os = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
+              phases.push({pickup: pickup, orders: os});
             });
             self.phases = phases;
           });

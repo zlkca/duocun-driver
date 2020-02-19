@@ -45,7 +45,7 @@
     margin: 0px;
   }
 
-  .merchant-row, .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
+  .merchant-row, .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row, .client-attr-row{
     font-size: 14px;
     padding-bottom: 5px;
     .col-3 {
@@ -89,7 +89,7 @@
   }
 
   .product-block{
-    padding-top: 10px;
+    padding-top: 0px;
     .col-9, .col-3{
       padding: 0px;
     }
@@ -98,7 +98,9 @@
       padding-left: 0px;
       padding-right: 0px;
     }
-    
+    .beverage{
+      color: red;
+    }
     .quantity-col{
       padding-left: 5px;
     }
@@ -121,9 +123,14 @@
   }
 }
 
+
 .order-header{
   width: 100%;
+  margin: 0px;
 
+  .row{
+    margin: 0px;
+  }
   .col-8{
     padding: 0px;
   }
@@ -196,8 +203,8 @@
   width: 185px;
 }
 
-.mat-expansion-panel-body {
-  padding: 0px !important;
+::ng-deep .mat-expansion-panel-body {
+  padding: 0px 10px !important;
 }
 
 .mat-slide-toggle-bar {
@@ -211,22 +218,24 @@
 }
 
 .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
-    transform: translate3d(60px,0,0) !important;
+  transform: translate3d(60px,0,0) !important;
 }
 
 .mat-slide-toggle-thumb-container {
-    width: 28px !important;
-    height: 28px !important;
-    top: 0px !important;
+  width: 28px !important;
+  height: 28px !important;
+  top: 0px !important;
 }
 
 .mat-expansion-panel-header {
   padding-left: 12px !important;
   font-weight: 600;
+  margin: 0px;
 }
 
 .mat-expansion-panel-header-title {
   padding-right: 0px;
+  margin: 0px;
 }
 
 .mat-slide-toggle-content {
@@ -241,4 +250,12 @@
   width: 88% !important;
   height: 70%;
   max-width: none !important;
+}
+
+.client-attr-row{
+  padding-top:10px;
+  .mat-form-field-type-mat-select{
+    width: 240px;
+    margin-top: -14px;
+  }
 }

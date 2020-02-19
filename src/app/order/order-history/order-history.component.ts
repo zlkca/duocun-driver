@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AccountService } from '../../account/account.service';
 import { OrderService } from '../../order/order.service';
 import { SharedService } from '../../shared/shared.service';
-import { Order } from '../order.model';
+import { Order, OrderStatus } from '../order.model';
 import { SocketService } from '../../shared/socket.service';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
@@ -65,7 +65,7 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
 
   reload(clientId) {
     const self = this;
-    self.orderSvc.find({ clientId: clientId, status: { $nin: ['del', 'bad', 'tmp'] } }).subscribe(orders => {
+    self.orderSvc.find({ clientId: clientId, status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] } }).subscribe(orders => {
       orders.sort((a: Order, b: Order) => {
         if (this.sharedSvc.compareDateTime(a.created, b.created)) {
           return -1;

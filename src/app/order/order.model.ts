@@ -6,6 +6,25 @@ import { IAccount } from '../account/account.model';
 import { IMerchant } from '../restaurant/restaurant.model';
 
 
+export enum OrderStatus {
+  BAD = 1,
+  DELETED = 2,
+  TEMP = 3,         // generate a temp order for electronic order
+  NEW = 4,
+  LOADED,       // The driver took the food from Merchant
+  DONE,         // Finish delivery
+  MERCHANT_CHECKED      // VIEWED BY MERCHANT
+}
+
+export enum PaymentStatus {
+  UNPAID = 1,
+  PAID
+}
+
+export enum OrderType {
+  FOOD_DELIVERY = 1,
+  TELECOMMUNICATIONS
+}
 
 export interface IOrder {
   _id?: string;
@@ -20,7 +39,12 @@ export interface IOrder {
   merchantName?: string;
   driverId?: string;
   driverName?: string;
-  status?: string;
+
+  type?: OrderType;             // in db
+  status: OrderStatus;          // in db
+  paymentStatus: PaymentStatus; // in db
+
+
   paid?: boolean;
   note?: string;
   address?: string;
@@ -40,6 +64,7 @@ export interface IOrder {
 
   merchant?: IMerchant;
   client?: IAccount;
+  driver?: IAccount;
   nOrders?: number;
   owe?: number;
 }
@@ -55,7 +80,11 @@ export class Order implements IOrder {
   merchantName: string;
   driverId: string;
   driverName?: string;
-  status: string;
+
+  type?: OrderType;             // in db
+  status: OrderStatus;          // in db
+  paymentStatus: PaymentStatus; // in db
+
   note: string;
   address: string;
   location?: ILocation;

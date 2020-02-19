@@ -11,6 +11,13 @@ export enum Role {
   PREPAID_CLIENT = 7
 }
 
+export interface IAccountAttribute {
+  _id?: string;
+  code: string; //   I: INDOOR, G: GARDENING, R: ROOFING, O: OFFICE, P: PLAZA, H: HOUSE, C: CONDO
+  name: string;
+  nameEN?: string;
+}
+
 export interface IAccount {
   _id?: string;
   type: string; // wechat, google, fb
@@ -32,6 +39,8 @@ export interface IAccount {
   merchants?: string[]; // merchant Ids
   balance?: number;
   info?: string;      // client info input by drivers
+  attributes?: string[]; // IAccountAttribute's code, I: INDOOR, G: GARDENING, R: ROOFING, O: OFFICE, P: PLAZA, H: HOUSE, C: CONDO
+
 }
 
 export class Account implements IAccount {

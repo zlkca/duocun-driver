@@ -1,21 +1,16 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { NgRedux } from '../../../../node_modules/@angular-redux/store';
 import { IAppState } from '../../store';
-import { Router } from '../../../../node_modules/@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatDialog } from '../../../../node_modules/@angular/material';
 import { OrderService } from '../order.service';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { Subject } from '../../../../node_modules/rxjs';
 import { CommandActions } from '../../shared/command.actions';
-import { TransactionService } from '../../transaction/transaction.service';
-import { environment } from '../../../environments/environment';
-import { ITransaction } from '../../transaction/transaction.model';
-import { IOrder } from '../order.model';
+import { IOrder, OrderStatus } from '../order.model';
 import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms';
 import { AccountService } from '../../account/account.service';
 import { IAccount } from '../../account/account.model';
 import { ClientBalanceDialogComponent } from '../client-balance-dialog/client-balance-dialog.component';
-import { AssignmentService } from '../../assignment/assignment.service';
 
 
 export interface DialogData {
@@ -109,10 +104,10 @@ export class ReceiveCashDialogComponent implements OnInit, OnDestroy {
           const toId = this.data.accountId;
           const toName = this.data.accountName;
           this.orderSvc.payOrder(toId, toName, +received, orderId, note).pipe(takeUntil(this.onDestroy$)).subscribe((r) => {
-            // this.assignmentSvc.update({orderId: orderId}, {status: 'done'}).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+            this.orderSvc.update({_id: orderId}, {status: OrderStatus.DONE}).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
               this.dialogRef.close(r);
               this.rx.dispatch({ type: CommandActions.SEND, payload: { name: 'reload-orders', args: null } }); // refresh order history
-            // });
+            });
           });
         }
       }

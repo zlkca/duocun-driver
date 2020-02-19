@@ -14,12 +14,12 @@ export class AuthService {
 
   setAccessTokenId(token: string) {
     if (token) {
-      Cookies.set('duocun-token-id', token, { expires: COOKIE_EXPIRY_DAYS });
+      Cookies.set('duocun-staff-token-id', token, { expires: COOKIE_EXPIRY_DAYS });
     }
   }
 
   getAccessTokenId(): string {
-    const tokenId = Cookies.get('duocun-token-id');
+    const tokenId = Cookies.get('duocun-staff-token-id');
     return tokenId ? tokenId : null;
   }
 
@@ -39,6 +39,6 @@ export class AuthService {
   // }
 
   removeCookies() {
-    Cookies.remove('duocun-token-id');
+    Cookies.remove('duocun-staff-token-id');
   }
 }

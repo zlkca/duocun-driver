@@ -22,4 +22,9 @@ export class TransactionService extends EntityService {
     const url = this.url + '/loadPage/' + currentPageNumber + '/' + itemsPerPage;
     return this.doGet(url, filter);
   }
+
+  getMerchantBalance(merchantAccountId: string, lang: string): Observable<any> {
+    const url = this.url + '/getMerchantBalance';
+    return this.doGet(url, {id: merchantAccountId, lang: lang});
+  }
 }

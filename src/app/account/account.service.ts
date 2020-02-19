@@ -83,6 +83,10 @@ export class AccountService extends EntityService {
     return this.http.get(url);
   }
 
+  getAttributes(filter: any = {}): Observable<any> {
+    const url = this.url + '/attributes';
+    return this.doGet(url, filter);
+  }
   // getUserList(query?: string): Observable<User[]> {
   //     const url = API_URL + 'users' + (query ? query : '');
   //     const headers = new HttpHeaders().set('Content-Type', 'application/json');

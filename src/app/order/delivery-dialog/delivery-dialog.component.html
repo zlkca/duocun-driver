@@ -17,13 +17,13 @@
 
 <div class="order-list" *ngIf="group">
   <div *ngFor="let it of group.items" class="order-block">
-    <mat-expansion-panel [expanded]="it.status !== 'done'">
+    <mat-expansion-panel [expanded]="it.status !== Status.DONE">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div class="row order-header">
             <div class="col-8">
               <div class="row code-col">
-                <div class="col-3">Order Id</div>
+                <div class="col-3" i18n="@@OrderId">Order Id</div>
                 <div class="col-9">{{it.code}}</div>
               </div>
               <div class="row client-col">
@@ -34,8 +34,8 @@
 
             <div class="col-4">
               <div class="row">
-                <div class="col-6 status-col red" *ngIf="it.status !== 'done'">未送</div>
-                <div class="col-6 status-col green" *ngIf="it.status === 'done'">已送</div>
+                <div class="col-6 status-col" *ngIf="it.status !== Status.DONE">未送</div>
+                <div class="col-6 status-col green" *ngIf="it.status === Status.DONE">已送</div>
                 <div class="col-6 quantity-col">x {{getQuantity(it.order)}}件</div>
               </div>
               <div class="row">
@@ -67,14 +67,11 @@
           </div>
         </div>
 
-        <!-- <div class="row address-row">
-          <div class="col-3" i18n="@@DeliverAddress">Delivery Address</div>
-          <div class="col-9">{{it.order.address}}</div>
-        </div> -->
         <div class="row note-row" *ngIf="it.order.note">
           <div class="col-3" i18n="@@Note">Note</div>
           <div class="col-9 note-text">{{it.order.note}}</div>
         </div>
+
         <form [formGroup]="forms[it.order._id]" class="info-form">
           <div class="row info-row">
               <div class="col-3 label-col">
@@ -86,10 +83,30 @@
               </div>
           </div>
         </form>
+
+        <div class="row client-attr-row">
+          <div class="col-3" i18n="@@ClientAttribute">Client Attribute</div>
+          <div class="col-9">
+            <mat-form-field class="attributes-field">
+              <!-- <mat-label>
+                <span i18n="@@ClientAttribute">Client Attribute</span>
+              </mat-label> -->
+              <mat-select [(value)]="it.order.client.attributes" 
+                (selectionChange)="onAttributesChanged(it.order.client, $event)"
+                (openedChange)="onSave(it.order.client, $event)"
+                multiple floatLabel="never">
+                <mat-option *ngFor="let a of attributes" [value]="a.code">
+                  {{a.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
         <div class="row product-block">
           <div class="col-9" *ngIf="it.order.items && it.order.items.length > 0">
             <div *ngFor="let item of it.order.items" class="text-sm row">
-              <div class="col-6 product-col">{{item.product.name}}</div>
+              <div class="col-6 product-col" [ngClass]="getProductCssClass(item)">{{item.product.name}}</div>
               <div class="col-3 quantity-col">x{{item.quantity}}</div>
               <!-- <div class="col-3 price-col">${{item.price * item.quantity | number : '1.2-2'}}</div> -->
             </div>
@@ -98,8 +115,9 @@
         </div>
       </div>
       <div class="row receivables-row">
-        <div class="btn btn-primary" *ngIf="it.order.paymentMethod==='cash'" (click)="openReceiveCashDialog(it.order)">收款</div>
-        <div class="btn btn-primary" *ngIf="it.paid && it.status !== 'done'" (click)="finishDelivery(it.order)">完成订单</div>
+        <!-- It is possible a client has 2 orders one paid by card, the other owe cash ! && it.order.paymentMethod==='cash' -->
+        <div class="btn btn-primary" *ngIf="it.balance < 0" (click)="openReceiveCashDialog(it.order)">收款</div>
+        <div class="btn btn-primary" *ngIf="it.balance >= 0 && it.status !== Status.DONE" (click)="finishDelivery(it.order)">完成订单</div>
       </div>
     </mat-expansion-panel>
 
