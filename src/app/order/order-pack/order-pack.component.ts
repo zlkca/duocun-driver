@@ -266,4 +266,32 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   getAddress(location: ILocation) {
     return this.locationSvc.getAddrString(location);
   }
+
+  getSingleDesc(item): string {
+    if (!item.spec || !item.spec.length) {
+      return '';
+    }
+    const singleSpecNames = [];
+    item.spec.filter(spec => spec.type === 'single' && spec.list && spec.list.length).forEach(spec => {
+      singleSpecNames.push(spec.list[0].name);
+    });
+    return singleSpecNames.join(', ');
+  }
+
+  getMultipleDesc(item): Array<{name: string, quantity: number}> {
+    if (!item.spec || !item.spec.length) {
+      return [];
+    }
+    const multipleDesc = [];
+    item.spec.filter(spec => spec.type === 'multiple' && spec.list && spec.list.length).forEach(spec => {
+      spec.list.forEach(specDetail => {
+        multipleDesc.push({
+          name: specDetail.name,
+          quantity: specDetail.quantity
+        });
+      });
+    });
+    return multipleDesc;
+  }
+
 }
