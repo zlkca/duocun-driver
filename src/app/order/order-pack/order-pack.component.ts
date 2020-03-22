@@ -266,4 +266,93 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   getAddress(location: ILocation) {
     return this.locationSvc.getAddrString(location);
   }
+
+  getSingleDesc(item): string {
+    if (!item.spec || !item.spec.length) {
+      return '';
+    }
+    const singleSpecNames = [];
+    item.spec.filter(spec => spec.type === 'single' && spec.list && spec.list.length).forEach(spec => {
+      singleSpecNames.push(spec.list[0].name);
+    });
+    return singleSpecNames.join(', ');
+  }
+
+  getMultipleDesc(item): Array<{name: string, quantity: number}> {
+    if (!item.spec || !item.spec.length) {
+      return [];
+    }
+    const multipleDesc = [];
+    item.spec.filter(spec => spec.type === 'multiple' && spec.list && spec.list.length).forEach(spec => {
+      spec.list.forEach(specDetail => {
+        multipleDesc.push({
+          name: specDetail.name,
+          quantity: specDetail.quantity
+        });
+      });
+    });
+    return multipleDesc;
+  }
+
+  isSameType(itOne, itTwo): boolean {
+    if (itOne.product._id !== itTwo.product._id) {
+      return false;
+    }
+    if (itOne.spec === itTwo.spec) {
+      return true;
+    }
+    if ((!itOne.spec || !itOne.spec.length) && (!itTwo.spec || !itTwo.spec.length)) {
+      return true;
+    }
+    const itOneSingleSpec = itOne.spec.filter(spec => spec.type === 'single');
+    const itTwoSingleSpec = itTwo.spec.filter(spec => spec.type === 'single');
+
+    if (!itOneSingleSpec.length !== !itTwoSingleSpec.length) {
+      return false;
+    }
+    for (let i = 0; i < itOneSingleSpec.length; i++) {
+      const twoSingleSpec = itTwoSingleSpec.find(spec => spec.specName === itOne.spec[i].specName);
+      if (!twoSingleSpec) {
+        return false;
+      }
+      if (itOne.spec[i].list[0].name !== twoSingleSpec.list[0].name) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  groupBySingleSpec(items): Array<{productName: string, singleDesc: string, quantity: number}> {
+    const list = [];
+    if (!items) {
+      return list;
+    }
+    items.forEach(item => {
+      const sameKind = list.find(pushed => this.isSameType(pushed, item));
+      if (sameKind) {
+        sameKind.quantity += item.quantity;
+      } else {
+        list.push({
+          ...item,
+          productName: item.product.name,
+          singleDesc: this.getSingleDesc(item),
+          quantity: item.quantity
+        });
+      }
+    });
+    return list;
+  }
+
+  sortByProductName(items) {
+    return items.sort((i, j) => {
+      if (i.productName > j.productName) {
+        return 1;
+      } else if (i.productName === j.productName) {
+        return 0;
+      } else {
+        return -1;
+      }
+    });
+  }
+
 }

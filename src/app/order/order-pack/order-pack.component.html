@@ -71,10 +71,21 @@
           </div> -->
           <div class="row product-block">
             <div class="col-9" *ngIf="it.order.items && it.order.items.length > 0">
-              <div *ngFor="let item of it.order.items" class="text-sm row">
-                <div class="col-6 product-col" [ngClass]="getProductCssClass(item)">{{item.product.name}}</div>
-                <div class="col-3 quantity-col">x{{item.quantity}}</div>
-                <!-- <div class="col-3 price-col">${{item.price * item.quantity | number : '1.2-2'}}</div> -->
+<!--              <div *ngFor="let item of it.order.items" class="text-sm row">-->
+<!--                <div class="col-9 product-col" [ngClass]="getProductCssClass(item)">{{item.product.name}}-->
+<!--                  <small>{{getSingleDesc(item)}}</small>-->
+<!--                </div>-->
+<!--                <div class="col-3 quantity-col">&times; {{item.quantity}}</div>-->
+<!--                &lt;!&ndash; <div class="col-3 price-col">${{item.price * item.quantity | number : '1.2-2'}}</div> &ndash;&gt;-->
+<!--              </div>-->
+              <div *ngFor="let item of sortByProductName(it.order.items)" class="text-sm row">
+                <div class="col-9 product-col">
+                  {{item.product.name}}
+                  {{getSingleDesc(item)}}
+                  <ng-container *ngIf="getMultipleDesc(item).length" i18n="@@SideDish">Side Dish: </ng-container>
+                  <ng-container *ngFor="let desc of getMultipleDesc(item)"> {{desc.name}} &times; {{desc.quantity}}</ng-container>
+                </div>
+                <div class="col-3 quantity-col">{{item.quantity}}</div>
               </div>
             </div>
             <div class="col-3">

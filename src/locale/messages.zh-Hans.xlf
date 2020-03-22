@@ -1720,6 +1720,10 @@
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="SideDish" datatype="html">
+        <source>SideDish</source>
+        <target>配菜</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
