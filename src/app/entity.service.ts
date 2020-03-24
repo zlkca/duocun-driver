@@ -89,7 +89,7 @@ export class EntityService {
     return this.http.post(url, entity, {headers: headers});
   }
 
-  save(entity: IEntity): Observable<any> {
+  save(entity: any): Observable<any> {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     const accessTokenId = this.cookieSvc.getAccessTokenId();

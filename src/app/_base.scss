@@ -1,0 +1,130 @@
+$cellphone: "(max-width:480px)";
+$mobile: "(max-width: 767px)";
+$tablet: "(min-width: 768px) and (max-width: 1199px)";
+$desktop: "(min-width: 1200px)";
+
+$green: rgb(24, 128, 56);
+$yellow: rgb(244, 160, 0);
+$red: rgb(219, 68, 55);
+$blue: #4285F3;
+
+$primary-color: #4285F3;
+$inverse-font-color: white;
+$background-color: white;
+$border-color: #eee;
+
+$header-bg-color: #ddd;
+$info-bg: rgb(69,69,69);
+$info-fg: white;
+
+$head-h: 60px;
+$bottom-bar-h: 60px;
+$bottom-btn-w: 125px;
+
+$content-padding: 300px;
+
+$input-h: 38px;
+
+$navbar-h: 0px;
+
+
+$head-h: 60px;
+$bottom-bar-h: 60px;
+$bottom-btn-w: 125px;
+
+$content-padding: 300px;
+
+$input-h: 38px;
+
+$navbar-h: 0px;
+
+.page{
+  position: fixed;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+}
+.title-row{
+  height: $head-h;
+  padding: 15px;
+  border-bottom: 1px solid $border-color;
+}
+.page-body{
+  position: fixed;
+  top: $head-h;
+  width: 100%;
+  height: calc(100% - #{$head-h} - #{$bottom-bar-h});
+}
+
+app-footer{
+  border-top: 1px solid $border-color;
+  z-index: 990; // spinner 1000
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+}
+
+.bottom-bar{
+  width: calc(100% - #{$content-padding} - #{$content-padding});
+  height: $bottom-bar-h;
+  background: $background-color;
+  margin: 0px;
+  padding: 0px;
+  border-top: solid 1px $border-color;
+  border-right: solid 1px $border-color;
+  border-left: solid 1px $border-color;
+
+  .bottom-btn{
+    text-align: center;
+    color: $inverse-font-color;
+    background: $primary-color;
+    width: $bottom-btn-w;
+    padding-top: 15px;
+  }
+}
+
+.label{
+  font-size:14px;
+}
+.tab-body{
+  padding: 10px;
+}
+.mat-button-toggle-button{
+  height: 40px;
+}
+.mat-button-toggle-checked {
+  background-color: $primary-color;
+  color: $inverse-font-color;
+}
+.mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+  line-height: 18px;
+}
+
+.table{
+  box-shadow: none;
+  border-bottom: 1px solid $border-color;
+
+  // table header
+  tr.mat-header-row {
+    height: 56px;
+    height: 30px;
+    background: $header-bg-color;
+    border-top: 1px solid $border-color;
+  }
+}
+
+@media #{$tablet}{
+  .bottom-bar{
+    width: 100%;
+    border-right: none;
+    border-left: none;
+  }
+}
+
+@media #{$mobile}{
+  .bottom-bar{
+    width: 100%;
+    border-right: none;
+    border-left: none;
+  }
+}

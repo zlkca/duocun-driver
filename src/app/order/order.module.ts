@@ -28,7 +28,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { MatSelectModule } from '../../../node_modules/@angular/material';
+import { MatSelectModule, MatButtonToggleModule } from '../../../node_modules/@angular/material';
 
 import { TransactionService } from '../transaction/transaction.service';
 import { ReceiveCashDialogComponent } from './receive-cash-dialog/receive-cash-dialog.component';
@@ -37,6 +37,7 @@ import { ClientBalanceDialogComponent } from './client-balance-dialog/client-bal
 import { SharedService } from '../shared/shared.service';
 import { LocationService } from '../location/location.service';
 import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.component';
+import { PickupPageComponent } from './pickup-page/pickup-page.component';
 
 @NgModule({
   imports: [
@@ -52,6 +53,7 @@ import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.compo
     ReactiveFormsModule,
     MatSnackBarModule,
     MatSelectModule,
+    MatButtonToggleModule,
     OrderRoutingModule,
     SharedModule
   ],
@@ -79,7 +81,8 @@ import { DeliveryDialogComponent } from './delivery-dialog/delivery-dialog.compo
     MapPageComponent,
     ReceiveCashDialogComponent,
     ClientBalanceDialogComponent,
-    DeliveryDialogComponent
+    DeliveryDialogComponent,
+    PickupPageComponent
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

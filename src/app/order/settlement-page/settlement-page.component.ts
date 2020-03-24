@@ -4,7 +4,7 @@ import { AccountService } from '../../account/account.service';
 import { SharedService } from '../../shared/shared.service';
 import { MerchantService } from '../../restaurant/restaurant.service';
 import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router';
-import { IMerchant, MerchantType } from '../../restaurant/restaurant.model';
+import { IMerchant, MerchantType, MerchantStatus } from '../../restaurant/restaurant.model';
 import { Subject } from '../../../../node_modules/rxjs';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import * as moment from 'moment';
@@ -58,7 +58,7 @@ export class SettlementPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    const q = { status: 'active', type: MerchantType.RESTAURANT };
+    const q = { status: MerchantStatus.ACTIVE, type: MerchantType.RESTAURANT };
     self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {

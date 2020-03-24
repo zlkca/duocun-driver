@@ -1,0 +1,241 @@
+@import '../../base';
+
+.pickup-row{
+  padding: 10px;
+}
+
+.merchant-block{
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-top: 1px solid #aaa;
+  margin-top: 10px;
+}
+
+.order{
+  border-bottom: solid 1px #eee;
+  padding: 0px 0px 10px 0px;
+
+  .note-row, .order-id-row, .client-row, .phonenum-row, .address-row, .navigate-row{
+    font-size: 12px;
+    .col-3 {
+      padding: 0px;
+    }
+    .col-9 {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .order-id-col, .merchant-col{
+    font-size: 12px;
+    .col-3 {
+      padding: 0px;
+    }
+    .col-9 {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  .product-block{
+    padding-top: 10px;
+    .col-9, .col-3{
+      padding: 0px;
+    }
+
+    .product-col{
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    .beverage{
+      color: red;
+    }
+    .quantity-col{
+      padding-left: 5px;
+    }
+
+    .phonenum-row{
+      a{
+        font-size: 14px;
+      }
+    }
+  }
+
+  .navigate-row{
+    .btn{
+      float: right;
+    }
+  }
+
+  .paid-toggle{
+    margin-top: 10px;
+  }
+}
+
+$lable-width: 50px;
+
+.order-header{
+  width: 100%;
+  margin-top: 10px;
+  padding-top: 0px;
+
+  .first-row, .second-row, .third-row{
+    width: 100%;
+    font-size: 12px;
+    font-weight: 400;
+    padding-left: 0px;
+  }
+
+  .warning{
+    color: red;
+    font-size: 20px;
+  }
+  .normal{
+    color: #333333;
+  }
+  
+  .code-col, .client-col, .quantity-col, .status-col, .note-col{
+    float: left;
+    width: 50%;
+    padding: 0px;
+
+    .label {
+      float: left;
+      padding: 0px;
+      width: $lable-width;
+    }
+    .text {
+      float: left;
+      padding-left: 0px;
+      padding-right: 0px;
+      width: calc(100% - #{$lable-width});
+    }
+  }
+
+  .note-col{
+    width: 100%;
+    .text{
+      color: red;
+    }
+  }
+
+  .status-col{
+    input{ // checkbox
+      float: left;
+      margin-top: 1px;
+    }
+    span{
+      font-size: 14px;
+    }
+  }
+  .col-3 {
+    padding: 0px;
+  }
+  .col-9 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .red{
+    color: red;
+  }
+
+  .green{
+    color: green;
+  }
+}
+
+.receivables-row{
+  font-size: 14px;
+  padding-top: 10px;
+
+  .left-col{
+    padding: 0px;
+  }
+
+  .right-col{
+    padding-right: 0px;
+
+    .paid-toggle{
+      margin-top: 10px;
+    }
+  }
+}
+
+.received-form{
+  font-size: 16px;
+  padding-right: 0px;
+  .label, .dollar-sign{
+    padding-top: 5px;
+  }
+  .received-input{
+    float: left;
+    width: calc(100% - 56px);
+    height: 32px;
+    padding: 5px;
+  }
+}
+
+.order-block{
+  margin-bottom: 6px;
+}
+
+.total-col, .balance-col, .receivable-col, .nOrder-col{
+  font-size: 12px;
+}
+
+.nOrder-col{
+  width: 185px;
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0px 10px 10px 10px !important;
+}
+
+.mat-slide-toggle-bar {
+  height: 28px !important;
+  width: 88px !important;
+}
+
+.mat-slide-toggle-thumb {
+  height: 28px !important;
+  width: 28px !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
+    transform: translate3d(60px,0,0) !important;
+}
+
+.mat-slide-toggle-thumb-container {
+    width: 28px !important;
+    height: 28px !important;
+    top: 0px !important;
+}
+
+$header-height: 90px;
+.mat-expansion-panel-header {
+  padding-left: 8px !important;
+  font-weight: 600;
+  height: 100% !important;
+  // height: $header-height !important;
+}
+
+.mat-expansion-panel-header-title {
+  padding-right: 0px;
+  margin-right: 0px;
+  // height: $header-height !important;
+}
+
+.mat-slide-toggle-content {
+  font-size: 12px;
+}
+
+// material css
+.receive-cash-dialog{
+  position: absolute !important;
+  top: 8%;
+  left: 6%;
+  width: 88% !important;
+  height: 70%;
+  max-width: none !important;
+}

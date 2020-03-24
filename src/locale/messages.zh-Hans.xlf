@@ -308,7 +308,7 @@
       </trans-unit>
       <trans-unit id="ChangeDeliveryAddress" datatype="html">
         <source>Change Address</source>
-        <target>更改送餐地址</target>
+        <target>更改送件地址</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/header/header.component.ts</context>
           <context context-type="linenumber">19</context>
@@ -620,7 +620,7 @@
       </trans-unit>
       <trans-unit id="DeliverAddress" datatype="html">
         <source>Deliver Address</source>
-        <target>送餐地址</target>
+        <target>送件地址</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/order/order-detail/order-detail.component.html</context>
           <context context-type="linenumber">4</context>
@@ -724,7 +724,7 @@
       </trans-unit>
       <trans-unit id="DeliverDate" datatype="html">
         <source>Deliver Date</source>
-        <target>送餐日期</target>
+        <target>送件日期</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/order/order-list/order-list.component.ts</context>
           <context context-type="linenumber">23</context>
@@ -808,7 +808,7 @@
       </trans-unit>
       <trans-unit id="DeliveryDate" datatype="html">
         <source>Delivery Date</source>
-        <target>送餐日期</target>
+        <target>送件日期</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/order/order-form/order-form.component.html</context>
           <context context-type="linenumber">52</context>
@@ -816,7 +816,7 @@
       </trans-unit>
       <trans-unit id="DeliveryTime" datatype="html">
         <source>Delivery Time</source>
-        <target>送餐时间</target>
+        <target>送件时间</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/order/order-form/order-form.component.html</context>
           <context context-type="linenumber">65</context>
@@ -1044,7 +1044,7 @@
       </trans-unit>
       <trans-unit id="Deliver" datatype="html">
         <source>Deliver</source>
-        <target>送餐</target>
+        <target>送件</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/admin/admin-order-list/admin-order-list.component.ts</context>
           <context context-type="linenumber">39</context>
@@ -1068,7 +1068,7 @@
       </trans-unit>
       <trans-unit id="fc5831a0172847c3b2ac4a700ce31e4deacfa6bf" datatype="html">
         <source>Input Delivery Address</source>
-        <target>输入送餐地址</target>
+        <target>输入送件地址</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/page/my-address/my-address.component.html</context>
           <context context-type="linenumber">9</context>
@@ -1378,7 +1378,7 @@
       </trans-unit>
       <trans-unit id="178cd5673e5cb7d0e5531b34e015bfad3a421dd6" datatype="html">
         <source>InputDeliveryAddress</source>
-        <target>请输入送餐地址</target>
+        <target>请输入送件地址</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/address-input/address-input.component.html</context>
           <context context-type="linenumber">3</context>
@@ -1386,7 +1386,7 @@
       </trans-unit>
       <trans-unit id="19c1ccdf982a842d6d2062cf8cdb37679127e6ad" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{placeholder}}"/></source>
-        <target>请输入送餐地址</target>
+        <target>请输入送件地址</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/address-input/address-input.component.html</context>
           <context context-type="linenumber">3</context>
@@ -1394,7 +1394,7 @@
       </trans-unit>
       <trans-unit id="e76af883448967255c2573fe8fa43fd26937185d" datatype="html">
         <source>SelectDeliveryDate</source>
-        <target>请选择送餐时间</target>
+        <target>请选择送件时间</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/delivery-date-input/delivery-date-input.component.html</context>
           <context context-type="linenumber">3</context>
@@ -1410,7 +1410,7 @@
       </trans-unit>
       <trans-unit id="PhoneAddrEmptyMsg" datatype="html">
         <source>Phone and Address cannot be empty</source>
-        <target>电话号码和送餐地址不能为空，点击进入编辑。</target>
+        <target>电话号码和送件地址不能为空，点击进入编辑。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/order/order-history/order-history.component.html</context>
           <context context-type="linenumber">30</context>

@@ -5,7 +5,7 @@ import { IAccount, Role } from '../../account/account.model';
 import { ActivatedRoute } from '../../../../node_modules/@angular/router';
 import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import { Subject } from '../../../../node_modules/rxjs';
-import { IMerchant, MerchantType } from '../../restaurant/restaurant.model';
+import { IMerchant, MerchantType, MerchantStatus } from '../../restaurant/restaurant.model';
 import { MerchantService } from '../../restaurant/restaurant.service';
 import * as moment from 'moment';
 
@@ -51,7 +51,7 @@ export class SummaryPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    const q = { status: 'active', type: MerchantType.RESTAURANT };
+    const q = { status: MerchantStatus.ACTIVE, type: MerchantType.RESTAURANT };
     self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       if (account) {
         const roles = account.roles;

@@ -17,6 +17,7 @@ import { ReceiveCashDialogComponent } from '../receive-cash-dialog/receive-cash-
 import { ICommand } from '../../shared/command.reducers';
 import { NgRedux } from '../../../../node_modules/@angular-redux/store';
 import { IAppState } from '../../store';
+import { PaymentMethod } from '../../payment/payment.model';
 
 @Component({
   selector: 'app-order-pack',
@@ -27,7 +28,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() orders;
   @Input() pickupTime;
-
   @Input() restaurant: IMerchant;
   @Input() delivered; // moment object
 
@@ -42,7 +42,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
   picked = {};
   Status = OrderStatus;
   loading = false;
-
+  PaymentMethod = PaymentMethod;
   constructor(
     private orderSvc: OrderService,
     private sharedSvc: SharedService,
@@ -168,15 +168,6 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  getQuantity(order: IOrder) {
-    let quantity = 0;
-    order.items.map((item: IOrderItem) => {
-      quantity += item.quantity;
-    });
-    return quantity;
-  }
-
-
   // pickupTime --- eg. '11:20'
   reload(accounts: IAccount[], pickupTime: string) {
     const self = this;
@@ -184,7 +175,7 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     const orderQuery = {
       driverId: this.account._id,
       delivered: range,
-      pickup: pickupTime,
+      pickupTime,
       status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }
     };
 
@@ -198,15 +189,24 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     // this.select.emit({ order: c });
   }
 
-  toDateTimeString(s) {
-    return s ? this.sharedSvc.toDateTimeString(s) : '';
-  }
 
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
-
+  getQuantity(order: IOrder) {
+    let quantity = 0;
+    order.items.map((item: IOrderItem) => {
+      quantity += item.quantity;
+    });
+    return quantity;
+  }
+  getAddress(location: ILocation) {
+    return this.locationSvc.getAddrString(location);
+  }
+  toDateTimeString(s) {
+    return s ? this.sharedSvc.toDateTimeString(s) : '';
+  }
   navigateTo(location: ILocation) {
     (<any>window).location = encodeURI('https://www.google.com/maps/dir/?api=1&destination=' +
       + location.streetNumber + '+' + location.streetName + '+'
@@ -263,7 +263,5 @@ export class OrderPackComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  getAddress(location: ILocation) {
-    return this.locationSvc.getAddrString(location);
-  }
+
 }

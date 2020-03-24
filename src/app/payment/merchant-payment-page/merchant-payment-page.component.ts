@@ -8,7 +8,7 @@ import { FormBuilder, Validators } from '../../../../node_modules/@angular/forms
 import { MatSnackBar, MatTableDataSource, MatSort } from '../../../../node_modules/@angular/material';
 import * as moment from 'moment';
 import { TransactionService } from '../../transaction/transaction.service';
-import { ITransaction } from '../../transaction/transaction.model';
+import { ITransaction, TransactionAction } from '../../transaction/transaction.model';
 import { environment } from '../../../environments/environment.prod';
 
 const CASH_ID = '5c9511bb0851a5096e044d10';
@@ -82,8 +82,7 @@ export class MerchantPaymentPageComponent implements OnInit, OnDestroy {
       toId: merchantAccount._id, // should be an account type
       toName: merchantAccount.username,
       amount: Math.round(amount * 100) / 100,
-      type: 'pay merchant',
-      action: 'pay merchant',
+      actionCode: TransactionAction.PAY_MERCHANT_CASH.code// 'pay merchant',
     };
 
     this.transactionSvc.save(t).pipe(takeUntil(this.onDestroy$)).subscribe(() => {

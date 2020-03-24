@@ -1,23 +1,14 @@
 <footer *ngIf="!bHide">
 
-  <div class="row bottom-nav-menus" *ngIf="!bCart">
-    <!-- <div class="menu" (click)="toDeliver()" [class.hightlighted]="selected==='deliver'">
-      <div class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
-          <path fill='none' d="M0 0h24v24H0V0z"/>
-          <path [style.fill]="getColor('deliver')" d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
-        </svg>
-      </div>
-      <div class="icon-text" i18n="@@Deliver">Deliver</div>
-    </div> -->
-    <div class="menu" (click)="toPack()" [class.hightlighted]="selected==='pack'">
+  <div class="row bottom-nav-menus">
+    <div class="menu" (click)="toPickup()" [class.hightlighted]="selected==='pickup'">
       <div class="icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
           <path fill="none" d="M0 0h24v24H0V0z"/>
-          <path [style.fill]="getColor('pack')" d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+          <path [style.fill]="getColor('pickup')" d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
         </svg>
       </div>
-      <div class="icon-text">取餐</div>
+      <div class="icon-text">取件</div>
     </div>
 
     <div class="menu" (click)="toMap()" [class.hightlighted]="selected==='map'">
@@ -40,16 +31,6 @@
       <div class="icon-text" i18n="@@Merchant">Merchant</div>
     </div>
 
-    <!-- <div class="menu" (click)="toClient()" [class.hightlighted]="selected==='client'">
-      <div class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
-          <path [style.fill]="getColor('client')" d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-          <path d="M0 0h24v24H0z" fill="none"/>
-        </svg>
-      </div>
-      <div class="icon-text" i18n="@@Client">Client</div>
-    </div> -->
-
     <div class="menu" (click)="toAccount()" [class.hightlighted]="selected==='account'">
       <div class="icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
@@ -60,9 +41,5 @@
       <div class="icon-text" i18n="@@Account">Account</div>
     </div>
   </div>
-  
-  <!-- <div class="copyright">
-      <a href="#">YoCompute Inc.</a> &#169;<span id="copyright-year">{{year}}</span>
-      <span class="created">Created by <a rel="nofollow" href="http://www.yocompute.com">yocompute.com</a></span>
-  </div> -->
+
 </footer>

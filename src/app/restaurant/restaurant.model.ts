@@ -4,11 +4,16 @@ import { Address } from '../account/account.model';
 import { GeoPoint } from '../location/location.model';
 import { Order } from '../order/order.model';
 
-export enum MerchantType {
-  RESTAURANT = 1,
-  TELECOM
-}
-
+export const MerchantType = {
+  RESTAURANT: 'R',
+  GROCERY: 'G',
+  FRESH: 'F',
+  TELECOM: 'T'
+};
+export const MerchantStatus = {
+  ACTIVE: 'A',
+  INACTIVE: 'I'
+};
 export interface IMerchant {
   _id?: string;
   name: string;
@@ -17,7 +22,7 @@ export interface IMerchant {
   ownerId?: string;
   malls?: string[]; // mall id
   inRange?: boolean;
-  type: MerchantType;
+  type: string;
   created?: string;
   modified?: string;
 
@@ -26,7 +31,6 @@ export interface IMerchant {
   isClosed?: boolean;
   distance?: number; // km
   deliveryFee?: number;
-  fullDeliveryFee?: number;
   deliveryDiscount?: number;
   products?: Product[];
   orders?: Order[];
@@ -43,7 +47,7 @@ export class Restaurant implements IMerchant {
   location: GeoPoint;
   ownerId: string;
   malls: string[]; // mall id
-  type: MerchantType;
+  type: string;
   created: string;
   modified: string;
   closed?: Date[];

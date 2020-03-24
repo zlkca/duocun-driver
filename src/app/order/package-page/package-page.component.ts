@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { IAccount, Role } from '../../account/account.model';
 import { AccountService } from '../../account/account.service';
 import { SharedService } from '../../shared/shared.service';
-import { IMerchant, MerchantType } from '../../restaurant/restaurant.model';
+import { IMerchant, MerchantType, MerchantStatus } from '../../restaurant/restaurant.model';
 import { Subject } from '../../../../node_modules/rxjs';
 import { MerchantService } from '../../restaurant/restaurant.service';
 import { ActivatedRoute, Router } from '../../../../node_modules/@angular/router';
@@ -50,19 +50,19 @@ export class PackagePageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-    const q = { status: 'active', type: MerchantType.RESTAURANT };
+    // const q = { status: MerchantStatus.ACTIVE, type: MerchantType.RESTAURANT };
     this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
       if (account && account.roles) {
         const roles = account.roles;
         if (roles && roles.length > 0 && roles.indexOf(Role.DRIVER) !== -1) {
-          self.merchantSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((rs: IMerchant[]) => {
-            if (rs && rs.length > 0) {
-              self.restaurant = rs[0];
-            } else {
-              self.restaurant = null;
-            }
-          });
+          // self.merchantSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((rs: IMerchant[]) => {
+          //   if (rs && rs.length > 0) {
+          //     self.restaurant = rs[0];
+          //   } else {
+          //     self.restaurant = null;
+          //   }
+          // });
 
           const tStart = moment().startOf('day').toISOString();
           const tEnd = moment().endOf('day').toISOString();
@@ -73,10 +73,11 @@ export class PackagePageComponent implements OnInit, OnDestroy {
           };
 
           this.orderSvc.find(query).pipe(takeUntil(self.onDestroy$)).subscribe((orders: IOrder[]) => {
-            const pickups = this.orderSvc.getPickupTimes(orders);
+            const pickups = ['10:00', '11:20']; // this.orderSvc.getPickupTimes(orders);
             const phases = [];
             pickups.map(pickup => {
-              const os = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
+              const os = orders.filter(x => x.pickupTime === pickup);
+              // const os = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
               phases.push({pickup: pickup, orders: os});
             });
             self.phases = phases;

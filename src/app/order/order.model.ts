@@ -5,26 +5,24 @@ import { ILocation } from '../location/location.model';
 import { IAccount } from '../account/account.model';
 import { IMerchant } from '../restaurant/restaurant.model';
 
+export const OrderType = {
+  FOOD_DELIVERY: 'F',
+  MOBILE_PLAN_SETUP: 'MS',
+  MOBILE_PLAN_MONTHLY: 'MM',
+  GROCERY: 'G'
+};
 
-export enum OrderStatus {
-  BAD = 1,
-  DELETED = 2,
-  TEMP = 3,         // generate a temp order for electronic order
-  NEW = 4,
-  LOADED,       // The driver took the food from Merchant
-  DONE,         // Finish delivery
-  MERCHANT_CHECKED      // VIEWED BY MERCHANT
-}
+export const OrderStatus = {
+  BAD:     'B',          // client return, compansate
+  DELETED: 'D',          // cancellation
+  TEMP:    'T',             // generate a temp order for electronic order
+  NEW:     'N',
+  LOADED:  'L',           // The driver took the food from Merchant
+  DONE:    'F',             // Finish delivery
+  MERCHANT_CHECKED: 'MC'  // VIEWED BY MERCHANT
+};
 
-export enum PaymentStatus {
-  UNPAID = 1,
-  PAID
-}
 
-export enum OrderType {
-  FOOD_DELIVERY = 1,
-  TELECOMMUNICATIONS
-}
 
 export interface IOrder {
   _id?: string;
@@ -40,10 +38,13 @@ export interface IOrder {
   driverId?: string;
   driverName?: string;
 
-  type?: OrderType;             // in db
-  status: OrderStatus;          // in db
-  paymentStatus: PaymentStatus; // in db
+  type?: string;             // in db
+  status: string;          // in db
+  paymentStatus: string; // in db
 
+  pickupTime?: string;
+  deliverDate?: string;
+  deliverTime?: string;
 
   paid?: boolean;
   note?: string;
@@ -81,9 +82,9 @@ export class Order implements IOrder {
   driverId: string;
   driverName?: string;
 
-  type?: OrderType;             // in db
-  status: OrderStatus;          // in db
-  paymentStatus: PaymentStatus; // in db
+  type?: string;             // in db
+  status: string;          // in db
+  paymentStatus: string; // in db
 
   note: string;
   address: string;

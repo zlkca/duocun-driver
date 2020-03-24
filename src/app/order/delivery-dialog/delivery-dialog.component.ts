@@ -12,6 +12,7 @@ import { LocationService } from '../../location/location.service';
 import { ILocation } from '../../location/location.model';
 import { ReceiveCashDialogComponent } from '../receive-cash-dialog/receive-cash-dialog.component';
 import { FormBuilder } from '../../../../node_modules/@angular/forms';
+import { PaymentMethod } from '../../payment/payment.model';
 
 export interface IDeliveryDialogData {
   title: string;
@@ -37,7 +38,7 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
   bAllowSave = {}; // { orderId: bool }
   Status = OrderStatus;
   attributes;
-
+  PaymentMethod = PaymentMethod;
   constructor(
     private orderSvc: OrderService,
     private locationSvc: LocationService,
@@ -109,7 +110,8 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
     // const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
     const placeId = location.placeId;
     const orderQuery = {
-      'location.placeId': placeId, pickup: pickupTime,
+      'location.placeId': placeId,
+      pickupTime,
       status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }
     };
     return new Promise((resolve, reject) => {

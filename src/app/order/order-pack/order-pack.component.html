@@ -6,7 +6,6 @@
       <span>{{grp.merchantName}}</span>
     </div>
     <div *ngFor="let it of grp.items" class="order-block">
-
       <mat-expansion-panel [expanded]="shouldExpend(it)">
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -18,8 +17,8 @@
                 </div>
                 <div class="status-col">
                   <input type="checkbox" [checked]="it.isPicked" (change)="onChangePicked(it.order)" />
-                  <span class="red" *ngIf="!it.isPicked">未取餐</span>
-                  <span class="green" *ngIf="it.isPicked">已取餐</span>
+                  <span class="red" *ngIf="!it.isPicked">未取</span>
+                  <span class="green" *ngIf="it.isPicked">已取</span>
                 </div>
               </div><!--end of first-row -->
               <div class="col-12 second-row">
@@ -28,9 +27,6 @@
                   <div class="text">{{it.order.clientName}}</div>
                 </div>
                 <div class="quantity-col" [ngClass]="getQuantity(it.order) > 1 ? 'warning' : 'normal'">x {{getQuantity(it.order)}}件</div>
-                  <!-- <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === 'card'">信用卡已付款</div>
-                  <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === 'WECHATPAY'">微信已付款</div>
-                  <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === 'prepaid'">现金已预付</div> -->
               </div><!--end of second-row -->
               <div class="col-12 third-row" *ngIf="it.order.note">
                 <div class="note-col">
@@ -84,42 +80,8 @@
           </div>
         </div>
         <div class="row receivables-row">
-          <div class="btn btn-primary" *ngIf="it.order.paymentMethod==='cash'" (click)="openReceiveCashDialog(it.order)">收款</div>
+          <div class="btn btn-primary" *ngIf="it.order.paymentMethod===PaymentMethod.CASH" (click)="openReceiveCashDialog(it.order)">收款</div>
           <div class="btn btn-primary" *ngIf="it.balance>=0 && it.status !== Status.DONE" (click)="finishDelivery(it.order)">完成订单</div>
-          <!-- it.balance < 0 <div class="col-6 left-col">
-                <div class="row total-col">
-                  <span>今天订单</span>:&nbsp;
-                  <span>${{order.total | number : '1.2-2'}}</span>
-                </div>
-                <div class="row receivable-col">
-                  <span>总共应收</span>:&nbsp;
-                  <span>${{order.receivable | number : '1.2-2'}}</span>
-                </div>
-                <div class="row nOrder-col" *ngIf="order.nOrders > 1">
-                  <span>应收高因为客户今天有</span>
-                  <span>{{order.nOrders}}</span>
-                  <span>个订单</span>
-                </div>
-                <div class="row nOrder-col" *ngIf="order.owe > 0">
-                  <span>应收高因为客户有欠款</span>
-                  <span>${{order.owe | number : '1.2-2'}}</span>
-                </div>
-              </div>
-              <div class="col-6 right-col">
-                <form [formGroup]="forms[order._id]" class="received-form">
-                  <div class="row received-block">
-                    <div class="label">
-                      <span i18n="@@Received">Received</span>:&nbsp;
-                    </div>
-                    <div class="dollar-sign">$&nbsp;<span *ngIf="order.paid">{{order.received | number : '1.2-2'}}</span></div>
-                    <input *ngIf="!order.paid" class="received-input" name="received" formControlName="received" />
-                  </div>
-                </form>
-                <div class="row paid-toggle" *ngIf="!order.paid">
-                  <mat-slide-toggle i18n="@@Paid" [checked]="order.paid" (click)="$event.preventDefault()" (change)="togglePaid($event, order)">Paid</mat-slide-toggle>
-                </div>
-              </div> -->
-          <!--end of right-col -->
         </div>
       </mat-expansion-panel>
 

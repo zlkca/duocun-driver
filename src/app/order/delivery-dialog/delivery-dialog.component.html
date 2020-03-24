@@ -39,9 +39,9 @@
                 <div class="col-6 quantity-col">x {{getQuantity(it.order)}}件</div>
               </div>
               <div class="row">
-                <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === 'card'">信用卡已付款</div>
-                <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === 'WECHATPAY'">微信已付款</div>
-                <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === 'prepaid'">现金已预付</div>
+                <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === PaymentMethod.CREDIT_CARD">信用卡已付款</div>
+                <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === PaymentMethod.WECHAT">微信已付款</div>
+                <div class="col-12 status-col" *ngIf="it.paid && it.order.paymentMethod === PaymentMethod.PREPAY">现金已预付</div>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@
         </div>
       </div>
       <div class="row receivables-row">
-        <!-- It is possible a client has 2 orders one paid by card, the other owe cash ! && it.order.paymentMethod==='cash' -->
+        <!-- It is possible a client has 2 orders one paid by card, the other owe cash ! && it.order.paymentMethod===PaymentMethod.CASH -->
         <div class="btn btn-primary" *ngIf="it.balance < 0" (click)="openReceiveCashDialog(it.order)">收款</div>
         <div class="btn btn-primary" *ngIf="it.balance >= 0 && it.status !== Status.DONE" (click)="finishDelivery(it.order)">完成订单</div>
       </div>

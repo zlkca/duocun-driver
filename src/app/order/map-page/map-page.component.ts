@@ -65,10 +65,11 @@ export class MapPageComponent implements OnInit, OnDestroy {
     };
 
     this.orderSvc.quickFind(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
-      const pickups = this.orderSvc.getPickupTimes(orders);
+      const pickups = ['10:00', '11:20']; // this.orderSvc.getPickupTimes(orders);
       const phases = [];
       pickups.map(pickup => {
-        const os1 = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
+        const os1 = orders.filter(x => x.pickupTime === pickup);
+        // const os1 = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
         const places = [];
 
         os1.map(order => {

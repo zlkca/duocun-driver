@@ -18,8 +18,6 @@ import { MerchantBalanceService } from './merchant-balance.service';
 import { DriverSalaryPageComponent } from './driver-salary-page/driver-salary-page.component';
 import { OrderService } from '../order/order.service';
 import { MerchantService } from '../restaurant/restaurant.service';
-import { ClientPaymentComponent } from './client-payment/client-payment.component';
-import { ClientPaymentPageComponent } from './client-payment-page/client-payment-page.component';
 import { ClientBalanceService } from './client-balance.service';
 import { PaginatePipe, NgxPaginationModule } from '../../../node_modules/ngx-pagination';
 
@@ -43,8 +41,6 @@ import { PaginatePipe, NgxPaginationModule } from '../../../node_modules/ngx-pag
     MerchantPaymentPageComponent,
     DriverPaymentPageComponent,
     DriverSalaryPageComponent,
-    ClientPaymentComponent,
-    ClientPaymentPageComponent
   ],
   providers: [
     AccountService,

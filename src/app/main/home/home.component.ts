@@ -59,6 +59,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     self.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.rx.dispatch({ type: AccountActions.UPDATE, payload: account });
       if (account) {
+        const tokenId: string = this.authSvc.getAccessTokenId();
+        this.authSvc.setAccessTokenId(tokenId);
         self.loginSuccessHandler(account);
       } else { // not login
         self.router.navigate(['account/login']);
@@ -74,7 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       // const todayStart = moment().startOf('day').toDate();
       // const todayEnd = moment().endOf('day').toDate();
       // const q = { $lt: todayEnd, $gt: todayStart };
-      this.router.navigate(['order/package']);
+      this.router.navigate(['order/pickup']);
     } else { // not authorized for opreration merchant
       this.router.navigate(['account/setting'], { queryParams: { merchant: false } });
     }

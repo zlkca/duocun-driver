@@ -74,7 +74,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   toHome() {
     this.selected = 'home';
     if (this.account) {
-      this.router.navigate(['order/package']);
+      this.router.navigate(['order/pickup']);
     } else {
       this.router.navigate(['account/login']);
     }
@@ -89,10 +89,10 @@ export class FooterComponent implements OnInit, OnDestroy {
     }
   }
 
-  toPack() {
-    this.selected = 'pack';
+  toPickup() {
+    this.selected = 'pickup';
     if (this.account) {
-      this.router.navigate(['order/package']);
+      this.router.navigate(['order/pickup']);
     } else {
       this.router.navigate(['account/login']);
     }

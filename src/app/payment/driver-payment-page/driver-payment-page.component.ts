@@ -9,7 +9,7 @@ import * as moment from 'moment';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { TransactionService } from '../../transaction/transaction.service';
-import { ITransaction, ITransactionData } from '../../transaction/transaction.model';
+import { ITransaction, ITransactionData, TransactionAction } from '../../transaction/transaction.model';
 import { IDriverPayment, IDriverPaymentData } from '../payment.model';
 
 @Component({
@@ -63,25 +63,24 @@ export class DriverPaymentPageComponent implements OnInit, OnDestroy {
       ],
     }), {});
   }
-
   getDescription(t, driverId) {
-    if (t.action === 'client cancel order from duocun') {
+    if (t.actionCode === TransactionAction.CANCEL_ORDER_FROM_DUOCUN.code) {
       return '取消' + t.toName;
-    } else if (t.action === 'pay by card') {
+    } else if (t.actionCode === TransactionAction.PAY_BY_CARD.code) {
       return '银行卡付款';
-    } else if (t.action === 'pay by wechat') {
+    } else if (t.actionCode === TransactionAction.PAY_BY_WECHAT.code) {
       return '微信付款';
-    } else if (t.action === 'client add credit by cash') {
-      return '现金充值';
-    } else if (t.action === 'client add credit by card') {
+    } else if (t.actionCode === TransactionAction.PAY_DRIVER_CASH.code) {
+      return '现金付款';
+    } else if (t.actionCode === TransactionAction.ADD_CREDIT_BY_CARD.code) {
       return '信用卡充值';
-    } else if (t.action === 'client add credit by WECHATPAY') {
+    } else if (t.actionCode === TransactionAction.ADD_CREDIT_BY_WECHAT.code) {
       return '微信充值';
-    } else if (t.action === 'pay merchant') {
+    } else if (t.actionCode === TransactionAction.PAY_MERCHANT_CASH.code) {
       return t.toName;
-    } else if (t.action === 'transfer' && t.fromId === driverId) {
+    } else if (t.actionCode === TransactionAction.TRANSFER.code && t.fromId === driverId) {
       return '转给' + t.toName;
-    } else if (t.action === 'transfer' && t.toId === driverId) {
+    } else if (t.actionCode === TransactionAction.TRANSFER.code && t.toId === driverId) {
       return '转自' + t.fromName;
     } else {
       return t.fromId === driverId ? t.toName : t.fromName;

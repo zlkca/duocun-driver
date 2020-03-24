@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as Cookies from 'js-cookie';
 
-const COOKIE_EXPIRY_DAYS = 365;
+const COOKIE_EXPIRY_DAYS = 36;
 
 
 @Injectable()

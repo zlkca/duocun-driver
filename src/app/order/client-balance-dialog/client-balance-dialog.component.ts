@@ -71,18 +71,18 @@ export class ClientBalanceDialogComponent  implements OnInit, OnDestroy {
   reload(clientId: string) {
     const q = {'$or': [{ fromId: clientId }, { toId: clientId }]};
 
-    this.transactionSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe(ts => {
+    this.transactionSvc.quickFind(q).pipe(takeUntil(this.onDestroy$)).subscribe((ts: ITransaction[]) => {
       const list = [];
 
       // ['created', 'action', 'fromName', 'toName', 'amount', 'id'];
-      ts.map(t => {
+      ts.map((t: ITransaction) => {
         const b = (t.fromId === clientId) ? t.fromBalance : t.toBalance;
         const description = this.getDescription(t, clientId);
         const consumed = t.toId === clientId ? t.amount : 0;
         const paid = t.fromId === clientId ? t.amount : 0;
 
         list.push({
-          _id: t._id, created: t.created, action: t.action, description: description,
+          _id: t._id, created: t.created, actionCode: t.actionCode, description: description,
           fromName: t.fromName, toName: t.toName, amount: t.amount, consumed: consumed, paid: paid, balance: b
         });
       });
