@@ -22,7 +22,7 @@ export class EntityService {
   }
 
   // without database join
-  quickFind(filter?: any, distinct?: any): Observable<any> {
+  quickFind(filter?: any, fields?: any): Observable<any> {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     const accessTokenId = this.cookieSvc.getAccessTokenId();
@@ -33,8 +33,8 @@ export class EntityService {
     if (filter) {
       headers = headers.append('filter', JSON.stringify(filter));
     }
-    if (distinct) {
-      headers = headers.append('distinct', JSON.stringify(distinct));
+    if (fields) {
+      headers = headers.append('fields', JSON.stringify(fields));
     }
     return this.http.get(this.url + '/qFind', { headers: headers });
   }

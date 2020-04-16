@@ -1,5 +1,4 @@
 <div class="order-list" *ngIf="groups && groups.length>0">
-
   <div *ngFor="let grp of groups">
     <div class="merchant-block">
       <span i18n="Merchant">Merchant</span>:
@@ -86,6 +85,13 @@
       </mat-expansion-panel>
 
     </div>
+  </div>
 
+  <div class="summary" *ngIf="productGroups && productGroups.length > 0">
+    <div class="title title-sm">取件统计:</div>
+    <div class="row" *ngFor="let pg of productGroups">
+      <div class="col-10 text-sm">{{pg.productName}}</div>
+      <div class="col-2 text-sm">x{{pg.quantity}}</div>
+    </div>
   </div>
 </div>

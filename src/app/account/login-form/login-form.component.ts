@@ -61,7 +61,6 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   onLogin() {
     const self = this;
     const v = this.form.value;
-    this.authSvc.removeCookies();
     if (this.form.valid) {
       this.accountSvc.login(v.account, v.password).subscribe((tokentId: string) => {
         if (tokentId) {

@@ -6,7 +6,18 @@ import { DeliveryDialogComponent } from '../../order/delivery-dialog/delivery-di
 import { OrderStatus } from '../../order/order.model';
 
 declare let google: any;
-
+const icons = {
+  'F' : {
+  yellow: 'assets/images/f-yellow.png',
+  green: 'assets/images/f-green.png',
+  red: 'assets/images/f-red.png',
+  },
+  'G' : {
+    yellow: 'assets/images/g-yellow.png',
+    green: 'assets/images/g-green.png',
+    red: 'assets/images/g-red.png',
+  },
+};
 function getFunc(location) {
   return () => {
     (<any>window).location = encodeURI('https://www.google.com/maps/dir/?api=1&destination=' +
@@ -38,7 +49,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   ) { }
 
   ngOnInit() {
-    this.initMap();
+    // this.initMap();
   }
 
   ngOnChanges(v) {
@@ -50,11 +61,12 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     this.onDestroy$.complete();
   }
 
-  openDeliveryDialog(location: any) {
+  openDeliveryDialog(place: any) {
+    const pickup = this.pickup;
     const params = {
       width: '300px',
       data: {
-        title: '订单', content: '', buttonTextNo: '取消', buttonTextYes: '确认', location: location, pickup: this.pickup
+        title: '订单', content: '', buttonTextNo: '取消', buttonTextYes: '确认', place, pickup
       },
       panelClass: 'delivery-dialog'
     };
@@ -72,8 +84,9 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     if (this.places && this.places.length) {
       this.places.map((p, i) => {
         const iconUrl = p.icon ? p.icon : 'http://labs.google.com/ridefinder/images/mm_20_red.png';
+        const location = p.location;
         const marker1 = new google.maps.Marker({
-          position: { lat: p.lat, lng: p.lng },
+          position: { lat: location.lat, lng: location.lng },
           label: {
             text: self.places[i].name,
             fontSize: '11px'
@@ -81,7 +94,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
           icon: {
             url: iconUrl
           },
-          placeId: p.placeId
+          placeId: p.location.placeId
         });
 
         // if (p.status === 'done') {
@@ -111,13 +124,8 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
 
   updatePlace(map: any, group: any) {
     const self = this;
-    const icons = {
-      yellow: 'http://maps.google.com/mapfiles/ms/icons/yellow.png',
-      green: 'http://maps.google.com/mapfiles/ms/icons/green.png',
-      red: 'http://maps.google.com/mapfiles/ms/icons/red.png',
-    };
 
-    const place: any = this.places.find(p => p.placeId === group.placeId);
+    const place: any = this.places.find(p => p.location.placeId === group.placeId);
     const marker: any = this.markers.find(m => m.placeId === group.placeId);
     let isDone = true; // place.status === 'done';
     // group.items.push({ balance: balance, order: order, code: code, status: status, paid: (order.status === 'paid') });
@@ -126,7 +134,8 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
         isDone = false;
       }
     });
-    place.icon = isDone ? icons['green'] : icons['red'];
+    const type = group.items[0].order.type;
+    place.icon = isDone ? icons[type]['green'] : icons[type]['red']; // icons['green'] : icons['red'];
 
     google.maps.event.removeListener(place.listener);
 
@@ -134,7 +143,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
 
     const iconUrl = place.icon ? place.icon : 'http://labs.google.com/ridefinder/images/mm_20_red.png';
     const newMarker = new google.maps.Marker({
-      position: place,
+      position: place.location,
       label: {
         text: place.name,
         fontSize: '11px'
@@ -156,6 +165,14 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
 
   initMap() {
     const self = this;
+
+    // if (this.markers && this.markers.length > 0) {
+    //   this.markers.map(marker => {
+    //     if (marker) {
+    //       marker.setMap(null);
+    //     }
+    //   });
+    // }
     if (typeof google !== 'undefined') {
       const mapDom = this.input.nativeElement;
       const map = new google.maps.Map(mapDom, {

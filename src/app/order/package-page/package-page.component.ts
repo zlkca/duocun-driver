@@ -10,6 +10,8 @@ import { takeUntil } from '../../../../node_modules/rxjs/operators';
 import * as moment from 'moment';
 import { OrderService } from '../order.service';
 import { IOrder, OrderStatus } from '../order.model';
+import { FormBuilder } from '../../../../node_modules/@angular/forms';
+import { MatDatepickerInputEvent } from '../../../../node_modules/@angular/material';
 
 @Component({
   selector: 'app-package-page',
@@ -17,7 +19,6 @@ import { IOrder, OrderStatus } from '../order.model';
   styleUrls: ['./package-page.component.scss']
 })
 export class PackagePageComponent implements OnInit, OnDestroy {
-
 
   account: IAccount;
   // range;
@@ -29,6 +30,8 @@ export class PackagePageComponent implements OnInit, OnDestroy {
   phases: any[] = [];
   // delivered; // moment object
   // deliverTime; // Display purpose
+  dateForm;
+  deliverDate;
 
   constructor(
     private merchantSvc: MerchantService,
@@ -37,6 +40,7 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     private orderSvc: OrderService,
     private router: Router,
     private route: ActivatedRoute,
+    private fb: FormBuilder
   ) {
 
     // const delivered = moment().set({ hour: 11, minute: 45, second: 0, millisecond: 0 });
@@ -46,6 +50,38 @@ export class PackagePageComponent implements OnInit, OnDestroy {
     // const todayStart = moment().startOf('day').toDate();
     // const todayEnd = moment().endOf('day').toDate();
     // this.range = { $lt: todayEnd, $gt: todayStart };
+
+    this.dateForm = this.fb.group({ date: [''] });
+  }
+
+  get date() { return this.dateForm.get('date'); }
+
+  onDateChange(type: string, event: MatDatepickerInputEvent<Date>) {
+    this.deliverDate = moment(event.value).format('YYYY-MM-DD');
+    const date = moment(event.value).set({ hour: 10, minute: 0, second: 0, millisecond: 0 });
+    this.date.setValue(date);
+
+    this.reload(this.deliverDate);
+  }
+
+  reload(deliverDate) {
+    const self = this;
+    const query = {
+      driverId: this.account._id,
+      deliverDate,
+      status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }
+    };
+
+    this.orderSvc.find(query).pipe(takeUntil(self.onDestroy$)).subscribe((orders: IOrder[]) => {
+      const pickups = ['10:00']; // , '11:20']; // this.orderSvc.getPickupTimes(orders);
+      const phases = [];
+      pickups.map(pickup => {
+        const os = orders.filter(x => x.pickupTime === pickup);
+        // const os = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
+        phases.push({pickup: pickup, orders: os});
+      });
+      self.phases = phases;
+    });
   }
 
   ngOnInit() {
@@ -63,25 +99,10 @@ export class PackagePageComponent implements OnInit, OnDestroy {
           //     self.restaurant = null;
           //   }
           // });
-
-          const tStart = moment().startOf('day').toISOString();
-          const tEnd = moment().endOf('day').toISOString();
-          const query = {
-            driverId: account._id,
-            delivered: { $lt: tEnd, $gt: tStart },
-            status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }
-          };
-
-          this.orderSvc.find(query).pipe(takeUntil(self.onDestroy$)).subscribe((orders: IOrder[]) => {
-            const pickups = ['10:00', '11:20']; // this.orderSvc.getPickupTimes(orders);
-            const phases = [];
-            pickups.map(pickup => {
-              const os = orders.filter(x => x.pickupTime === pickup);
-              // const os = orders.filter(x => x.delivered === this.sharedSvc.getDateTime(moment(), pickup).toISOString());
-              phases.push({pickup: pickup, orders: os});
-            });
-            self.phases = phases;
-          });
+          const date = moment().set({ hour: 10, minute: 0, second: 0, millisecond: 0 });
+          this.date.setValue(date);
+          this.deliverDate = moment().format('YYYY-MM-DD');
+          this.reload(this.deliverDate);
 
         } else { // not authorized for opreration merchant
           this.router.navigate(['account/setting'], { queryParams: { merchant: false } });

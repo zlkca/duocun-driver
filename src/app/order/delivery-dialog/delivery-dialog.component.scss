@@ -157,12 +157,18 @@
   .green{
     color: green;
   }
+
 }
 
 .receivables-row{
   font-size: 14px;
   padding-top: 10px;
   margin: 5px;
+
+  .btn{
+    float: left;
+    margin-right: 15px;
+  }
 
   .left-col{
     padding: 0px;
@@ -258,4 +264,9 @@
     width: 240px;
     margin-top: -14px;
   }
+}
+
+.emphasise{
+  color: red;
+  font-size: 18px;
 }

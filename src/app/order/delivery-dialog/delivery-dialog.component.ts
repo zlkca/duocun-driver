@@ -19,7 +19,7 @@ export interface IDeliveryDialogData {
   content: string;
   buttonTextNo: string;
   buttonTextYes: string;
-  location: any;
+  place: any;
   pickup: string;
 }
 
@@ -32,6 +32,7 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject();
   account;
   group;
+  myItems = [];
   clientIds = [];
   accounts;
   forms = {};  // { orderId: any }
@@ -39,6 +40,9 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
   Status = OrderStatus;
   attributes;
   PaymentMethod = PaymentMethod;
+
+  bAllowMsg = true;
+
   constructor(
     private orderSvc: OrderService,
     private locationSvc: LocationService,
@@ -53,14 +57,19 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
   ) {
     dialogRef.disableClose = true;
 
+
+  }
+
+  ngOnInit() {
     const self = this;
     this.accountSvc.getCurrentAccount().pipe(takeUntil(this.onDestroy$)).subscribe(account => {
       self.account = account;
       if (account) {
-        const location = self.data.location;
+        const place = self.data.place;
         const pickup = self.data.pickup;
-        this.reload(account, pickup, location).then((group) => {
+        this.reload(account, pickup, place).then((group) => {
           this.group = group;
+          this.myItems = group.items;
         });
       } else {
         this.router.navigate(['account/login']);
@@ -72,9 +81,6 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-  }
-
 
   ngOnDestroy() {
     this.onDestroy$.next();
@@ -82,7 +88,7 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
   }
 
   onNoClick() {
-    this.dialogRef.close();
+    this.dialogRef.close(this.group);
   }
 
   getProductCssClass(item) {
@@ -105,15 +111,23 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
     return quantity;
   }
 
-  reload(account: IAccount, pickupTime: string, location: ILocation): Promise<any> {
-    // const accountId = account._id;
-    // const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
+  // return placeId, address, items
+  reload(account: IAccount, pickupText: string, place: any): Promise<any> {
+    const driverId = account._id;
+    const range = { $gt: moment().startOf('day').toISOString(), $lt: moment().endOf('day').toISOString() };
+    const location = place.location;
     const placeId = location.placeId;
+
+    const pickupTime = pickupText === '所有订单' ? { $in: ['10:00', '11:20'] } : pickupText;
+
     const orderQuery = {
+      driverId,
       'location.placeId': placeId,
-      pickupTime,
+      delivered: range,
+      // pickupTime,
       status: { $nin: [OrderStatus.BAD, OrderStatus.DELETED, OrderStatus.TEMP] }
     };
+
     return new Promise((resolve, reject) => {
       this.orderSvc.find(orderQuery).pipe(takeUntil(this.onDestroy$)).subscribe((orders: IOrder[]) => {
         orders.map(order => {
@@ -148,11 +162,12 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
         const code = order.code;
         const status = order.status;
         const balance = order.client ? order.client.balance : 0;
-        group.items.push({ balance: balance, order: order, code: code, status: status });
+        group.items.push({ order, balance, code, status });
       }
     });
     return group;
   }
+
 
   hasInvalidateStreetNumber(location: ILocation) {
     return location.streetNumber.indexOf('-') !== -1 ||
@@ -180,52 +195,22 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
     const clientId = order.clientId;
     this.accountSvc.find({ _id: clientId }).pipe(takeUntil(this.onDestroy$)).subscribe((accounts) => {
       const client = accounts[0];
-      if (client && client.attributes && client.attributes.length > 0) {
-        const orderId = order._id;
-        const params = {
-          width: '300px',
-          data: {
-            title: '收款', content: '', buttonTextNo: '取消', buttonTextYes: '确认收款',
-            orderId: orderId, accountId: this.account._id, accountName: this.account.username
-          },
-          panelClass: 'receive-cash-dialog'
-        };
-        const dialogRef = this.dialog.open(ReceiveCashDialogComponent, params);
+      // if (client && client.attributes && client.attributes.length > 0) {
+      const orderId = order._id;
+      const params = {
+        width: '300px',
+        data: {
+          title: '收款', content: '', buttonTextNo: '取消', buttonTextYes: '确认收款',
+          orderId: orderId, accountId: this.account._id, accountName: this.account.username
+        },
+        panelClass: 'receive-cash-dialog'
+      };
+      const dialogRef = this.dialog.open(ReceiveCashDialogComponent, params);
 
-        // return {status: 'success'}
-        dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(result => {
-          if (result) {
-            this.reload(this.account, this.data.pickup, this.data.location).then(group => {
-              let isDone = true; // place.status === 'done';
-              group.items.map(x => {
-                if (x.status !== OrderStatus.DONE) {
-                  isDone = false;
-                }
-              });
-
-              if (isDone) {
-                this.group = group;
-                this.dialogRef.close(group);
-              }
-            });
-          }
-        });
-      } else {
-        alert('请选择客户属性。');
-      }
-    });
-  }
-
-  finishDelivery(order: IOrder) {
-    const clientId = order.clientId;
-    this.accountSvc.find({ _id: clientId }).pipe(takeUntil(this.onDestroy$)).subscribe((accounts) => {
-      const client = accounts[0];
-      if (client && client.attributes && client.attributes.length > 0) {
-        this.orderSvc.update({ _id: order._id }, { status: OrderStatus.DONE }).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-          this.snackBar.open('', '此订单已完成', { duration: 1800 });
-          this.reload(this.account, this.data.pickup, this.data.location).then(group => {
-            // if finish all delivery in this address, close the dialog; otherwise keep the dialog open
-            // this.dialogRef.close(group);
+      // return {status: 'success'}
+      dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(result => {
+        if (result && result.status === 'success') {
+          this.reload(this.account, this.data.pickup, this.data.place).then(group => {
             let isDone = true; // place.status === 'done';
             group.items.map(x => {
               if (x.status !== OrderStatus.DONE) {
@@ -234,16 +219,61 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
             });
 
             if (isDone) {
-              // this.group = group;
-              this.dialogRef.close(group);
-            } else {
               this.group = group;
+              this.dialogRef.close(group);
             }
           });
+        }
+      });
+      // } else {
+      //   alert('请选择客户属性。');
+      // }
+    });
+  }
+
+  needCollectCash(it) {
+    if (it.balance < 0) {
+      return true;
+    } else {
+      // if(it.status !== Status.DONE){
+      //   return
+      // }
+      return false;
+    }
+  }
+
+  isOrderFinished(it) {
+    return it.order.status === OrderStatus.DONE;
+  }
+
+  finishDelivery(order: IOrder) {
+    const clientId = order.clientId;
+    this.accountSvc.find({ _id: clientId }).pipe(takeUntil(this.onDestroy$)).subscribe((accounts) => {
+      const client = accounts[0];
+      // if (client && client.attributes && client.attributes.length > 0) {
+      this.orderSvc.update({ _id: order._id }, { status: OrderStatus.DONE }).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+        this.snackBar.open('', '此订单已完成', { duration: 1800 });
+        this.reload(this.account, this.data.pickup, this.data.place).then(group => {
+          // if finish all delivery in this address, close the dialog; otherwise keep the dialog open
+          // this.dialogRef.close(group);
+          let isDone = true; // place.status === 'done';
+          group.items.map(x => {
+            if (x.status !== OrderStatus.DONE) {
+              isDone = false;
+            }
+          });
+
+          if (isDone) {
+            // this.group = group;
+            this.dialogRef.close(group);
+          } else {
+            this.group = group;
+          }
         });
-      } else {
-        alert('请选择客户属性。');
-      }
+      });
+      // } else {
+      //   alert('请选择客户属性。');
+      // }
     });
   }
 
@@ -278,6 +308,16 @@ export class DeliveryDialogComponent implements OnInit, OnDestroy {
         // this.dataSource = new MatTableDataSource(this.clients);
         // this.dataSource.sort = this.sort;
       });
+    }
+  }
+
+  sendClientMsg(order) {
+    if (order.client && order.client.phone) {
+      this.accountSvc.sendClientMsg(order.type, order.client.phone, 'zh')
+        .pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+          this.bAllowMsg = false;
+          this.snackBar.open('', '消息已发送', { duration: 1000 });
+        });
     }
   }
 }

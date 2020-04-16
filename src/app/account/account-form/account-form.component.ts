@@ -52,23 +52,23 @@ export class AccountFormComponent implements OnInit, OnChanges {
 
   save() {
     // This component will be used for business admin and super admin!
-    const self = this;
-    const v = this.form.value;
-    const account = new Account(this.form.value);
+    // const self = this;
+    // const v = this.form.value;
+    // const account = new Account(this.form.value);
 
-    account.id = self.account ? self.account.id : null;
-    if (!v.password) {
-      v.password = this.accountSvc.DEFAULT_PASSWORD;
-    }
-    if (account.id) {
-      self.accountSvc.replace(account).subscribe((r: any) => {
-        self.valueSave.emit({ name: 'OnUpdateAccount' });
-      });
-    } else {
-      self.accountSvc.save(account).subscribe((r: any) => {
-        self.valueSave.emit({ name: 'OnUpdateAccount' });
-      });
-    }
+    // account.id = self.account ? self.account.id : null;
+    // if (!v.password) {
+    //   v.password = this.accountSvc.DEFAULT_PASSWORD;
+    // }
+    // if (account.id) {
+    //   self.accountSvc.replace(account).subscribe((r: any) => {
+    //     self.valueSave.emit({ name: 'OnUpdateAccount' });
+    //   });
+    // } else {
+    //   self.accountSvc.save(account).subscribe((r: any) => {
+    //     self.valueSave.emit({ name: 'OnUpdateAccount' });
+    //   });
+    // }
 
   }
 

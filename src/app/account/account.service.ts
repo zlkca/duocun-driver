@@ -87,6 +87,12 @@ export class AccountService extends EntityService {
     const url = this.url + '/attributes';
     return this.doGet(url, filter);
   }
+
+  sendClientMsg(orderType: string, phone: string, lang: string): Observable<any> {
+    const url = this.url + '/sendClientMsg';
+    return this.doPost(url, {orderType, phone, lang: 'zh' });
+  }
+
   // getUserList(query?: string): Observable<User[]> {
   //     const url = API_URL + 'users' + (query ? query : '');
   //     const headers = new HttpHeaders().set('Content-Type', 'application/json');

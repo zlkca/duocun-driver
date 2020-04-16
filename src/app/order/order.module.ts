@@ -42,6 +42,8 @@ import { PickupPageComponent } from './pickup-page/pickup-page.component';
 @NgModule({
   imports: [
     CommonModule,
+    MatMomentDateModule,
+    MatDatepickerModule,
     MatTabsModule,
     MatExpansionModule,
     MatSlideToggleModule,
